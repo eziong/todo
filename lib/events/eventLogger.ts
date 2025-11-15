@@ -209,7 +209,7 @@ export class EventLogger {
       category: 'user_action',
       severity: 'info',
       correlationId,
-      context,
+      context: context as Record<string, unknown>,
       tags: ['task', 'update', eventType, newStatus]
     });
   }

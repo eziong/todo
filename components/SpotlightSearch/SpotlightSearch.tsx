@@ -45,9 +45,10 @@ import { SearchResultsList } from './SearchResultsList/SearchResultsList';
 import { SearchFilters } from './SearchFilters/SearchFilters';
 import { SearchSuggestions } from './SearchSuggestions/SearchSuggestions';
 import { useTaskSearch } from '@/hooks/useTaskSearch';
-import { get_search_suggestions } from '@/database/search-examples';
+import { getSearchSuggestions } from '@/database/search-examples';
 import type { SearchCategory, SearchResultItem, QuickAction } from './useSpotlightSearch';
-import type { SearchFilters as SearchFiltersType } from './SearchFilters/useSearchFilters';
+import { designTokens } from '@/theme/utils';
+import type { SearchFilters as SearchFiltersType } from '@/hooks/useTaskSearch';
 
 // =============================================
 // TYPES
@@ -71,7 +72,7 @@ interface SearchInputProps {
   onQueryChange: (query: string) => void;
   onClear: () => void;
   onKeyDown: (event: React.KeyboardEvent) => void;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
@@ -200,9 +201,11 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
               key={key}
               value={key}
               label={displayLabel}
-              icon={typeof icon === 'string' ? (
-                <Typography sx={{ fontSize: '1rem' }}>{icon}</Typography>
-              ) : icon}
+              {...(icon && (typeof icon === 'string' || React.isValidElement(icon)) && {
+                icon: typeof icon === 'string' ? (
+                  <Typography sx={{ fontSize: '1rem' }}>{icon}</Typography>
+                ) : icon as React.ReactElement
+              })}
               iconPosition="start"
               sx={{
                 '& .MuiTab-iconWrapper': {
@@ -266,7 +269,7 @@ const EnhancedSearchHeader: React.FC<EnhancedSearchHeaderProps> = ({
           onClick={onToggleFilters}
           sx={{
             textTransform: 'none',
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: 2,
             ...(hasActiveFilters && !showFilters && {
               borderColor: 'primary.main',
               color: 'primary.main',
@@ -296,7 +299,7 @@ const EnhancedSearchHeader: React.FC<EnhancedSearchHeaderProps> = ({
           onClick={onToggleSuggestions}
           sx={{
             textTransform: 'none',
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: 2,
           }}
         >
           Suggestions
@@ -331,7 +334,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ actions, onActionSelect }) 
               sx={{
                 py: theme.spacing(1),
                 px: theme.spacing(1.5),
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: 2,
                 transition: theme.transitions.create(['background-color']),
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.04),
@@ -457,7 +460,7 @@ const RecentSearches: React.FC<RecentSearchesProps> = ({
 // MAIN COMPONENT
 // =============================================
 
-export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
+export const SpotlightSearch: React.FC<SpotlightSearchProps> = React.memo(({
   className,
   onResultSelect,
   onActionSelect,
@@ -497,13 +500,14 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
     searchGlobal,
     searchTasks,
     getSuggestions,
-    clearResults,
+    clearSearch,
+    transformToEnhancedResults,
   } = useTaskSearch();
 
   // Determine which results to show
   const useEnhancedResults = showEnhancedFeatures && state.query.trim().length >= 2;
-  const enhancedResults = [...globalResults, ...taskResults];
-  const displayResults = useEnhancedResults ? enhancedResults : state.filteredResults;
+  const enhancedResults = useEnhancedResults ? [...globalResults, ...taskResults] : [];
+  const displayResults = useEnhancedResults ? enhancedResults as any[] : state.filteredResults;
   const isLoading = useEnhancedResults ? enhancedLoading : state.isLoading;
 
   // Handle enhanced search
@@ -514,9 +518,9 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
         getSuggestions(state.query);
       }
     } else {
-      clearResults();
+      clearSearch();
     }
-  }, [state.query, currentFilters, showEnhancedFeatures, searchGlobal, getSuggestions, clearResults, showSuggestions]);
+  }, [state.query, currentFilters, showEnhancedFeatures, searchGlobal, getSuggestions, clearSearch, showSuggestions]);
 
   // Enhanced feature controls
   const toggleFilters = () => setShowFilters(prev => !prev);
@@ -577,8 +581,8 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
       className={className}
       PaperProps={{
         sx: {
-          borderRadius: isMobile ? 0 : theme.macOS.borderRadius.xlarge,
-          boxShadow: theme.macOS.shadows.modal,
+          borderRadius: isMobile ? 0 : 4,
+          boxShadow: theme.shadows[16],
           overflow: 'hidden',
           maxHeight: isMobile ? '100vh' : '80vh',
           ...(isMobile && {
@@ -663,7 +667,10 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
             <SearchSuggestions
               query={state.query}
               onSuggestionSelect={handleSuggestionSelect}
-              getSuggestionsFunction={get_search_suggestions}
+              getSuggestionsFunction={async (query: string) => {
+                await getSuggestions(query);
+                return suggestions;
+              }}
               compact
               maxSuggestions={6}
             />
@@ -700,7 +707,7 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
                           sx={{
                             py: theme.spacing(1.5),
                             px: theme.spacing(2),
-                            borderRadius: theme.macOS.borderRadius.medium,
+                            borderRadius: 2,
                             mx: theme.spacing(1),
                             my: 0.5,
                             transition: theme.transitions.create(['background-color', 'transform']),
@@ -829,6 +836,6 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
       </DialogContent>
     </Dialog>
   );
-};
+});
 
 export default SpotlightSearch;

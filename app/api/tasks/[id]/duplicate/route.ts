@@ -272,7 +272,7 @@ export async function POST(
       description: task.description,
       status: 'todo', // Always start duplicates as todo
       priority: task.priority,
-      assigned_to_user_id: null, // Don't copy assignment
+      assigned_to_user_id: undefined, // Don't copy assignment
       created_by_user_id: user.id,
       start_date: task.start_date,
       end_date: task.end_date,
@@ -280,9 +280,9 @@ export async function POST(
       position: nextPosition,
       tags: [...(task.tags || [])],
       estimated_hours: task.estimated_hours,
-      actual_hours: null, // Reset actual hours for duplicate
+      actual_hours: undefined, // Reset actual hours for duplicate
       attachments: [], // Don't copy attachments for now
-      completed_at: null,
+      completed_at: undefined,
     };
 
     // Validate duplicate task data
@@ -350,6 +350,15 @@ export async function POST(
           ...duplicateTaskData,
           duplicated_from: taskId,
         },
+        category: 'user_action',
+        severity: 'info',
+        source: 'web',
+        tags: [],
+        context: {
+          original_task_id: taskId,
+          original_task_title: task.title,
+          duplicate_task_title: duplicateTaskData.title
+        }
       };
 
       await supabase.from('events').insert([event]);

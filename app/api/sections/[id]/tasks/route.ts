@@ -27,7 +27,7 @@ interface RouteParams {
 
 // Helper function to check user permissions for section via workspace
 async function checkSectionPermission(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string, 
   sectionId: string, 
   requiredPermission: 'read' | 'write' | 'delete' | 'admin'
@@ -262,10 +262,18 @@ export async function GET(request: NextRequest, { params }: RouteParams): Promis
         id: section.id,
         name: section.name,
         workspace_id: section.workspace_id,
-        workspace: {
-          id: section.workspace.id,
-          name: section.workspace.name,
-        },
+        workspace: (() => {
+          const workspaceData = Array.isArray(section.workspace) 
+            ? section.workspace[0] 
+            : section.workspace;
+          return workspaceData ? {
+            id: workspaceData.id,
+            name: workspaceData.name,
+          } : {
+            id: '',
+            name: 'Unknown Workspace'
+          };
+        })(),
       } : undefined,
     };
 
@@ -336,20 +344,20 @@ export async function POST(request: NextRequest, { params }: RouteParams): Promi
       section_id: sectionId,
       workspace_id: section.workspace_id,
       title: taskData.title || 'Untitled Task',
-      description: taskData.description || null,
+      description: taskData.description || undefined,
       status: taskData.status || 'todo',
       priority: taskData.priority || 'medium',
-      assigned_to_user_id: taskData.assigned_to_user_id || null,
+      assigned_to_user_id: taskData.assigned_to_user_id || undefined,
       created_by_user_id: user.id,
-      start_date: taskData.start_date || null,
-      end_date: taskData.end_date || null,
-      due_date: taskData.due_date || null,
+      start_date: taskData.start_date || undefined,
+      end_date: taskData.end_date || undefined,
+      due_date: taskData.due_date || undefined,
       position: taskData.position !== undefined ? taskData.position : nextPosition,
       tags: taskData.tags || [],
-      estimated_hours: taskData.estimated_hours || null,
-      actual_hours: taskData.actual_hours || null,
+      estimated_hours: taskData.estimated_hours || undefined,
+      actual_hours: taskData.actual_hours || undefined,
       attachments: taskData.attachments || [],
-      completed_at: null,
+      completed_at: undefined,
     };
 
     // Validate task data
@@ -431,6 +439,14 @@ export async function POST(request: NextRequest, { params }: RouteParams): Promi
         entity_type: 'task',
         entity_id: newTask.id,
         new_values: insertData,
+        category: 'user_action',
+        severity: 'info',
+        source: 'web',
+        tags: [],
+        context: {
+          section_id: sectionId,
+          section_name: section.name || 'Unknown Section'
+        }
       };
 
       await supabase.from('events').insert([event]);

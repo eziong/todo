@@ -19,13 +19,15 @@ import {
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { TaskCard } from '@/components/TaskCard/TaskCard';
 import { useInfiniteTaskList } from './useInfiniteTaskList';
-import type { BaseComponentProps, TaskFilters } from '@/types';
+import type { TaskFilters } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // TYPES
 // =============================================
 
-export interface InfiniteTaskListProps extends BaseComponentProps {
+export interface InfiniteTaskListProps {
+  className?: string;
   filters?: TaskFilters;
   searchQuery?: string;
   pageSize?: number;
@@ -83,7 +85,7 @@ const LoadMoreIndicator: React.FC<LoadMoreIndicatorProps> = ({
             </Button>
           }
           sx={{
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: designTokens.borderRadius.md,
           }}
         >
           Failed to load more tasks
@@ -241,7 +243,7 @@ export const InfiniteTaskList: React.FC<InfiniteTaskListProps> = ({
             </Button>
           }
           sx={{
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: designTokens.borderRadius.md,
           }}
         >
           Failed to load tasks. Please try again.
@@ -306,7 +308,7 @@ export const InfiniteTaskList: React.FC<InfiniteTaskListProps> = ({
             disabled={loading}
             sx={{
               textTransform: 'none',
-              borderRadius: theme.macOS.borderRadius.medium,
+              borderRadius: designTokens.borderRadius.md,
             }}
           >
             Refresh
@@ -325,14 +327,15 @@ export const InfiniteTaskList: React.FC<InfiniteTaskListProps> = ({
               borderBottom: index < tasks.length - 1 
                 ? `1px solid ${alpha(theme.palette.divider, 0.06)}`
                 : 'none',
+              width: '100%',
             }}
           >
             <TaskCard
               task={task}
               onToggleComplete={() => toggleTaskCompletion(task.id)}
-              onUpdate={(updates) => updateTask(task.id, updates)}
+              onUpdate={(id, updates) => updateTask(id, updates)}
               onDelete={() => deleteTask(task.id)}
-              sx={{ width: '100%' }}
+              onOpenModal={(task) => {/* TODO: implement modal opening */}}
             />
           </ListItem>
         ))}

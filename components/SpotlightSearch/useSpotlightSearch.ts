@@ -5,13 +5,14 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/Auth';
+import { useAuth } from '@/components/Auth/useAuth';
 import { useTaskSearch } from '@/hooks/useTaskSearch';
 import { useDebounce } from '@/hooks/useDebounce';
 import type {
   SearchResult,
   TaskSearchResult,
   SearchSuggestion,
+  User,
 } from '@/database/types';
 
 // =============================================

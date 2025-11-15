@@ -66,25 +66,26 @@ import {
 } from 'recharts';
 import { useActivityDashboard, UseActivityDashboardProps } from './useActivityDashboard';
 import type { ActivityPeriodType, EventCategory } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // STYLED COMPONENTS
 // =============================================
 
 const MetricCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.large,
-  boxShadow: theme.macOS.shadows.card,
+  borderRadius: designTokens.borderRadius.lg,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   border: theme.palette.mode === 'light' ? 'none' : `1px solid ${theme.palette.divider}`,
-  transition: theme.macOS.animation.fast,
+  transition: designTokens.animation.fast,
   '&:hover': {
-    boxShadow: theme.macOS.shadows.medium,
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     transform: 'translateY(-2px)',
   },
 }));
 
 const StatBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
-  borderRadius: theme.macOS.borderRadius.medium,
+  borderRadius: designTokens.borderRadius.md,
   background: theme.palette.mode === 'light' 
     ? theme.palette.grey[50] 
     : theme.palette.grey[900],
@@ -557,7 +558,7 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
 
       {/* Key Metrics */}
       <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricDisplay
             title="Total Events"
             value={metrics?.totalEvents ?? 0}
@@ -573,7 +574,7 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
           />
         </Grid>
         
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricDisplay
             title="Today's Activity"
             value={metrics?.eventsToday ?? 0}
@@ -584,7 +585,7 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
           />
         </Grid>
         
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricDisplay
             title="Active Users"
             value={metrics?.userActivity.activeUsers ?? 0}
@@ -595,7 +596,7 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
           />
         </Grid>
         
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <MetricDisplay
             title="Security Events"
             value={securitySummary?.totalEvents ?? 0}
@@ -609,7 +610,7 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
 
       {/* Charts and Analysis */}
       <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           {metrics?.topCategories && (
             <CategoryChart
               data={metrics.topCategories}
@@ -619,7 +620,7 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
           )}
         </Grid>
         
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           {metrics?.trends.peakHours && (
             <ActivityTimelineChart
               data={metrics.trends.peakHours}
@@ -632,7 +633,7 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
       {/* Top Event Types */}
       {metrics?.topEventTypes && (
         <Grid container spacing={3} mb={3}>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <MetricCard>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -641,7 +642,7 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
                 
                 <Grid container spacing={2}>
                   {metrics.topEventTypes.slice(0, 8).map((event, index) => (
-                    <Grid item xs={6} sm={4} md={3} key={event.eventType}>
+                    <Grid size={{ xs: 6, sm: 4, md: 3 }} key={event.eventType}>
                       <StatBox>
                         <Typography variant="body2" color="text.secondary" gutterBottom>
                           {event.eventType.replace('_', ' ')}
@@ -665,11 +666,11 @@ export const ActivityDashboard: React.FC<ActivityDashboardProps> = ({
       {/* Security Alerts */}
       {securitySummary && (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <SecurityAlerts alerts={securitySummary.recentAlerts} />
           </Grid>
           
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <MetricCard>
               <CardContent>
                 <Typography variant="h6" gutterBottom>

@@ -7,13 +7,14 @@ import React, { Suspense } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 import { TaskDetailModal } from '@/components/TaskDetailModal/TaskDetailModal';
 import { useModalRouter, MODAL_TYPES } from './useModalRouter';
-import type { BaseComponentProps } from '@/types';
+
 
 // =============================================
 // TYPES
 // =============================================
 
-export interface ModalRouterProps extends BaseComponentProps {
+export interface ModalRouterProps {
+  className?: string;
   // Optional modal component overrides
   components?: {
     [key: string]: React.ComponentType<any>;
@@ -69,9 +70,11 @@ export const ModalRouter: React.FC<ModalRouterProps> = ({
           <div className={className}>
             <Suspense fallback={<ModalLoader />}>
               <TaskDetailModal
-                taskId={modalId || ''}
+                task={null as any} // TODO: Fetch task by modalId
                 open={true}
                 onClose={closeModal}
+                onUpdate={async () => {}} // TODO: Implement task update
+                onDelete={async () => {}} // TODO: Implement task delete
               />
             </Suspense>
           </div>

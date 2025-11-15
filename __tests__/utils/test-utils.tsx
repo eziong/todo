@@ -5,7 +5,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { AuthProvider } from '@/components/Auth/AuthProvider'
 import { SpotlightSearchProvider } from '@/components/SpotlightSearch/SpotlightSearchProvider'
-import { theme } from '@/theme'
+import { theme } from '@/theme/utils'
 import { User } from '@supabase/supabase-js'
 
 // Mock user data

@@ -42,20 +42,17 @@ import {
   Timeline as ActivitiesIcon,
   Dashboard as DashboardIcon,
 } from '@mui/icons-material';
-import { ThemeToggle } from '@/components/ThemeProvider';
+import { ThemeToggle } from '@/components/ThemeProvider/ThemeToggle/ThemeToggle';
 import { useNavigationSidebar } from './useNavigationSidebar';
-import type { 
-  BaseComponentProps, 
-  WorkspaceWithSections, 
-  SectionWithTasks, 
-  User,
-} from '@/types';
+import { designTokens } from '@/theme/utils';
+import type { Workspace, Section, User } from '@/types/database';
 
 // =============================================
 // TYPES
 // =============================================
 
-export interface NavigationSidebarProps extends BaseComponentProps {
+export interface NavigationSidebarProps {
+  className?: string;
   onToggleSidebar?: () => void;
 }
 
@@ -65,14 +62,14 @@ interface SearchResultsProps {
     isSearching: boolean;
     searchQuery: string;
     searchResults: {
-      workspaces: WorkspaceWithSections[];
-      sections: SectionWithTasks[];
+      workspaces: Workspace[];
+      sections: Section[];
       recentItems: Array<{
         id: string;
         title: string;
         type: 'workspace' | 'section';
-        workspace?: WorkspaceWithSections;
-        section?: SectionWithTasks;
+        workspace?: Workspace;
+        section?: Section;
       }>;
     };
   };
@@ -83,9 +80,6 @@ interface SearchResultsProps {
       text: { primary: string };
       divider: string;
       primary: { main: string };
-    };
-    macOS: {
-      borderRadius: { medium: number };
     };
   };
 }
@@ -110,7 +104,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ state, selectWorkspace, c
           mb: 2,
           backgroundColor: alpha(theme.palette.text.primary, 0.02),
           border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-          borderRadius: theme.macOS.borderRadius.medium,
+          borderRadius: designTokens.borderRadius.md,
         }}
       >
         <Typography variant="body2" color="text.secondary">
@@ -136,7 +130,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ state, selectWorkspace, c
               }}
               sx={{
                 mx: 1,
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.08),
                 },
@@ -154,7 +148,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ state, selectWorkspace, c
               </ListItemIcon>
               <ListItemText 
                 primary={workspace.name}
-                secondary={`${workspace.taskCount} tasks`}
+                secondary={workspace.description || 'Workspace'}
               />
             </ListItemButton>
           ))}
@@ -175,7 +169,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ state, selectWorkspace, c
               }}
               sx={{
                 mx: 1,
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.08),
                 },
@@ -186,7 +180,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ state, selectWorkspace, c
               </ListItemIcon>
               <ListItemText 
                 primary={section.name}
-                secondary={`${section.taskCount} tasks`}
+                secondary={section.description || 'Section'}
               />
             </ListItemButton>
           ))}
@@ -203,19 +197,19 @@ interface WorkspaceListProps {
     selectedWorkspaceId: string | null;
     expandedWorkspaces: Set<string>;
     searchResults: {
-      workspaces: WorkspaceWithSections[];
-      sections: SectionWithTasks[];
+      workspaces: Workspace[];
+      sections: Section[];
       recentItems: Array<{
         id: string;
         title: string;
         type: 'workspace' | 'section';
-        workspace?: WorkspaceWithSections;
-        section?: SectionWithTasks;
+        workspace?: Workspace;
+        section?: Section;
       }>;
     };
     searchQuery: string;
   };
-  workspaces: WorkspaceWithSections[];
+  workspaces: Workspace[];
   selectWorkspace: (id: string) => void;
   toggleWorkspaceExpansion: (id: string) => void;
   theme: {
@@ -223,10 +217,6 @@ interface WorkspaceListProps {
       text: { primary: string };
       divider: string;
       primary: { main: string };
-    };
-    macOS: {
-      borderRadius: { medium: number; small: number };
-      shadows: { subtle: string };
     };
   };
 }
@@ -244,7 +234,7 @@ const WorkspaceList: React.FC<WorkspaceListProps> = ({ state, workspaces, select
             disablePadding
             sx={{
               mb: 0.5,
-              borderRadius: theme.macOS.borderRadius.medium,
+              borderRadius: designTokens.borderRadius.md,
               overflow: 'hidden',
             }}
           >
@@ -252,7 +242,7 @@ const WorkspaceList: React.FC<WorkspaceListProps> = ({ state, workspaces, select
               selected={workspace.id === state.selectedWorkspaceId}
               onClick={() => selectWorkspace(workspace.id)}
               sx={{
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 '&.Mui-selected': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.12),
                   '&:hover': {
@@ -268,7 +258,7 @@ const WorkspaceList: React.FC<WorkspaceListProps> = ({ state, workspaces, select
                     height: 16,
                     borderRadius: '50%',
                     backgroundColor: workspace.color,
-                    boxShadow: theme.macOS.shadows.subtle,
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
                   }}
                 />
               </ListItemIcon>
@@ -281,7 +271,7 @@ const WorkspaceList: React.FC<WorkspaceListProps> = ({ state, workspaces, select
               />
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip 
-                  label={workspace.taskCount}
+                  label={workspace.name}
                   size="small"
                   sx={{
                     minWidth: 24,
@@ -304,8 +294,8 @@ const WorkspaceList: React.FC<WorkspaceListProps> = ({ state, workspaces, select
                   sx={{ 
                     width: 24, 
                     height: 24,
-                    opacity: workspace.sections.length > 0 ? 1 : 0.3,
-                    pointerEvents: workspace.sections.length > 0 ? 'auto' : 'none',
+                    opacity: 1, // TODO: Check if workspace has sections
+                    pointerEvents: 'auto', // TODO: Check if workspace has sections
                   }}
                 >
                   {state.expandedWorkspaces.has(workspace.id) ? (
@@ -325,12 +315,13 @@ const WorkspaceList: React.FC<WorkspaceListProps> = ({ state, workspaces, select
             unmountOnExit
           >
             <List component="div" disablePadding sx={{ pl: 2, pr: 1 }}>
-              {workspace.sections.map((section) => (
+              {/* TODO: Get sections for workspace */}
+              {[].map((section: Section) => (
                 <ListItem key={section.id} disablePadding>
                   <ListItemButton
                     sx={{
                       py: 0.75,
-                      borderRadius: theme.macOS.borderRadius.small,
+                      borderRadius: designTokens.borderRadius.sm,
                       '&:hover': {
                         backgroundColor: alpha(section.color, 0.08),
                       },
@@ -353,7 +344,7 @@ const WorkspaceList: React.FC<WorkspaceListProps> = ({ state, workspaces, select
                       }
                     />
                     <Chip 
-                      label={section.taskCount}
+                      label={section.name}
                       size="small"
                       sx={{
                         minWidth: 20,
@@ -386,9 +377,6 @@ interface QuickNavigationProps {
     palette: {
       text: { primary: string };
       primary: { main: string };
-    };
-    macOS: {
-      borderRadius: { medium: number; small: number };
     };
   };
 }
@@ -439,7 +427,7 @@ const QuickNavigation: React.FC<QuickNavigationProps> = ({ currentPath, onNaviga
               selected={currentPath === item.path}
               onClick={() => onNavigate(item.path)}
               sx={{
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 '&.Mui-selected': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.12),
                   '&:hover': {
@@ -484,10 +472,6 @@ interface UserProfileSectionProps {
       divider: string;
       primary: { main: string };
     };
-    macOS: {
-      borderRadius: { medium: number; large: number };
-      shadows: { modal: string };
-    };
   };
 }
 
@@ -517,7 +501,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
       <ListItemButton
         onClick={handleUserMenuOpen}
         sx={{
-          borderRadius: theme.macOS.borderRadius.medium,
+          borderRadius: designTokens.borderRadius.md,
           px: 1.5,
           py: 1,
           '&:hover': {
@@ -567,27 +551,27 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
         }}
         PaperProps={{
           sx: {
-            borderRadius: theme.macOS.borderRadius.large,
-            boxShadow: theme.macOS.shadows.modal,
+            borderRadius: designTokens.borderRadius.lg,
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
             border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
             minWidth: 200,
           },
         }}
       >
-        <MenuItem onClick={handleUserMenuClose} sx={{ borderRadius: theme.macOS.borderRadius.medium }}>
+        <MenuItem onClick={handleUserMenuClose} sx={{ borderRadius: designTokens.borderRadius.md }}>
           <ListItemIcon>
             <AccountCircleIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </MenuItem>
-        <MenuItem onClick={handleSettingsClick} sx={{ borderRadius: theme.macOS.borderRadius.medium }}>
+        <MenuItem onClick={handleSettingsClick} sx={{ borderRadius: designTokens.borderRadius.md }}>
           <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText primary="Settings" />
         </MenuItem>
         <Divider sx={{ my: 1 }} />
-        <MenuItem onClick={handleUserSignOut} sx={{ borderRadius: theme.macOS.borderRadius.medium }}>
+        <MenuItem onClick={handleUserSignOut} sx={{ borderRadius: designTokens.borderRadius.md }}>
           <ListItemIcon>
             <ExitToAppIcon fontSize="small" />
           </ListItemIcon>
@@ -602,7 +586,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({
 // PRESENTER COMPONENT
 // =============================================
 
-export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ 
+export const NavigationSidebar: React.FC<NavigationSidebarProps> = React.memo(({ 
   className 
 }) => {
   const theme = useTheme();
@@ -704,9 +688,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         }}
         PaperProps={{
           sx: {
-            borderRadius: drawerVariant === 'temporary' ? `0 ${theme.macOS.borderRadius.xlarge}px ${theme.macOS.borderRadius.xlarge}px 0` : 0,
+            borderRadius: drawerVariant === 'temporary' ? `0 ${designTokens.borderRadius.xl}px ${designTokens.borderRadius.xl}px 0` : 0,
             border: drawerVariant !== 'temporary' ? 'none' : undefined,
-            boxShadow: drawerVariant === 'temporary' ? theme.macOS.shadows.modal : 'none',
+            boxShadow: drawerVariant === 'temporary' ? '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)' : 'none',
             width: state.width,
           },
         }}
@@ -741,7 +725,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   sx={{
                     width: 28,
                     height: 28,
-                    borderRadius: theme.macOS.borderRadius.medium,
+                    borderRadius: designTokens.borderRadius.md,
                     '&:hover': {
                       backgroundColor: alpha(theme.palette.primary.main, 0.08),
                     },
@@ -779,7 +763,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: theme.macOS.borderRadius.medium,
+                  borderRadius: designTokens.borderRadius.md,
                   backgroundColor: alpha(theme.palette.text.primary, 0.02),
                   '&:hover': {
                     backgroundColor: alpha(theme.palette.text.primary, 0.04),
@@ -816,7 +800,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           <Box sx={{ px: 2, pb: 1 }}>
             <ListItemButton
               sx={{
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 border: `1px dashed ${alpha(theme.palette.primary.main, 0.3)}`,
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.primary.main, 0.04),
@@ -876,4 +860,4 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       </Drawer>
     </Box>
   );
-};
+});

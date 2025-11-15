@@ -69,24 +69,25 @@ import type {
   EventSource, 
   EntityType 
 } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // STYLED COMPONENTS
 // =============================================
 
 const FilterCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.large,
-  boxShadow: theme.macOS.shadows.card,
+  borderRadius: designTokens.borderRadius.lg,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   border: theme.palette.mode === 'light' ? 'none' : `1px solid ${theme.palette.divider}`,
 }));
 
 const FilterChip = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.5),
-  borderRadius: theme.macOS.borderRadius.small,
+  borderRadius: designTokens.borderRadius.sm,
 }));
 
 const QuickFilterButton = styled(Button)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.medium,
+  borderRadius: designTokens.borderRadius.md,
   textTransform: 'none',
   fontSize: '0.8125rem',
   fontWeight: 500,
@@ -263,7 +264,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         </Typography>
         
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid size={{ xs: 6 }}>
             <DatePicker
               label="From"
               value={from ? new Date(from) : null}
@@ -277,7 +278,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
             />
           </Grid>
           
-          <Grid item xs={6}>
+          <Grid size={{ xs: 6 }}>
             <DatePicker
               label="To"
               value={to ? new Date(to) : null}
@@ -465,10 +466,10 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
     setSources,
     entityTypes,
     setEntityTypes,
-    userIds,
-    setUserIds,
-    workspaceIds,
-    setWorkspaceIds,
+    userId,
+    setUserId,
+    workspaceId,
+    setWorkspaceId,
     dateRange,
     setDateRange,
     tags,
@@ -614,7 +615,7 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
         <Collapse in={expanded} timeout="auto">
           <Grid container spacing={3}>
             {/* Event Types */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <MultiSelect
                 label="Event Types"
                 value={eventTypes}
@@ -625,7 +626,7 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
             </Grid>
 
             {/* Categories */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <MultiSelect
                 label="Categories"
                 value={categories}
@@ -636,7 +637,7 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
             </Grid>
 
             {/* Severity */}
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <MultiSelect
                 label="Severity"
                 value={severities}
@@ -647,7 +648,7 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
             </Grid>
 
             {/* Sources */}
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <MultiSelect
                 label="Sources"
                 value={sources}
@@ -658,7 +659,7 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
             </Grid>
 
             {/* Entity Types */}
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <MultiSelect
                 label="Entity Types"
                 value={entityTypes}
@@ -668,32 +669,55 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
             </Grid>
 
             {/* Users */}
+            {/* Users */}
             {userOptions.length > 0 && (
-              <Grid item xs={12} md={6}>
-                <MultiSelect
-                  label="Users"
-                  value={userIds}
-                  onChange={setUserIds}
-                  options={userOptions}
-                  icon={<PersonIcon />}
-                />
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth>
+                  <InputLabel>User</InputLabel>
+                  <Select
+                    value={userId || ''}
+                    onChange={(e) => setUserId(e.target.value || undefined)}
+                    label="User"
+                    startAdornment={<PersonIcon sx={{ mr: 1, color: 'text.secondary' }} />}
+                  >
+                    <MenuItem value="">
+                      <em>All Users</em>
+                    </MenuItem>
+                    {userOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
             )}
 
             {/* Workspaces */}
             {workspaceOptions.length > 0 && (
-              <Grid item xs={12} md={6}>
-                <MultiSelect
-                  label="Workspaces"
-                  value={workspaceIds}
-                  onChange={setWorkspaceIds}
-                  options={workspaceOptions}
-                />
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Workspace</InputLabel>
+                  <Select
+                    value={workspaceId || ''}
+                    onChange={(e) => setWorkspaceId(e.target.value || undefined)}
+                    label="Workspace"
+                  >
+                    <MenuItem value="">
+                      <em>All Workspaces</em>
+                    </MenuItem>
+                    {workspaceOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
             )}
 
             {/* Date Range */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <DateRangePicker
                 from={dateRange.from}
                 to={dateRange.to}
@@ -702,7 +726,7 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
             </Grid>
 
             {/* Correlation ID */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 label="Correlation ID"
@@ -714,7 +738,7 @@ export const ActivityFilters: React.FC<ActivityFiltersProps> = ({
             </Grid>
 
             {/* Tags */}
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TagInput
                 value={tags}
                 onChange={setTags}

@@ -12,6 +12,16 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['@mui/material', '@mui/icons-material'],
   },
 
+  // Turbopack configuration for Next.js 16
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
+
   // Image optimization
   images: {
     formats: ['image/webp', 'image/avif'],
@@ -85,64 +95,12 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Bundle optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Optimization for production builds
-    if (!dev) {
-      config.optimization = {
-        ...config.optimization,
-        sideEffects: false,
-        usedExports: true,
-        innerGraph: true,
-        concatenateModules: true,
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-              priority: 10
-            },
-            mui: {
-              test: /[\\/]node_modules[\\/]@mui[\\/]/,
-              name: 'mui',
-              chunks: 'all',
-              priority: 20
-            },
-            common: {
-              name: 'common',
-              minChunks: 2,
-              chunks: 'all',
-              priority: 5,
-              reuseExistingChunk: true
-            }
-          }
-        }
-      };
-    }
-
-    // Tree shaking for MUI
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@mui/material': '@mui/material',
-      '@mui/icons-material': '@mui/icons-material'
-    };
-
-    return config;
-  },
-
   // Output configuration
   output: 'standalone',
   
   // TypeScript configuration
   typescript: {
     tsconfigPath: './tsconfig.json',
-  },
-
-  // ESLint configuration
-  eslint: {
-    dirs: ['pages', 'components', 'lib', 'app'],
   },
 
   // Development optimizations

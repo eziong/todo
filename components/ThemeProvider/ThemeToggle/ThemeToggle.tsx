@@ -8,9 +8,10 @@ import {
   Brightness6 as SystemIcon 
 } from '@mui/icons-material';
 import { useThemeToggle } from './useThemeToggle';
-import type { BaseComponentProps } from '@/types';
 
-interface ThemeToggleProps extends BaseComponentProps {
+
+interface ThemeToggleProps {
+  className?: string;
   size?: 'small' | 'medium' | 'large';
   showSystemIndicator?: boolean;
 }

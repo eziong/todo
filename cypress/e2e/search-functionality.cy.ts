@@ -10,25 +10,10 @@ describe('Search Functionality', () => {
     cy.createSection('Meetings', 'work-projects')
     cy.createSection('Shopping', 'personal-tasks')
     
-    cy.createTask('Fix authentication bug', 'development', { 
-      description: 'Fix OAuth login issues',
-      priority: 'high',
-      tags: ['bug', 'frontend']
-    })
-    cy.createTask('Implement user dashboard', 'development', {
-      description: 'Create dashboard with analytics',
-      priority: 'medium',
-      tags: ['feature', 'frontend']
-    })
-    cy.createTask('Team standup', 'meetings', {
-      description: 'Daily team standup meeting',
-      priority: 'low'
-    })
-    cy.createTask('Buy groceries', 'shopping', {
-      description: 'Milk, bread, eggs',
-      priority: 'medium',
-      tags: ['personal']
-    })
+    cy.createTask('Fix authentication bug', 'development')
+    cy.createTask('Implement user dashboard', 'development')
+    cy.createTask('Team standup', 'meetings')
+    cy.createTask('Buy groceries', 'shopping')
   })
 
   describe('Spotlight Search Modal', () => {
@@ -500,8 +485,7 @@ describe('Search Functionality', () => {
 
       cy.get('[data-testid="search-input"]').type('authentication{enter}')
 
-      cy.wait('@trackSearch')
-      cy.get('@trackSearch').should((interception) => {
+      cy.wait('@trackSearch').then((interception) => {
         expect(interception.request.body).to.deep.include({
           query: 'authentication',
           resultsCount: 1,
@@ -523,8 +507,7 @@ describe('Search Functionality', () => {
 
       cy.contains('Fix authentication bug').click()
 
-      cy.wait('@trackClick')
-      cy.get('@trackClick').should((interception) => {
+      cy.wait('@trackClick').then((interception) => {
         expect(interception.request.body).to.deep.include({
           query: 'authentication',
           resultId: 'task-1',

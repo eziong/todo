@@ -4,7 +4,7 @@
 // Container logic for Activities page with filtering, pagination, and export functionality
 
 import { useState, useMemo, useCallback } from 'react';
-import { useActivity } from '@/hooks/useActivity';
+import { useActivityFeed } from '@/hooks/useActivity';
 import type { 
   ActivityFeedItem, 
   EventCategory, 
@@ -31,7 +31,7 @@ export type DateRangePreset = 'all' | 'today' | 'week' | 'month' | 'quarter' | '
 export type ActivitySortField = 'created_at' | 'event_type' | 'entity_type' | 'user_name' | 'severity';
 export type ActivitySortDirection = 'asc' | 'desc';
 
-interface ActivityFiltersState {
+export interface ActivityFiltersState {
   categories: EventCategory[];
   eventTypes: EventType[];
   entityTypes: EntityType[];
@@ -192,7 +192,7 @@ const filterActivitiesByDateRange = (
       if (!customRange.start || !customRange.end) return activities;
       return activities.filter(activity => {
         const activityDate = new Date(activity.created_at).toISOString().split('T')[0];
-        return activityDate >= customRange.start && activityDate <= customRange.end;
+        return activityDate >= customRange.start! && activityDate <= customRange.end!;
       });
     default:
       return activities;
@@ -323,9 +323,8 @@ export const useActivitiesPageView = (props: ActivitiesPageViewProps): UseActivi
     hasMore,
     loadMore,
     refresh,
-  } = useActivity({
+  } = useActivityFeed({
     workspaceId,
-    userId,
     categories: filters.categories,
     limit: pagination.limit,
     autoRefresh,

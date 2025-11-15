@@ -367,10 +367,10 @@ export function useUserActivitySummary({
 
       const data = await activityQueries.getUserActivitySummary({
         userId: targetUserId,
-        workspaceId,
-        periodType,
-        periodStart: startDate.toISOString(),
-        periodEnd: endDate.toISOString()
+        workspace_id: workspaceId,
+        period_type: periodType,
+        period_start: startDate.toISOString(),
+        period_end: endDate.toISOString()
       });
 
       setSummary(data);

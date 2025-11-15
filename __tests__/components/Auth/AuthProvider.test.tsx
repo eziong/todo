@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { AuthProvider, useAuthContext } from '@/components/Auth/AuthProvider'
 import * as useAuthHook from '@/components/Auth/useAuth'
-import type { UseAuthReturn } from '@/types'
+import type { UseAuthReturn } from '@/types/database'
 
 // Mock the useAuth hook
 jest.mock('@/components/Auth/useAuth')

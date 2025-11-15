@@ -10,14 +10,17 @@ import {
   Stack,
   Chip 
 } from '@mui/material';
-import { ThemeToggle, useThemeContext, designTokens } from './index';
+import { ThemeToggle } from './ThemeToggle/ThemeToggle';
+import { designTokens } from '@/theme/utils';
+import { useTheme } from '@mui/material';
 
 /**
  * Demo component to showcase the enhanced theme system
  * This file can be removed after testing
  */
 export const ThemeDemo: React.FC = () => {
-  const { mode } = useThemeContext();
+  const theme = useTheme();
+  const mode = theme.palette.mode;
 
   return (
     <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
@@ -80,7 +83,7 @@ export const ThemeDemo: React.FC = () => {
         <CardContent>
           <Typography variant="h5" gutterBottom>Workspace Colors</Typography>
           <Stack direction="row" flexWrap="wrap" gap={1}>
-            {designTokens.colors.workspace.map((color, index) => (
+            {Object.values(designTokens.colors.taskPriority).map((color, index) => (
               <Chip
                 key={color}
                 label={`Workspace ${index + 1}`}
@@ -114,7 +117,7 @@ export const ThemeDemo: React.FC = () => {
             />
             <Chip 
               label="Archived" 
-              sx={{ backgroundColor: designTokens.colors.taskStatus.archived, color: 'white' }} 
+              sx={{ backgroundColor: designTokens.colors.taskStatus.cancelled, color: 'white' }} 
             />
           </Stack>
         </CardContent>

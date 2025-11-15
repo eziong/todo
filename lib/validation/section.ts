@@ -139,13 +139,13 @@ export function validateSectionUpdate(data: any): ValidationResult & { sanitized
   // Validate description (optional)
   if (data.description !== undefined) {
     if (data.description === null) {
-      sanitizedData.description = null;
+      sanitizedData.description = undefined;
     } else if (typeof data.description !== 'string') {
       errors.push('Description must be a string');
     } else if (data.description.length > 500) {
       errors.push('Description must be less than 500 characters');
     } else {
-      sanitizedData.description = data.description.trim() || null;
+      sanitizedData.description = data.description.trim() || undefined;
     }
   }
 

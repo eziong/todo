@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { useAuth } from '@/components/Auth';
+import { useAuth } from '@/components/Auth/useAuth';
 import type { 
   WorkspacePermissions,
   WorkspaceMemberRole,

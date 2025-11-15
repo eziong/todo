@@ -205,6 +205,15 @@ export async function PUT(
         new_values: {
           is_archived: shouldArchive,
         },
+        category: 'user_action',
+        severity: 'info',
+        source: 'web',
+        tags: [],
+        context: {
+          task_title: task.title,
+          section_id: task.section_id,
+          section_name: task.section.name
+        }
       };
 
       await supabase.from('events').insert([event]);

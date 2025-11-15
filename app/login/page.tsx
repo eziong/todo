@@ -3,7 +3,7 @@
 // =============================================
 // Public login page for user authentication
 
-import { Login } from '@/components/Auth';
+import { Login } from '@/components/Auth/Login/Login';
 
 /**
  * Login Page Component

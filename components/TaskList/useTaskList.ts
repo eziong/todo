@@ -20,22 +20,22 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable';
 import type { 
-  TaskWithRelations, 
+  Task, 
   User,
-} from '@/types';
+} from '@/types/database';
 
 // =============================================
 // TYPES
 // =============================================
 
 export interface TaskListProps {
-  tasks: TaskWithRelations[];
+  tasks: Task[];
   users?: User[];
-  onUpdateTask: (id: string, updates: Partial<TaskWithRelations>) => Promise<void>;
+  onUpdateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask: (id: string) => Promise<void>;
   onToggleComplete: (id: string) => Promise<void>;
   onReorderTasks: (taskIds: string[]) => Promise<void>;
-  onOpenTaskModal: (task: TaskWithRelations) => void;
+  onOpenTaskModal: (task: Task) => void;
   loading?: boolean;
   error?: string | null;
   className?: string;
@@ -49,8 +49,8 @@ export interface TaskListProps {
 
 export interface TaskListState {
   // Data
-  tasks: TaskWithRelations[];
-  activeTask: TaskWithRelations | null;
+  tasks: Task[];
+  activeTask: Task | null;
   
   // UI States
   loading: boolean;
@@ -79,7 +79,7 @@ export interface UseTaskListReturn {
   };
   
   // Task operations
-  handleUpdateTask: (id: string, updates: Partial<TaskWithRelations>) => Promise<void>;
+  handleUpdateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   handleDeleteTask: (id: string) => Promise<void>;
   handleToggleComplete: (id: string) => Promise<void>;
   
@@ -216,7 +216,7 @@ export const useTaskList = ({
   
   const handleUpdateTask = React.useCallback(async (
     id: string, 
-    updates: Partial<TaskWithRelations>
+    updates: Partial<Task>
   ): Promise<void> => {
     setState(prev => ({ ...prev, error: null }));
     

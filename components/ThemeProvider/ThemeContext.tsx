@@ -1,11 +1,12 @@
 'use client';
 
 import React, { createContext, useContext } from 'react';
-import type { ThemeMode, AppTheme } from '../../theme';
+import type { Theme } from '@mui/material/styles';
+import type { ThemeMode } from '@/theme/utils';
 
 interface ThemeContextValue {
   mode: ThemeMode;
-  theme: AppTheme;
+  theme: Theme;
   toggleMode: () => void;
   setMode: (mode: ThemeMode) => void;
   isSystemTheme: boolean;

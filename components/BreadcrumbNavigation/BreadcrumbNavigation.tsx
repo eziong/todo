@@ -19,13 +19,15 @@ import {
   Home as HomeIcon,
 } from '@mui/icons-material';
 import { useBreadcrumbNavigation } from './useBreadcrumbNavigation';
-import type { BaseComponentProps } from '@/types';
+import { designTokens } from '@/theme/utils';
+
 
 // =============================================
 // TYPES
 // =============================================
 
-export interface BreadcrumbNavigationProps extends BaseComponentProps {
+export interface BreadcrumbNavigationProps {
+  className?: string;
   showBackButton?: boolean;
   showHomeButton?: boolean;
   maxItems?: number;
@@ -112,7 +114,7 @@ export const BreadcrumbNavigation: React.FC<BreadcrumbNavigationProps> = ({
             mr: 1,
             width: 32,
             height: 32,
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: designTokens.borderRadius.md,
             '&:hover': {
               backgroundColor: alpha(theme.palette.primary.main, 0.08),
             },
@@ -131,7 +133,7 @@ export const BreadcrumbNavigation: React.FC<BreadcrumbNavigationProps> = ({
             mr: 1,
             width: 32,
             height: 32,
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: designTokens.borderRadius.md,
             '&:hover': {
               backgroundColor: alpha(theme.palette.primary.main, 0.08),
             },
@@ -190,7 +192,7 @@ export const BreadcrumbNavigation: React.FC<BreadcrumbNavigationProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
-                borderRadius: theme.macOS.borderRadius.small,
+                borderRadius: designTokens.borderRadius.sm,
                 px: 0.5,
                 py: 0.25,
                 transition: theme.transitions.create(['color', 'background-color'], {

@@ -57,6 +57,38 @@ import type { SearchResultItem } from '../useSpotlightSearch';
 // SUB-COMPONENTS
 // =============================================
 
+const HighlightedText: React.FC<{ 
+  text: string; 
+  query: string; 
+  getHighlightData: (text: string, query: string) => Array<{ text: string; isHighlighted: boolean }> 
+}> = React.memo(({ text, query, getHighlightData }) => {
+  const parts = getHighlightData(text, query);
+  
+  return (
+    <>
+      {parts.map((part, index) => (
+        part.isHighlighted ? (
+          <Box
+            key={index}
+            component="span"
+            sx={{
+              backgroundColor: '#FFD700',
+              color: '#000',
+              fontWeight: 600,
+              borderRadius: '2px',
+              padding: '1px 2px',
+            }}
+          >
+            {part.text}
+          </Box>
+        ) : (
+          <React.Fragment key={index}>{part.text}</React.Fragment>
+        )
+      ))}
+    </>
+  );
+});
+
 interface SearchResultItemProps {
   result: SearchResultItem;
   query: string;
@@ -66,7 +98,7 @@ interface SearchResultItemProps {
   viewMode: 'list' | 'grid' | 'compact';
   onClick: () => void;
   onHover?: () => void;
-  highlightText: (text: string, query: string) => React.ReactNode;
+  getHighlightData: (text: string, query: string) => Array<{ text: string; isHighlighted: boolean }>;
   getRelevanceLabel: (score: number) => string;
   getRelevanceColor: (score: number) => string;
 }
@@ -80,7 +112,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
   viewMode,
   onClick,
   onHover,
-  highlightText,
+  getHighlightData,
   getRelevanceLabel,
   getRelevanceColor,
 }) => {
@@ -167,7 +199,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
 
   if (viewMode === 'grid') {
     return (
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid size={{ xs: 12, sm: 6, md: 4 }}>
         <Card
           sx={{
             cursor: 'pointer',
@@ -178,7 +210,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
             borderColor: isSelected ? 'primary.main' : 'divider',
             '&:hover': {
               transform: 'translateY(-2px)',
-              boxShadow: theme.macOS.shadows.medium,
+              boxShadow: theme.shadows[4],
             },
           }}
           onClick={onClick}
@@ -199,7 +231,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
                     overflow: 'hidden',
                   }}
                 >
-                  {highlightText(result.title, query)}
+                  {<HighlightedText text={result.title} query={query} getHighlightData={getHighlightData} />}
                 </Typography>
               </Box>
 
@@ -229,7 +261,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
                   overflow: 'hidden',
                 }}
               >
-                {highlightText(result.subtitle, query)}
+                {<HighlightedText text={result.subtitle} query={query} getHighlightData={getHighlightData} />}
               </Typography>
             )}
 
@@ -281,7 +313,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
                   fontStyle: 'italic',
                 }}
               >
-                {highlightText(result.contextSnippet, query)}
+                {<HighlightedText text={result.contextSnippet} query={query} getHighlightData={getHighlightData} />}
               </Typography>
             )}
           </CardContent>
@@ -299,7 +331,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
         sx={{
           py: 1,
           px: 2,
-          borderRadius: theme.macOS.borderRadius.small,
+          borderRadius: 1,
           mx: 0.5,
           my: 0.25,
           '&:hover': {
@@ -315,7 +347,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
           primary={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {highlightText(result.title, query)}
+                {<HighlightedText text={result.title} query={query} getHighlightData={getHighlightData} />}
               </Typography>
               
               {showRelevanceScore && (
@@ -366,7 +398,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
       sx={{
         py: 1.5,
         px: 2,
-        borderRadius: theme.macOS.borderRadius.medium,
+        borderRadius: 2,
         mx: 1,
         my: 0.5,
         transition: theme.transitions.create(['background-color', 'transform']),
@@ -396,7 +428,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
         primary={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
             <Typography variant="body1" sx={{ fontWeight: 500 }}>
-              {highlightText(result.title, query)}
+              {<HighlightedText text={result.title} query={query} getHighlightData={getHighlightData} />}
             </Typography>
             
             {showRelevanceScore && (
@@ -450,7 +482,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
                 color="text.secondary"
                 sx={{ mb: 0.5 }}
               >
-                {highlightText(result.subtitle, query)}
+                {<HighlightedText text={result.subtitle} query={query} getHighlightData={getHighlightData} />}
               </Typography>
             )}
             
@@ -466,7 +498,7 @@ const SearchResultItemComponent: React.FC<SearchResultItemProps> = ({
                   fontStyle: 'italic',
                 }}
               >
-                {highlightText(result.contextSnippet, query)}
+                {<HighlightedText text={result.contextSnippet} query={query} getHighlightData={getHighlightData} />}
               </Typography>
             )}
 
@@ -560,7 +592,7 @@ const ResultsHeader: React.FC<ResultsHeaderProps> = ({
               if (option) onSortChange(option);
             }}
             label="Sort by"
-            sx={{ borderRadius: theme.macOS.borderRadius.small }}
+            sx={{ borderRadius: 1 }}
           >
             {availableSortOptions.map((option) => (
               <MenuItem key={`${option.field}-${option.direction}`} value={`${option.field}-${option.direction}`}>
@@ -630,7 +662,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({ viewMode }) => {
     return (
       <Grid container spacing={2} sx={{ p: 2 }}>
         {[1, 2, 3, 4, 5, 6].map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item}>
             <Card>
               <CardContent>
                 <Skeleton variant="text" height={24} />
@@ -699,7 +731,7 @@ export const SearchResultsList: React.FC<SearchResultsListProps> = ({
     setViewMode,
     toggleRelevanceScores,
     toggleContextSnippets,
-    highlightText,
+    getHighlightData,
     getRelevanceLabel,
     getRelevanceColor,
     getResultSummary,
@@ -857,7 +889,7 @@ export const SearchResultsList: React.FC<SearchResultsListProps> = ({
                         viewMode={viewMode}
                         onClick={() => handleResultClick(result, globalIndex)}
                         onHover={() => handleResultHover(result, globalIndex)}
-                        highlightText={highlightText}
+                        getHighlightData={getHighlightData}
                         getRelevanceLabel={getRelevanceLabel}
                         getRelevanceColor={getRelevanceColor}
                       />
@@ -882,7 +914,7 @@ export const SearchResultsList: React.FC<SearchResultsListProps> = ({
                         viewMode={viewMode}
                         onClick={() => handleResultClick(result, globalIndex)}
                         onHover={() => handleResultHover(result, globalIndex)}
-                        highlightText={highlightText}
+                        getHighlightData={getHighlightData}
                         getRelevanceLabel={getRelevanceLabel}
                         getRelevanceColor={getRelevanceColor}
                       />
@@ -910,7 +942,7 @@ export const SearchResultsList: React.FC<SearchResultsListProps> = ({
                     viewMode={viewMode}
                     onClick={() => handleResultClick(result, index)}
                     onHover={() => handleResultHover(result, index)}
-                    highlightText={highlightText}
+                    getHighlightData={getHighlightData}
                     getRelevanceLabel={getRelevanceLabel}
                     getRelevanceColor={getRelevanceColor}
                   />
@@ -929,7 +961,7 @@ export const SearchResultsList: React.FC<SearchResultsListProps> = ({
                     viewMode={viewMode}
                     onClick={() => handleResultClick(result, index)}
                     onHover={() => handleResultHover(result, index)}
-                    highlightText={highlightText}
+                    getHighlightData={getHighlightData}
                     getRelevanceLabel={getRelevanceLabel}
                     getRelevanceColor={getRelevanceColor}
                   />

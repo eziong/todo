@@ -25,7 +25,7 @@ export interface RequestContext {
 // =============================================
 
 // Use AsyncLocalStorage for request-scoped context
-const { AsyncLocalStorage } = require('async_hooks');
+import { AsyncLocalStorage } from 'async_hooks';
 const requestContextStore = new AsyncLocalStorage<RequestContext>();
 
 // =============================================
@@ -38,7 +38,7 @@ export function withEventContext(handler: Function) {
     
     return requestContextStore.run(context, async () => {
       // Set context in Supabase session for database functions
-      const supabase = createClient();
+      const supabase = await createClient();
       
       try {
         if (context.userId) {
@@ -60,7 +60,7 @@ export function withEventContext(handler: Function) {
 }
 
 async function createRequestContext(req: NextRequest): Promise<RequestContext> {
-  const supabase = createClient();
+  const supabase = await createClient();
   let userId: string | undefined;
 
   try {
@@ -85,7 +85,7 @@ async function createRequestContext(req: NextRequest): Promise<RequestContext> {
   // Get real IP address considering proxies
   const forwardedFor = req.headers.get('x-forwarded-for');
   const realIP = req.headers.get('x-real-ip');
-  const ipAddress = forwardedFor?.split(',')[0]?.trim() || realIP || req.ip || 'unknown';
+  const ipAddress = forwardedFor?.split(',')[0]?.trim() || realIP || 'unknown';
 
   // Generate or extract session ID
   const sessionId = req.headers.get('x-session-id') || generateSessionId();
@@ -211,7 +211,7 @@ async function logAPIEvent({
   error: Error | null;
   options: APIEventOptions;
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const eventType = error ? 'api_error' : 'api_call';
   const category = error ? 'error' : 'system';
@@ -309,73 +309,5 @@ export function useEventContext() {
 // CLIENT-SIDE EVENT CONTEXT PROVIDER
 // =============================================
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-
-interface ClientEventContextType {
-  sessionId: string;
-  source: 'web' | 'mobile';
-  setContext: (context: Partial<RequestContext>) => void;
-  getContext: () => Partial<RequestContext>;
-}
-
-const ClientEventContext = createContext<ClientEventContextType | undefined>(undefined);
-
-export function EventContextProvider({ children }: { children: React.ReactNode }) {
-  const [sessionId, setSessionId] = useState<string>('');
-
-  useEffect(() => {
-    // Initialize session ID on mount
-    const storedContext = JSON.parse(
-      sessionStorage.getItem('eventContext') || '{}'
-    );
-    
-    const newSessionId = storedContext.sessionId || generateSessionId();
-    setSessionId(newSessionId);
-
-    // Detect if mobile
-    const isMobile = /Mobile|Android|iPhone|iPad/.test(navigator.userAgent);
-    
-    const context: Partial<RequestContext> = {
-      sessionId: newSessionId,
-      source: isMobile ? 'mobile' : 'web',
-      userAgent: navigator.userAgent
-    };
-
-    sessionStorage.setItem('eventContext', JSON.stringify(context));
-  }, []);
-
-  const setContext = (context: Partial<RequestContext>) => {
-    const existingContext = JSON.parse(
-      sessionStorage.getItem('eventContext') || '{}'
-    );
-    const newContext = { ...existingContext, ...context };
-    sessionStorage.setItem('eventContext', JSON.stringify(newContext));
-  };
-
-  const getContext = (): Partial<RequestContext> => {
-    return JSON.parse(
-      sessionStorage.getItem('eventContext') || '{}'
-    );
-  };
-
-  const value = {
-    sessionId,
-    source: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'mobile' as const : 'web' as const,
-    setContext,
-    getContext
-  };
-
-  return (
-    <ClientEventContext.Provider value={value}>
-      {children}
-    </ClientEventContext.Provider>
-  );
-}
-
-export function useClientEventContext() {
-  const context = useContext(ClientEventContext);
-  if (!context) {
-    throw new Error('useClientEventContext must be used within EventContextProvider');
-  }
-  return context;
-}
+// Re-export client-side context provider from components
+export { EventContextProvider, useClientEventContext } from '@/components/EventProvider/EventProvider';

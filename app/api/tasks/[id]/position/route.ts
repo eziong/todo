@@ -119,7 +119,7 @@ async function reorderTasks(
     }
 
     // Find the current task
-    const currentTaskIndex = allTasks.findIndex(t => t.id === taskId);
+    const currentTaskIndex = allTasks.findIndex((t: any) => t.id === taskId);
     if (currentTaskIndex === -1) {
       return { success: false, error: 'Task not found in section' };
     }
@@ -127,7 +127,7 @@ async function reorderTasks(
     const currentTask = allTasks[currentTaskIndex];
     
     // Remove the current task from the array
-    const otherTasks = allTasks.filter(t => t.id !== taskId);
+    const otherTasks = allTasks.filter((t: any) => t.id !== taskId);
     
     // Calculate the new position within bounds
     const maxPosition = otherTasks.length;
@@ -137,13 +137,13 @@ async function reorderTasks(
     otherTasks.splice(clampedPosition, 0, { ...currentTask, position: clampedPosition });
     
     // Update all positions to be sequential
-    const updates = otherTasks.map((task, index) => ({
+    const updates = otherTasks.map((task: any, index: number) => ({
       id: task.id,
       position: index,
     }));
 
     // Batch update all task positions
-    const updatePromises = updates.map(update => 
+    const updatePromises = updates.map((update: any) => 
       supabase
         .from('tasks')
         .update({ position: update.position })
@@ -266,6 +266,15 @@ export async function PUT(
         entity_id: taskId,
         old_values: { position: oldPosition },
         new_values: { position: updatedTask.position },
+        category: 'user_action',
+        severity: 'info',
+        source: 'web',
+        tags: [],
+        context: {
+          task_title: task.title,
+          section_id: task.section_id,
+          section_name: task.section.name
+        }
       };
 
       await supabase.from('events').insert([event]);

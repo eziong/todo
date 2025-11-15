@@ -6,7 +6,7 @@
 import { useCallback, useMemo } from 'react';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { queryKeys } from '@/lib/data/queryClient';
-import type { Task, TaskFilters } from '@/types';
+import type { Task, TaskFilters } from '@/types/database';
 
 // =============================================
 // TYPES
@@ -74,16 +74,17 @@ const fetchTasksPage = async (params: {
     id: `task-${pageParam}-${index}`,
     title: `Task ${pageParam * pageSize + index + 1}`,
     description: `Description for task ${pageParam * pageSize + index + 1}`,
-    status: Math.random() > 0.7 ? 'completed' : 'pending',
+    status: Math.random() > 0.7 ? 'completed' : 'todo',
     priority: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as Task['priority'],
-    due_date: Math.random() > 0.5 ? new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString() : null,
+    due_date: Math.random() > 0.5 ? new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString() : undefined,
     section_id: 'mock-section-id',
     workspace_id: 'mock-workspace-id',
     created_by_user_id: 'mock-user-id',
-    assigned_to_user_id: Math.random() > 0.5 ? 'mock-user-id' : null,
+    assigned_to_user_id: Math.random() > 0.5 ? 'mock-user-id' : undefined,
     position: pageParam * pageSize + index,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    is_deleted: false,
     tags: [],
     attachments: [],
   });
@@ -100,24 +101,38 @@ const fetchTasksPage = async (params: {
   }
   
   // Apply filters
-  if (filters?.status) {
-    filteredTasks = filteredTasks.filter(task => task.status === filters.status);
+  if (filters?.status && filters.status.length > 0) {
+    filteredTasks = filteredTasks.filter(task => filters.status!.includes(task.status));
   }
   
-  if (filters?.priority) {
-    filteredTasks = filteredTasks.filter(task => task.priority === filters.priority);
+  if (filters?.priority && filters.priority.length > 0) {
+    filteredTasks = filteredTasks.filter(task => filters.priority!.includes(task.priority));
   }
   
-  if (filters?.assignedToMe) {
-    filteredTasks = filteredTasks.filter(task => task.assigned_to_user_id === 'mock-user-id');
-  }
-  
-  if (filters?.dueToday) {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+  if (filters?.assigned_to_user_id && filters.assigned_to_user_id.length > 0) {
     filteredTasks = filteredTasks.filter(task => 
-      task.due_date && new Date(task.due_date) <= today
+      task.assigned_to_user_id && filters.assigned_to_user_id!.includes(task.assigned_to_user_id)
     );
+  }
+  
+  // Handle due date filters
+  if (filters?.due_date_from || filters?.due_date_to) {
+    filteredTasks = filteredTasks.filter(task => {
+      if (!task.due_date) return false;
+      const taskDue = new Date(task.due_date);
+      
+      if (filters.due_date_from) {
+        const fromDate = new Date(filters.due_date_from);
+        if (taskDue < fromDate) return false;
+      }
+      
+      if (filters.due_date_to) {
+        const toDate = new Date(filters.due_date_to);
+        if (taskDue > toDate) return false;
+      }
+      
+      return true;
+    });
   }
   
   // Simulate pagination

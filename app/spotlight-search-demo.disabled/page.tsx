@@ -20,12 +20,9 @@ import {
   Paper,
 } from '@mui/material';
 import { Search as SearchIcon, Keyboard as KeyboardIcon } from '@mui/icons-material';
-import { 
-  SpotlightSearchProvider,
-  useSpotlightControls,
-} from '@/components/SpotlightSearch';
-import { AuthProvider } from '@/components/Auth';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { SpotlightSearchProvider, useSpotlightControls } from '@/components/SpotlightSearch/SpotlightSearchProvider';
+import { AuthProvider } from '@/components/Auth/AuthProvider';
+import { ThemeProvider } from '@/components/ThemeProvider/ThemeProvider';
 
 // =============================================
 // DEMO CONTROLS COMPONENT

@@ -17,6 +17,10 @@ export type {
   TaskPriority,
   WorkspaceMemberRole,
   EventType,
+  EventCategory,
+  EventSeverity,
+  EventSource,
+  ActivityPeriodType,
   EntityType,
   
   // Utility types
@@ -25,6 +29,10 @@ export type {
   UserPreferences,
   WorkspaceSettings,
   TaskAttachment,
+  ActivityFeedItem,
+  EntityActivityTimelineItem,
+  UserActivitySummary,
+  EventCategoryStats,
   
   // Views
   UserWorkspaceAccess,
@@ -53,6 +61,14 @@ export type {
   TaskSort,
   WorkspaceMemberFilters,
   EventFilters,
+  ActivityFilters,
+  ActivitySummaryFilters,
+  
+  // Event context types
+  AuthEventContext,
+  SearchEventContext,
+  TaskEventContext,
+  SystemEventContext,
   
   // Real-time types
   RealtimePayload,

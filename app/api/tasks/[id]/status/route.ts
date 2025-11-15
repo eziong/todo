@@ -177,9 +177,9 @@ export async function PUT(
     // Handle completion timestamp
     if (statusData.status === 'completed') {
       updateData.completed_at = statusData.completed_at || new Date().toISOString();
-    } else if (task.status === 'completed' && statusData.status !== 'completed') {
-      // Reopening a completed task
-      updateData.completed_at = null;
+    } else if (task.completed_at) {
+      // Reopening a completed task (if it was completed before and new status is not completed)
+      updateData.completed_at = undefined;
     }
 
     // Store old values for audit
@@ -222,6 +222,15 @@ export async function PUT(
         entity_id: taskId,
         old_values: oldValues,
         new_values: updateData,
+        category: 'user_action',
+        severity: 'info',
+        source: 'web',
+        tags: [],
+        context: {
+          task_title: task.title,
+          section_id: task.section_id,
+          section_name: task.section.name
+        }
       };
 
       await supabase.from('events').insert([event]);

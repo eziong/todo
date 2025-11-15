@@ -18,9 +18,8 @@ import {
   Block as BlockIcon,
 } from '@mui/icons-material';
 import { useProtectedRoute, type UseProtectedRouteOptions } from './useProtectedRoute';
-import type { BaseComponentProps } from '@/types';
-
-export interface ProtectedRouteProps extends BaseComponentProps, UseProtectedRouteOptions {
+export interface ProtectedRouteProps extends UseProtectedRouteOptions {
+  className?: string;
   children: React.ReactNode;
   fallback?: React.ReactNode;
   loadingComponent?: React.ReactNode;

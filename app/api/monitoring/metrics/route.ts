@@ -144,11 +144,11 @@ async function collectResourceMetrics() {
 
 // Collect health check metrics
 async function collectHealthMetrics() {
-  const health = {
-    database: 'healthy' as const,
-    api: 'healthy' as const,
-    authentication: 'healthy' as const,
-    external: 'healthy' as const
+  const health: SystemMetrics['health'] = {
+    database: 'healthy',
+    api: 'healthy',
+    authentication: 'healthy',
+    external: 'healthy'
   };
 
   try {

@@ -82,7 +82,7 @@ const SuggestionItem: React.FC<SuggestionItemProps> = ({
       sx={{
         px: theme.spacing(compact ? 2 : 3),
         py: theme.spacing(compact ? 1 : 1.5),
-        borderRadius: theme.macOS.borderRadius.medium,
+        borderRadius: 2,
         mx: theme.spacing(1),
         my: 0.5,
         transition: theme.transitions.create(['background-color', 'transform'], {
@@ -108,7 +108,7 @@ const SuggestionItem: React.FC<SuggestionItemProps> = ({
             justifyContent: 'center',
             width: compact ? 24 : 32,
             height: compact ? 24 : 32,
-            borderRadius: theme.macOS.borderRadius.small,
+            borderRadius: 1,
             backgroundColor: alpha(getEntityColor(suggestion.entity_type), 0.1),
             fontSize: compact ? '0.875rem' : '1rem',
           }}
@@ -376,8 +376,8 @@ export const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
           mt: 1,
           maxHeight: compact ? 300 : 400,
           overflow: 'auto',
-          borderRadius: theme.macOS.borderRadius.large,
-          boxShadow: theme.macOS.shadows.modal,
+          borderRadius: 3,
+          boxShadow: theme.shadows[8],
           backgroundColor: alpha(theme.palette.background.paper, 0.95),
           backdropFilter: 'blur(8px)',
           border: '1px solid',

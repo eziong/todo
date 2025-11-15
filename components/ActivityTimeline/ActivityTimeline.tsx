@@ -9,13 +9,6 @@ import {
   Card,
   CardContent,
   Typography,
-  Timeline,
-  TimelineItem,
-  TimelineOppositeContent,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineDot,
-  TimelineContent,
   Chip,
   Avatar,
   IconButton,
@@ -39,9 +32,19 @@ import {
   Schedule as ScheduleIcon,
   TrendingUp as TrendingUpIcon
 } from '@mui/icons-material';
+import {
+  Timeline,
+  TimelineItem,
+  TimelineOppositeContent,
+  TimelineSeparator,
+  TimelineConnector,
+  TimelineDot,
+  TimelineContent,
+} from '@mui/lab';
 import { styled, useTheme } from '@mui/material/styles';
 import { useActivityTimeline, UseActivityTimelineProps } from './useActivityTimeline';
 import type { EntityActivityTimelineItem, EventType } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // STYLED COMPONENTS
@@ -50,17 +53,17 @@ import type { EntityActivityTimelineItem, EventType } from '@/types/database';
 const StyledTimelineDot = styled(TimelineDot)(({ theme }) => ({
   borderWidth: 2,
   padding: theme.spacing(0.75),
-  boxShadow: theme.macOS.shadows.subtle,
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
 }));
 
 const EventCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.medium,
-  boxShadow: theme.macOS.shadows.card,
+  borderRadius: designTokens.borderRadius.md,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   border: theme.palette.mode === 'light' ? 'none' : `1px solid ${theme.palette.divider}`,
   '&:hover': {
-    boxShadow: theme.macOS.shadows.medium,
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     transform: 'translateY(-1px)',
-    transition: theme.macOS.animation.fast,
+    transition: designTokens.animation.fast,
   },
 }));
 
@@ -140,7 +143,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({
   isExpanded
 }) => {
   const theme = useTheme();
-  const hasDetails = event.old_values || event.new_values || event.delta;
+  const hasDetails = !!(event.old_values || event.new_values || event.delta);
 
   return (
     <EventCard>

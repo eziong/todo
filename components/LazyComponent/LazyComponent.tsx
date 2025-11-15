@@ -88,7 +88,7 @@ export const LazyComponent: React.FC<LazyComponentProps> = ({
 
 // Intersection Observer based lazy loading hook
 export function useIntersectionObserver(
-  targetRef: React.RefObject<Element>,
+  targetRef: React.RefObject<Element | null>,
   options: IntersectionObserverInit = {}
 ) {
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -142,7 +142,7 @@ export const ViewportLazyComponent: React.FC<ViewportLazyComponentProps> = ({
   rootMargin = '50px',
   render
 }) => {
-  const targetRef = useRef<HTMLDivElement>(null);
+  const targetRef = useRef<HTMLDivElement | null>(null);
   const { isIntersecting, hasIntersected } = useIntersectionObserver(targetRef, {
     threshold,
     rootMargin

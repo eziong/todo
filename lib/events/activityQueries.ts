@@ -236,10 +236,10 @@ export class ActivityQueries {
 
   async getUserActivitySummary({
     userId,
-    workspaceId,
-    periodType = 'day',
-    periodStart,
-    periodEnd
+    workspace_id: workspaceId,
+    period_type: periodType = 'day',
+    period_start: periodStart,
+    period_end: periodEnd
   }: ActivitySummaryFilters & { userId: string }): Promise<UserActivitySummary[]> {
     try {
       let query = this.supabase
@@ -402,41 +402,29 @@ export class ActivityQueries {
     try {
       const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
-      // Get trending tasks (most activity)
+      // Get trending tasks (most activity) - using RPC function for aggregation
       const { data: trendingTasks, error: tasksError } = await this.supabase
-        .from('events')
-        .select('entity_id, count(*)')
-        .eq('workspace_id', workspaceId)
-        .eq('entity_type', 'task')
-        .gte('created_at', startDate)
-        .eq('is_deleted', false)
-        .group('entity_id')
-        .order('count', { ascending: false })
-        .limit(limit);
+        .rpc('get_trending_tasks', {
+          workspace_id: workspaceId,
+          start_date: startDate,
+          limit_count: limit
+        } as any);
 
-      // Get active users
+      // Get active users - using RPC function for aggregation
       const { data: activeUsers, error: usersError } = await this.supabase
-        .from('events')
-        .select('user_id, count(*)')
-        .eq('workspace_id', workspaceId)
-        .gte('created_at', startDate)
-        .eq('is_deleted', false)
-        .not('user_id', 'is', null)
-        .group('user_id')
-        .order('count', { ascending: false })
-        .limit(limit);
+        .rpc('get_active_users', {
+          workspace_id: workspaceId,
+          start_date: startDate,
+          limit_count: limit
+        } as any);
 
-      // Get popular sections
+      // Get popular sections - using RPC function for aggregation
       const { data: popularSections, error: sectionsError } = await this.supabase
-        .from('events')
-        .select('entity_id, count(*)')
-        .eq('workspace_id', workspaceId)
-        .eq('entity_type', 'section')
-        .gte('created_at', startDate)
-        .eq('is_deleted', false)
-        .group('entity_id')
-        .order('count', { ascending: false })
-        .limit(limit);
+        .rpc('get_popular_sections', {
+          workspace_id: workspaceId,
+          start_date: startDate,
+          limit_count: limit
+        } as any);
 
       if (tasksError || usersError || sectionsError) {
         console.error('Error fetching trending activity:', { tasksError, usersError, sectionsError });

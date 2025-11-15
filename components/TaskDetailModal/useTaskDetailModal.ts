@@ -5,20 +5,20 @@
 
 import React from 'react';
 import type { 
-  TaskWithRelations, 
+  Task, 
   User,
   TaskStatus,
   TaskPriority,
   TaskUpdate,
   TaskAttachment,
-} from '@/types';
+} from '@/types/database';
 
 // =============================================
 // TYPES
 // =============================================
 
 export interface TaskDetailModalProps {
-  task: TaskWithRelations | null;
+  task: Task | null;
   open: boolean;
   onClose: () => void;
   onUpdate: (id: string, updates: TaskUpdate) => Promise<void>;
@@ -125,7 +125,7 @@ export interface UseTaskDetailModalReturn {
 // UTILITY FUNCTIONS
 // =============================================
 
-const createInitialFormData = (task: TaskWithRelations | null): TaskDetailFormData => {
+const createInitialFormData = (task: Task | null): TaskDetailFormData => {
   if (!task) {
     return {
       title: '',

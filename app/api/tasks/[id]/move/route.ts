@@ -208,15 +208,15 @@ async function insertTaskInSection(
 
     // Update positions of existing tasks that need to shift
     const tasksToUpdate = targetTasks
-      .filter((_, index) => index >= insertPosition)
-      .map((task, index) => ({
+      .filter((_: any, index: number) => index >= insertPosition)
+      .map((task: any, index: number) => ({
         id: task.id,
         position: insertPosition + index + 1,
       }));
 
     // Update existing task positions first
     if (tasksToUpdate.length > 0) {
-      const updatePromises = tasksToUpdate.map(update => 
+      const updatePromises = tasksToUpdate.map((update: any) => 
         supabase
           .from('tasks')
           .update({ position: update.position })
@@ -267,7 +267,7 @@ async function compactSourceSection(
     }
 
     // Update positions to fill the gap
-    const updatePromises = tasksToAdjust.map((task, index) => 
+    const updatePromises = tasksToAdjust.map((task: any, index: number) => 
       supabase
         .from('tasks')
         .update({ position: removedPosition + index })
@@ -444,6 +444,15 @@ export async function POST(
           section_id: moveData.target_section_id,
           position: insertResult.newPosition,
         },
+        category: 'user_action',
+        severity: 'info',
+        source: 'web',
+        tags: [],
+        context: {
+          task_title: task.title,
+          source_section_id: task.section_id,
+          target_section_id: moveData.target_section_id
+        }
       };
 
       await supabase.from('events').insert([event]);

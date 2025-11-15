@@ -139,7 +139,7 @@ await eventLogger.logAuthEvent({
 
 ```typescript
 import { useActivityFeed } from '@/hooks/useActivity';
-import { ActivityFeed } from '@/components/ActivityFeed';
+import { ActivityFeed } from '@/components/ActivityFeed/ActivityFeed';
 
 function WorkspaceDashboard({ workspaceId }) {
   return (
@@ -510,7 +510,7 @@ describe('Event Logging', () => {
 
 ```typescript
 import { render, screen } from '@testing-library/react';
-import { ActivityFeed } from '@/components/ActivityFeed';
+import { ActivityFeed } from '@/components/ActivityFeed/ActivityFeed';
 
 describe('ActivityFeed', () => {
   it('should display recent activity', async () => {

@@ -230,31 +230,31 @@ function ActivityFeedItemComponent({ item }: ActivityFeedItemProps): React.React
           secondary={
             <Stack spacing={0.5} sx={{ mt: 0.5 }}>
               {/* Workspace name */}
-              {item.workspace_name && item.entity_type !== 'workspace' && (
+              {item.workspace_name && item.entity_type !== 'workspace' ? (
                 <Typography variant="caption" color="text.secondary">
                   in {item.workspace_name}
                 </Typography>
-              )}
+              ) : null}
               
               {/* Status change context */}
-              {item.event_type === 'status_changed' && item.context?.new_status && (
+              {item.event_type === 'status_changed' && item.context?.new_status ? (
                 <Box>
                   <StatusChip 
-                    label={`${item.context.previous_status} → ${item.context.new_status}`}
+                    label={`${(item.context as any).previous_status} → ${(item.context as any).new_status}`}
                     color="primary"
                     variant="outlined"
                     size="small"
                   />
                 </Box>
-              )}
+              ) : null}
               
               {/* Search results context */}
-              {item.event_type === 'search_performed' && item.context?.results_count !== undefined && (
+              {item.event_type === 'search_performed' && item.context?.results_count !== undefined ? (
                 <Typography variant="caption" color="text.secondary">
-                  {item.context.results_count} results found
-                  {item.context.execution_time_ms && ` • ${item.context.execution_time_ms}ms`}
+                  {(item.context as any).results_count} results found
+                  {(item.context as any).execution_time_ms ? ` • ${(item.context as any).execution_time_ms}ms` : ''}
                 </Typography>
-              )}
+              ) : null}
             </Stack>
           }
         />
@@ -296,7 +296,7 @@ function ActivityFilter({ selectedCategories, onCategoriesChange }: ActivityFilt
         {categories.map(({ value, label, icon }) => (
           <Chip
             key={value}
-            icon={icon}
+            icon={icon as React.ReactElement || undefined}
             label={label}
             color={selectedCategories.includes(value) ? 'primary' : 'default'}
             variant={selectedCategories.includes(value) ? 'filled' : 'outlined'}

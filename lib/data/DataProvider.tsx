@@ -8,15 +8,14 @@
 import React, { useEffect } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient, invalidateQueries } from './queryClient';
-import { useAuthContext } from '@/components/Auth';
-import { createClient } from '@/utils/supabase/client';
-import type { BaseComponentProps } from '@/types';
-
+import { useAuthContext } from '@/components/Auth/AuthProvider';
+import { createClient } from '@/lib/supabase/client';
 // =============================================
 // TYPES
 // =============================================
 
-export interface DataProviderProps extends BaseComponentProps {
+export interface DataProviderProps {
+  className?: string;
   children: React.ReactNode;
 }
 

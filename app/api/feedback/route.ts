@@ -105,7 +105,7 @@ async function storeFeedback(feedback: any) {
     // In a real implementation, store in your database
     // For example, using Supabase:
     
-    // const supabase = createClient();
+    // const supabase = await createClient();
     // await supabase
     //   .from('feedback')
     //   .insert({

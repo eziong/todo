@@ -22,7 +22,9 @@ import {
   ExitToApp as LogoutIcon,
   Login as LoginIcon,
 } from '@mui/icons-material';
-import { useAuthContext, ProtectedRoute, UserProfile } from '@/components/Auth';
+import { useAuthContext } from '@/components/Auth/AuthProvider';
+import { ProtectedRoute } from '@/components/Auth/ProtectedRoute/ProtectedRoute';
+import { UserProfile } from '@/components/Auth/UserProfile/UserProfile';
 import { useRouter } from 'next/navigation';
 
 /**

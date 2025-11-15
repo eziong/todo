@@ -99,7 +99,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     onError: handleError,
     className,
     style: {
-      objectFit: 'cover',
+      objectFit: 'cover' as const,
       ...style
     }
   };
@@ -236,7 +236,7 @@ export const OptimizedBackground: React.FC<OptimizedBackgroundProps> = ({
         priority={priority}
         quality={quality}
         style={{
-          objectFit: 'cover',
+          objectFit: 'cover' as const,
           zIndex: -1
         }}
       />

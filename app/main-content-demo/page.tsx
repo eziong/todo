@@ -7,8 +7,8 @@
 
 import React from 'react';
 import { Box, CssBaseline } from '@mui/material';
-import { ThemeProvider } from '@/components/ThemeProvider';
-import { MainContent } from '@/components/MainContent';
+import { ThemeProvider } from '@/components/ThemeProvider/ThemeProvider';
+import { MainContent } from '@/components/MainContent/MainContent';
 
 export default function MainContentDemoPage() {
   return (

@@ -17,7 +17,7 @@ interface RouteParams {
 
 // Helper function to check user permissions for section via workspace
 async function checkSectionPermission(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string, 
   sectionId: string, 
   requiredPermission: 'read' | 'write' | 'delete' | 'admin'
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest, { params }: RouteParams): Promi
     // Get current section state
     const { data: currentSection, error: currentError } = await supabase
       .from('sections')
-      .select('id, name, is_archived')
+      .select('id, name, is_archived, position')
       .eq('id', sectionId)
       .eq('is_deleted', false)
       .single();

@@ -35,9 +35,10 @@ import {
   Palette as PaletteIcon,
 } from '@mui/icons-material';
 import { useUserProfile } from './useUserProfile';
-import type { BaseComponentProps } from '@/types';
 
-export interface UserProfileProps extends BaseComponentProps {
+
+export interface UserProfileProps {
+  className?: string;
   variant?: 'full' | 'compact';
   showPreferences?: boolean;
 }

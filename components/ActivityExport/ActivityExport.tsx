@@ -80,27 +80,28 @@ import {
   ExportTemplate,
   ExportProgress 
 } from './useActivityExport';
-import { ActivityFilters } from '../ActivityFilters';
+import { ActivityFilters } from '@/components/ActivityFilters/ActivityFilters';
 import type { ActivityFeedItem } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // STYLED COMPONENTS
 // =============================================
 
 const ExportCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.large,
-  boxShadow: theme.macOS.shadows.card,
+  borderRadius: designTokens.borderRadius.lg,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   border: theme.palette.mode === 'light' ? 'none' : `1px solid ${theme.palette.divider}`,
 }));
 
 const FormatCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.medium,
+  borderRadius: designTokens.borderRadius.md,
   border: `2px solid transparent`,
   cursor: 'pointer',
-  transition: theme.macOS.animation.fast,
+  transition: designTokens.animation.fast,
   '&:hover': {
     borderColor: theme.palette.primary.main,
-    boxShadow: theme.macOS.shadows.medium,
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
   },
   '&.selected': {
     borderColor: theme.palette.primary.main,
@@ -109,7 +110,7 @@ const FormatCard = styled(Card)(({ theme }) => ({
 }));
 
 const ProgressCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.medium,
+  borderRadius: designTokens.borderRadius.md,
   backgroundColor: theme.palette.mode === 'light' 
     ? theme.palette.info.light + '20' 
     : theme.palette.info.dark + '20',
@@ -176,7 +177,7 @@ const FormatSelector: React.FC<FormatSelectorProps> = ({
   return (
     <Grid container spacing={2}>
       {formatOptions.map((option) => (
-        <Grid item xs={12} sm={6} md={4} key={option.format}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={option.format}>
           <FormatCard
             className={selectedFormat === option.format ? 'selected' : ''}
             onClick={() => onFormatChange(option.format)}
@@ -257,7 +258,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
       <FormGroup>
         <Grid container spacing={1}>
           {availableFields.map((field) => (
-            <Grid item xs={12} sm={6} md={4} key={field.key}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={field.key}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -327,7 +328,7 @@ const TemplateManager: React.FC<TemplateManagerProps> = ({
         <AccordionDetails>
           <Grid container spacing={2}>
             {templates.map((template) => (
-              <Grid item xs={12} sm={6} key={template.id}>
+              <Grid size={{ xs: 12, sm: 6 }} key={template.id}>
                 <Card variant="outlined">
                   <CardContent sx={{ py: 2 }}>
                     <Typography variant="subtitle2" gutterBottom>
@@ -599,13 +600,13 @@ export const ActivityExport: React.FC<ActivityExportProps> = ({
       label: 'Configure Options',
       content: (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={3}>
               <Box>
                 <Typography variant="subtitle1" gutterBottom>Date Range</Typography>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <Grid container spacing={2}>
-                    <Grid item xs={6}>
+                    <Grid size={{ xs: 6 }}>
                       <DatePicker
                         label="From"
                         value={options.dateRange.from ? new Date(options.dateRange.from) : null}
@@ -620,7 +621,7 @@ export const ActivityExport: React.FC<ActivityExportProps> = ({
                         }}
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid size={{ xs: 6 }}>
                       <DatePicker
                         label="To"
                         value={options.dateRange.to ? new Date(options.dateRange.to) : null}
@@ -674,7 +675,7 @@ export const ActivityExport: React.FC<ActivityExportProps> = ({
             </Stack>
           </Grid>
           
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Group By</InputLabel>
@@ -742,7 +743,7 @@ export const ActivityExport: React.FC<ActivityExportProps> = ({
           <Box>
             <Typography variant="subtitle1" gutterBottom>Export Summary</Typography>
             <Grid container spacing={2}>
-              <Grid item xs={6} sm={3}>
+              <Grid size={{ xs: 6, sm: 3 }}>
                 <Box textAlign="center">
                   <Typography variant="h6" color="primary">
                     {activityData.length}
@@ -753,7 +754,7 @@ export const ActivityExport: React.FC<ActivityExportProps> = ({
                 </Box>
               </Grid>
               
-              <Grid item xs={6} sm={3}>
+              <Grid size={{ xs: 6, sm: 3 }}>
                 <Box textAlign="center">
                   <Typography variant="h6" color="success.main">
                     {selectedFields.length}
@@ -764,7 +765,7 @@ export const ActivityExport: React.FC<ActivityExportProps> = ({
                 </Box>
               </Grid>
               
-              <Grid item xs={6} sm={3}>
+              <Grid size={{ xs: 6, sm: 3 }}>
                 <Box textAlign="center">
                   <Typography variant="h6" color="info.main">
                     {options.format.toUpperCase()}
@@ -775,7 +776,7 @@ export const ActivityExport: React.FC<ActivityExportProps> = ({
                 </Box>
               </Grid>
               
-              <Grid item xs={6} sm={3}>
+              <Grid size={{ xs: 6, sm: 3 }}>
                 <Box textAlign="center">
                   <Typography variant="h6" color="warning.main">
                     {Math.round(estimatedSize / 1024)}KB

@@ -47,11 +47,11 @@ export interface UseActivityFiltersReturn {
   entityTypes: EntityType[];
   setEntityTypes: (types: EntityType[]) => void;
   
-  userIds: string[];
-  setUserIds: (userIds: string[]) => void;
+  userId: string | undefined;
+  setUserId: (userId: string | undefined) => void;
   
-  workspaceIds: string[];
-  setWorkspaceIds: (workspaceIds: string[]) => void;
+  workspaceId: string | undefined;
+  setWorkspaceId: (workspaceId: string | undefined) => void;
   
   dateRange: {
     from: string | null;
@@ -101,10 +101,10 @@ const defaultFilters: EventFilters = {
   category: [],
   severity: [],
   source: [],
-  user_id: [],
-  workspace_id: [],
-  date_from: null,
-  date_to: null,
+  user_id: undefined,
+  workspace_id: undefined,
+  date_from: undefined,
+  date_to: undefined,
   tags: [],
   correlation_id: undefined
 };
@@ -127,8 +127,8 @@ export const useActivityFilters = ({
   const severities = filters.severity || [];
   const sources = filters.source || [];
   const entityTypes = filters.entity_type || [];
-  const userIds = filters.user_id || [];
-  const workspaceIds = filters.workspace_id || [];
+  const userId = filters.user_id;
+  const workspaceId = filters.workspace_id;
   const tags = filters.tags || [];
   const correlationId = filters.correlation_id || '';
   
@@ -222,18 +222,18 @@ export const useActivityFilters = ({
     updateFilters({ entity_type: types });
   }, [updateFilters]);
 
-  const setUserIds = useCallback((ids: string[]) => {
-    updateFilters({ user_id: ids });
+  const setUserId = useCallback((id: string | undefined) => {
+    updateFilters({ user_id: id });
   }, [updateFilters]);
 
-  const setWorkspaceIds = useCallback((ids: string[]) => {
-    updateFilters({ workspace_id: ids });
+  const setWorkspaceId = useCallback((id: string | undefined) => {
+    updateFilters({ workspace_id: id });
   }, [updateFilters]);
 
   const setDateRange = useCallback((range: { from: string | null; to: string | null }) => {
     updateFilters({ 
-      date_from: range.from, 
-      date_to: range.to 
+      date_from: range.from || undefined, 
+      date_to: range.to || undefined 
     });
   }, [updateFilters]);
 
@@ -269,14 +269,14 @@ export const useActivityFilters = ({
       severities.length > 0 ||
       sources.length > 0 ||
       entityTypes.length > 0 ||
-      userIds.length > 0 ||
-      workspaceIds.length > 0 ||
+      userId !== undefined ||
+      workspaceId !== undefined ||
       dateRange.from !== null ||
       dateRange.to !== null ||
       tags.length > 0 ||
       correlationId.length > 0
     );
-  }, [eventTypes, categories, severities, sources, entityTypes, userIds, workspaceIds, dateRange, tags, correlationId]);
+  }, [eventTypes, categories, severities, sources, entityTypes, userId, workspaceId, dateRange, tags, correlationId]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -285,13 +285,13 @@ export const useActivityFilters = ({
     if (severities.length > 0) count++;
     if (sources.length > 0) count++;
     if (entityTypes.length > 0) count++;
-    if (userIds.length > 0) count++;
-    if (workspaceIds.length > 0) count++;
+    if (userId !== undefined) count++;
+    if (workspaceId !== undefined) count++;
     if (dateRange.from || dateRange.to) count++;
     if (tags.length > 0) count++;
     if (correlationId) count++;
     return count;
-  }, [eventTypes, categories, severities, sources, entityTypes, userIds, workspaceIds, dateRange, tags, correlationId]);
+  }, [eventTypes, categories, severities, sources, entityTypes, userId, workspaceId, dateRange, tags, correlationId]);
 
   const isValid = useMemo(() => {
     // Date range validation
@@ -380,10 +380,10 @@ export const useActivityFilters = ({
     setSources,
     entityTypes,
     setEntityTypes,
-    userIds,
-    setUserIds,
-    workspaceIds,
-    setWorkspaceIds,
+    userId,
+    setUserId,
+    workspaceId,
+    setWorkspaceId,
     dateRange,
     setDateRange,
     tags,

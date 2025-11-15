@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { SearchResultItem } from '../useSpotlightSearch';
 
@@ -66,7 +66,7 @@ export interface UseSearchResultsListReturn {
   getTypeFilter: () => string | null;
   
   // Highlighting
-  highlightText: (text: string, query: string) => React.ReactNode;
+  getHighlightData: (text: string, query: string) => Array<{ text: string; isHighlighted: boolean }>;
   getRelevanceLabel: (score: number) => string;
   getRelevanceColor: (score: number) => string;
   
@@ -300,32 +300,22 @@ export const useSearchResultsList = (
 
   const getTypeFilter = useCallback(() => typeFilter, [typeFilter]);
 
-  // Highlighting function
-  const highlightText = useCallback((text: string, searchQuery: string): React.ReactNode => {
-    if (!searchQuery.trim()) return text;
+  // Get highlight data for text rendering
+  const getHighlightData = useCallback((text: string, searchQuery: string): Array<{ text: string; isHighlighted: boolean }> => {
+    if (!searchQuery.trim()) {
+      return [{ text, isHighlighted: false }];
+    }
     
     try {
       const regex = new RegExp(`(${searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
       const parts = text.split(regex);
       
-      return parts.map((part, index) => {
-        if (part.toLowerCase() === searchQuery.toLowerCase()) {
-          return (
-            <span key={index} style={{
-              backgroundColor: '#FFD700',
-              color: '#000',
-              fontWeight: 600,
-              borderRadius: '2px',
-              padding: '1px 2px',
-            }}>
-              {part}
-            </span>
-          );
-        }
-        return part;
-      });
+      return parts.map((part) => ({
+        text: part,
+        isHighlighted: part.toLowerCase() === searchQuery.toLowerCase()
+      }));
     } catch {
-      return text;
+      return [{ text, isHighlighted: false }];
     }
   }, []);
 
@@ -421,7 +411,7 @@ export const useSearchResultsList = (
     getTypeFilter,
     
     // Highlighting
-    highlightText,
+    getHighlightData,
     getRelevanceLabel,
     getRelevanceColor,
     

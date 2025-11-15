@@ -26,9 +26,8 @@ import {
   ExitToApp as LogoutIcon,
 } from '@mui/icons-material';
 import { useUserMenu } from './useUserMenu';
-import type { BaseComponentProps } from '@/types';
-
-export interface UserMenuProps extends BaseComponentProps {
+export interface UserMenuProps {
+  className?: string;
   showFullProfile?: boolean;
   variant?: 'button' | 'avatar' | 'compact';
 }

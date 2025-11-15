@@ -6,16 +6,16 @@
 'use client';
 
 import React, { createContext, useContext } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth, type UseAuthReturn } from './useAuth';
 import { AuthErrorBoundary } from './ErrorBoundary/AuthErrorBoundary';
-import type { UseAuthReturn, BaseComponentProps } from '@/types';
 
 // Authentication context
 const AuthContext = createContext<UseAuthReturn | undefined>(undefined);
 
 // Authentication provider props
-export interface AuthProviderProps extends BaseComponentProps {
+export interface AuthProviderProps {
   children: React.ReactNode;
+  className?: string;
 }
 
 /**

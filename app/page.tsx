@@ -2,8 +2,10 @@
 
 import { Box, Typography, Button, Card, CardContent } from "@mui/material";
 import { ChecklistRtl as ChecklistIcon } from "@mui/icons-material";
-import { useAuthContext, UserMenu } from '@/components/Auth';
+import { useAuthContext } from '@/components/Auth/AuthProvider';
+import { UserMenu } from '@/components/Auth/UserMenu/UserMenu';
 import { useRouter } from 'next/navigation';
+import { designTokens } from '@/theme/utils';
 
 export default function Home(): React.ReactElement {
   const { user, loading } = useAuthContext();
@@ -48,8 +50,8 @@ export default function Home(): React.ReactElement {
         sx={{
           maxWidth: 500,
           width: "100%",
-          borderRadius: (theme) => theme.macOS.borderRadius.large,
-          boxShadow: (theme) => theme.macOS.shadows.medium,
+          borderRadius: designTokens.borderRadius.lg,
+          boxShadow: designTokens.shadows.medium,
           backdropFilter: "blur(20px)",
           background: "rgba(255, 255, 255, 0.95)",
         }}

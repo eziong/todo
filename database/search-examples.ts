@@ -27,10 +27,10 @@ export async function performGlobalSearch(
   const { data, error } = await supabase
     .rpc('search_all', {
       search_query: query,
-      workspace_id_filter: workspaceId,
       result_limit: limit,
-      result_offset: offset
-    });
+      result_offset: offset,
+      ...(workspaceId && { workspace_id_filter: workspaceId })
+    } as any);
 
   const executionTime = performance.now() - startTime;
 
@@ -42,12 +42,12 @@ export async function performGlobalSearch(
       p_search_query: query,
       p_search_type: 'global',
       p_filters_applied: { workspace_id: workspaceId, limit, offset },
-      p_results_count: data?.length || 0,
+      p_results_count: (data as any)?.length || 0,
       p_execution_time_ms: executionTime
-    });
+    } as any);
   }
 
-  return { data: data as SearchResult[], error, executionTime };
+  return { data: (data as unknown as SearchResult[]) || [], error, executionTime };
 }
 
 /**
@@ -84,7 +84,7 @@ export async function performTaskSearch(
       due_date_to: filters.dueDateTo,
       result_limit: filters.limit || 20,
       result_offset: filters.offset || 0
-    });
+    } as any);
 
   const executionTime = performance.now() - startTime;
 
@@ -96,12 +96,12 @@ export async function performTaskSearch(
       p_search_query: query,
       p_search_type: 'tasks',
       p_filters_applied: filters,
-      p_results_count: data?.length || 0,
+      p_results_count: (data as any)?.length || 0,
       p_execution_time_ms: executionTime
-    });
+    } as any);
   }
 
-  return { data: data as TaskSearchResult[], error, executionTime };
+  return { data: (data as unknown as TaskSearchResult[]) || [], error, executionTime };
 }
 
 /**
@@ -118,9 +118,9 @@ export async function getSearchSuggestions(
       partial_query: partialQuery,
       workspace_id_filter: workspaceId,
       suggestion_limit: limit
-    });
+    } as any);
 
-  return { data: data as SearchSuggestion[], error };
+  return { data: (data as unknown as SearchSuggestion[]) || [], error };
 }
 
 /**
@@ -133,12 +133,12 @@ export async function getSearchStats(
   const { data: stats, error: statsError } = await supabase
     .rpc('get_search_stats', {
       workspace_id_filter: workspaceId
-    });
+    } as any);
 
   const { data: metrics, error: metricsError } = await supabase
     .rpc('get_search_performance_metrics', {
       workspace_id_filter: workspaceId
-    });
+    } as any);
 
   return {
     stats: stats?.[0] || null,
@@ -155,7 +155,7 @@ export async function getSearchStats(
  * React hook for global search with debouncing
  */
 import { useState, useEffect, useMemo } from 'react';
-import { useDebounce } from './hooks/useDebounce'; // Assume this exists
+import { useDebounce } from '../hooks/useDebounce'; // Assume this exists
 
 export function useGlobalSearch(
   supabase: SupabaseClientType,
@@ -339,6 +339,6 @@ export async function rebuildSearchVectors(
 ) {
   const { data, error } = await supabase.rpc('rebuild_search_vectors', {
     entity_type: entityType
-  });
+  } as any);
   return { result: data, error };
 }

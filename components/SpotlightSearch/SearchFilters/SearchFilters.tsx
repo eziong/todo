@@ -40,6 +40,8 @@ import {
 } from '@mui/icons-material';
 import { useSearchFilters } from './useSearchFilters';
 import type { SearchFiltersProps } from './useSearchFilters';
+import type { TaskStatus, TaskPriority } from '@/database/types';
+import type { SearchFilters as BaseSearchFilters } from '@/hooks/useTaskSearch';
 
 // =============================================
 // SUB-COMPONENTS
@@ -48,7 +50,7 @@ import type { SearchFiltersProps } from './useSearchFilters';
 interface FilterChipProps {
   label: string;
   onDelete: () => void;
-  icon?: React.ReactNode;
+  icon?: React.ReactElement;
   color?: string;
 }
 
@@ -60,11 +62,11 @@ const FilterChip: React.FC<FilterChipProps> = ({ label, onDelete, icon, color })
       label={label}
       onDelete={onDelete}
       deleteIcon={<ClearIcon />}
-      icon={icon}
+      {...(icon && { icon })}
       size="small"
       sx={{
         height: 28,
-        borderRadius: theme.macOS.borderRadius.medium,
+        borderRadius: 1,
         backgroundColor: color ? alpha(color, 0.1) : 'action.hover',
         color: color || 'text.primary',
         border: color ? `1px solid ${alpha(color, 0.3)}` : '1px solid transparent',
@@ -109,7 +111,7 @@ const QuickFilterButtons: React.FC<QuickFilterButtonsProps> = ({ onPresetSelect 
           onClick={() => onPresetSelect(preset.id)}
           sx={{
             minHeight: 32,
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: 1,
             textTransform: 'none',
             fontSize: '0.875rem',
             border: '1px solid',
@@ -155,7 +157,7 @@ const EntityTypeToggle: React.FC<EntityTypeToggleProps> = ({ value, onChange }) 
         '& .MuiToggleButton-root': {
           border: '1px solid',
           borderColor: 'divider',
-          borderRadius: theme.macOS.borderRadius.small,
+          borderRadius: 0.5,
           px: 2,
           py: 0.5,
           textTransform: 'none',
@@ -245,7 +247,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
             justifyContent: 'space-between',
             width: '100%',
             textTransform: 'none',
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: 1,
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -276,7 +278,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
             sx={{
               mt: 1,
               p: 2,
-              borderRadius: theme.macOS.borderRadius.large,
+              borderRadius: 2,
               border: '1px solid',
               borderColor: 'divider',
             }}
@@ -320,7 +322,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
       className={className}
       sx={{
         p: 3,
-        borderRadius: theme.macOS.borderRadius.large,
+        borderRadius: 2,
         border: '1px solid',
         borderColor: 'divider',
         backgroundColor: alpha(theme.palette.background.paper, 0.8),
@@ -354,7 +356,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
             startIcon={<ClearIcon />}
             onClick={clearAllFilters}
             sx={{
-              borderRadius: theme.macOS.borderRadius.medium,
+              borderRadius: 1,
               textTransform: 'none',
             }}
           >
@@ -405,7 +407,7 @@ interface FilterOption {
 }
 
 interface SearchFiltersContentProps {
-  filters: Record<string, unknown>;
+  filters: BaseSearchFilters;
   statusOptions: FilterOption[];
   priorityOptions: FilterOption[];
   workspaceOptions: FilterOption[];
@@ -414,8 +416,8 @@ interface SearchFiltersContentProps {
   tagOptions: FilterOption[];
   selectedWorkspace: string | null;
   selectedSections: string[];
-  selectedStatuses: string[];
-  selectedPriorities: string[];
+  selectedStatuses: TaskStatus[];
+  selectedPriorities: TaskPriority[];
   selectedAssignees: string[];
   selectedTags: string[];
   dueDateRange: { from: Date | null; to: Date | null };
@@ -423,8 +425,8 @@ interface SearchFiltersContentProps {
   hasActiveFilters: boolean;
   setWorkspaceFilter: (workspaceId: string | null) => void;
   setSectionFilter: (sectionIds: string[]) => void;
-  setStatusFilter: (statuses: string[]) => void;
-  setPriorityFilter: (priorities: string[]) => void;
+  setStatusFilter: (statuses: TaskStatus[]) => void;
+  setPriorityFilter: (priorities: TaskPriority[]) => void;
   setAssigneeFilter: (assigneeIds: string[]) => void;
   setTagFilter: (tags: string[]) => void;
   setDueDateRange: (range: { from: Date | null; to: Date | null }) => void;
@@ -494,7 +496,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
               value={selectedWorkspace || ''}
               onChange={(e) => setWorkspaceFilter(e.target.value || null)}
               label="Workspace"
-              sx={{ borderRadius: theme.macOS.borderRadius.medium }}
+              sx={{ borderRadius: 1 }}
             >
               <MenuItem value="">All Workspaces</MenuItem>
               {workspaceOptions.map((option) => (
@@ -522,7 +524,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                 placeholder="Select sections..."
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: theme.macOS.borderRadius.medium,
+                    borderRadius: 1,
                   },
                 }}
               />
@@ -535,7 +537,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                   onDelete={() => {
                     const tagProps = getTagProps({ index });
                     if (tagProps.onDelete) {
-                      tagProps.onDelete();
+                      tagProps.onDelete({} as any);
                     }
                   }}
                   icon={<Typography sx={{ fontSize: '0.875rem' }}>{option.icon}</Typography>}
@@ -557,8 +559,8 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
           <Autocomplete
             multiple
             options={statusOptions}
-            value={statusOptions.filter(option => selectedStatuses.includes(option.value))}
-            onChange={(_, newValue) => setStatusFilter(newValue.map(v => v.value))}
+            value={statusOptions.filter(option => selectedStatuses.includes(option.value as TaskStatus))}
+            onChange={(_, newValue) => setStatusFilter(newValue.map(v => v.value as TaskStatus))}
             getOptionLabel={(option) => option.label}
             renderInput={(params) => (
               <TextField
@@ -568,7 +570,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                 placeholder="Select status..."
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: theme.macOS.borderRadius.medium,
+                    borderRadius: 1,
                   },
                 }}
               />
@@ -581,7 +583,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                   onDelete={() => {
                     const tagProps = getTagProps({ index });
                     if (tagProps.onDelete) {
-                      tagProps.onDelete();
+                      tagProps.onDelete({} as any);
                     }
                   }}
                   icon={<Typography sx={{ fontSize: '0.875rem' }}>{option.icon}</Typography>}
@@ -594,8 +596,8 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
           <Autocomplete
             multiple
             options={priorityOptions}
-            value={priorityOptions.filter(option => selectedPriorities.includes(option.value))}
-            onChange={(_, newValue) => setPriorityFilter(newValue.map(v => v.value))}
+            value={priorityOptions.filter(option => selectedPriorities.includes(option.value as TaskPriority))}
+            onChange={(_, newValue) => setPriorityFilter(newValue.map(v => v.value as TaskPriority))}
             getOptionLabel={(option) => option.label}
             renderInput={(params) => (
               <TextField
@@ -605,7 +607,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                 placeholder="Select priority..."
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: theme.macOS.borderRadius.medium,
+                    borderRadius: 1,
                   },
                 }}
               />
@@ -618,7 +620,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                   onDelete={() => {
                     const tagProps = getTagProps({ index });
                     if (tagProps.onDelete) {
-                      tagProps.onDelete();
+                      tagProps.onDelete({} as any);
                     }
                   }}
                   icon={<Typography sx={{ fontSize: '0.875rem' }}>{option.icon}</Typography>}
@@ -652,7 +654,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                 placeholder="Select people..."
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: theme.macOS.borderRadius.medium,
+                    borderRadius: 1,
                   },
                 }}
               />
@@ -665,7 +667,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                   onDelete={() => {
                     const tagProps = getTagProps({ index });
                     if (tagProps.onDelete) {
-                      tagProps.onDelete();
+                      tagProps.onDelete({} as any);
                     }
                   }}
                   icon={<PersonIcon fontSize="small" />}
@@ -698,7 +700,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                 placeholder="Add tags..."
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: theme.macOS.borderRadius.medium,
+                    borderRadius: 1,
                   },
                 }}
               />
@@ -716,7 +718,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
                     onDelete={() => {
                     const tagProps = getTagProps({ index });
                     if (tagProps.onDelete) {
-                      tagProps.onDelete();
+                      tagProps.onDelete({} as any);
                     }
                   }}
                     icon={<TagIcon fontSize="small" />}
@@ -750,7 +752,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
             sx={{
               flex: 1,
               '& .MuiOutlinedInput-root': {
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: 1,
               },
             }}
           />
@@ -767,7 +769,7 @@ const SearchFiltersContent: React.FC<SearchFiltersContentProps> = ({
             sx={{
               flex: 1,
               '& .MuiOutlinedInput-root': {
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: 1,
               },
             }}
           />

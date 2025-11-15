@@ -37,13 +37,14 @@ import {
   Assignment as AssignmentIcon,
 } from '@mui/icons-material';
 import { useTaskCard, type TaskCardProps } from './useTaskCard';
-import type { TaskStatus } from '@/types';
+import type { TaskStatus } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // PRESENTER COMPONENT
 // =============================================
 
-export const TaskCard: React.FC<TaskCardProps> = (props) => {
+export const TaskCard: React.FC<TaskCardProps> = React.memo((props) => {
   const theme = useTheme();
   const container = useTaskCard(props);
   const { state, isDragging } = container;
@@ -76,7 +77,7 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
   const isCompleted = state.task.status === 'completed';
   const canEdit = container.canEdit();
   const showActions = container.shouldShowActions();
-  const assignee = props.users?.find(user => user.id === state.task.assigned_to_user_id);
+  const { assignee } = container;
   
   // =============================================
   // INLINE EDITING COMPONENTS
@@ -133,10 +134,10 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
           cursor: canEdit ? 'pointer' : 'default',
           textDecoration: isCompleted ? 'line-through' : 'none',
           opacity: isCompleted ? 0.7 : 1,
-          transition: theme.macOS.animation.fast,
+          transition: designTokens.animation.fast,
           '&:hover': canEdit ? {
             backgroundColor: theme.palette.action.hover,
-            borderRadius: theme.macOS.borderRadius.small,
+            borderRadius: designTokens.borderRadius.sm,
             px: 0.5,
             mx: -0.5,
           } : {},
@@ -206,10 +207,10 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
           mb: 1.5,
           cursor: canEdit ? 'pointer' : 'default',
           opacity: isCompleted ? 0.7 : 1,
-          transition: theme.macOS.animation.fast,
+          transition: designTokens.animation.fast,
           '&:hover': canEdit ? {
             backgroundColor: theme.palette.action.hover,
-            borderRadius: theme.macOS.borderRadius.small,
+            borderRadius: designTokens.borderRadius.sm,
             px: 0.5,
             mx: -0.5,
           } : {},
@@ -233,7 +234,7 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
     
     return (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
-        {state.task.tags.map((tag) => (
+        {state.task.tags.map((tag: string) => (
           <Chip
             key={tag}
             label={tag}
@@ -390,7 +391,7 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
               size="small"
               sx={{ 
                 opacity: showActions ? 1 : 0,
-                transition: theme.macOS.animation.fast,
+                transition: designTokens.animation.fast,
               }}
             >
               <MoreIcon />
@@ -404,7 +405,7 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
               color="primary"
               sx={{ 
                 opacity: showActions ? 1 : 0,
-                transition: theme.macOS.animation.fast,
+                transition: designTokens.animation.fast,
               }}
             >
               <LaunchIcon />
@@ -427,11 +428,11 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
       sx={{
         position: 'relative',
         cursor: 'pointer',
-        transition: `all ${theme.macOS.animation.fast}`,
+        transition: `all ${designTokens.animation.fast}`,
         ...(container.sortableProps.style as Record<string, unknown>),
         '&:hover': {
           transform: isDragging ? undefined : 'translateY(-2px)',
-          boxShadow: isDragging ? undefined : theme.macOS.shadows.medium,
+          boxShadow: isDragging ? undefined : '0 2px 4px rgba(0, 0, 0, 0.15)',
         },
         '&:active': {
           transform: state.isPressed && !isDragging ? 'translateY(-1px)' : undefined,
@@ -451,7 +452,7 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
           top: 8,
           left: 8,
           opacity: showActions ? 1 : 0,
-          transition: theme.macOS.animation.fast,
+          transition: designTokens.animation.fast,
           cursor: isDragging ? 'grabbing' : 'grab',
           color: theme.palette.text.secondary,
           '&:hover': {
@@ -472,8 +473,8 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
           width: 4,
           height: '100%',
           backgroundColor: container.getPriorityColor(),
-          borderTopRightRadius: theme.macOS.borderRadius.medium,
-          borderBottomRightRadius: theme.macOS.borderRadius.medium,
+          borderTopRightRadius: designTokens.borderRadius.md,
+          borderBottomRightRadius: designTokens.borderRadius.md,
         }}
       />
       
@@ -520,7 +521,7 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: designTokens.borderRadius.md,
           }}
         >
           <CircularProgress size={24} />
@@ -528,4 +529,4 @@ export const TaskCard: React.FC<TaskCardProps> = (props) => {
       )}
     </Card>
   );
-};
+});

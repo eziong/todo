@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
+import { onCLS, onFID, onFCP, onLCP, onTTFB } from 'web-vitals';
 
 interface PerformanceMonitorProps {
   enabled?: boolean;
@@ -30,8 +30,8 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
       }
 
       // Send to Vercel Analytics if available
-      if (window.va) {
-        window.va('track', 'Web Vitals', {
+      if ((window as any).va) {
+        (window as any).va('track', 'Web Vitals', {
           metric_name: metric.name,
           metric_value: metric.value,
           metric_rating: metric.rating
@@ -53,22 +53,22 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
     };
 
     // Collect Web Vitals metrics
-    getCLS(sendToAnalytics);
-    getFID(sendToAnalytics);
-    getFCP(sendToAnalytics);
-    getLCP(sendToAnalytics);
-    getTTFB(sendToAnalytics);
+    onCLS(sendToAnalytics);
+    onFID(sendToAnalytics);
+    onFCP(sendToAnalytics);
+    onLCP(sendToAnalytics);
+    onTTFB(sendToAnalytics);
 
     // Custom performance metrics
     const measureCustomMetrics = () => {
-      if (performance.mark && performance.measure) {
+      if (typeof window !== 'undefined' && performance) {
         // Measure React hydration time
         const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
         if (navigationEntries.length > 0) {
           const navigation = navigationEntries[0];
           
           // Time to Interactive approximation
-          const tti = navigation.domInteractive - navigation.navigationStart;
+          const tti = navigation.domInteractive;
           
           sendToAnalytics({
             id: 'tti',

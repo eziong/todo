@@ -1,3 +1,4 @@
+/** @jsxImportSource react */
 // =============================================
 // EVENT LOGGING INTEGRATION EXAMPLES
 // =============================================
@@ -7,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAutoEventLogging } from '@/lib/events/middleware';
 import { eventLogger } from '@/lib/events/eventLogger';
 import { createClient } from '@/lib/supabase/server';
+import type { SystemEventContext } from '@/types/database';
 
 // =============================================
 // EXAMPLE: TASK UPDATE API ROUTE WITH EVENT LOGGING
@@ -16,7 +18,7 @@ async function updateTaskHandler(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   // Verify authentication
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -62,7 +64,7 @@ async function updateTaskHandler(
         context: {
           update_data: updateData,
           error_details: updateError
-        }
+        } as SystemEventContext
       });
 
       return NextResponse.json(
@@ -140,7 +142,7 @@ async function updateTaskHandler(
       context: {
         user_id: user.id,
         request_body: await req.json().catch(() => null)
-      }
+      } as SystemEventContext
     });
 
     return NextResponse.json(
@@ -161,7 +163,7 @@ export const PATCH = withAutoEventLogging(updateTaskHandler, {
 // EXAMPLE: COMPONENT WITH EVENT LOGGING
 // =============================================
 
-import React from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { useEventLogger } from '@/hooks/useActivity';
 
 interface TaskCardProps {
@@ -347,12 +349,11 @@ import { useEffect } from 'react';
 
 export function AuthEventLogger() {
   const { user, signOut } = useAuth();
-  const { logAuthEvent } = useEventLogger();
 
   // Log login events
   useEffect(() => {
     if (user) {
-      logAuthEvent({
+      eventLogger.logAuthEvent({
         userId: user.id,
         eventType: 'login',
         context: {
@@ -362,17 +363,17 @@ export function AuthEventLogger() {
         }
       });
     }
-  }, [user, logAuthEvent]);
+  }, [user]);
 
   const handleSignOut = async () => {
     if (user) {
       // Log logout before signing out
-      await logAuthEvent({
+      await eventLogger.logAuthEvent({
         userId: user.id,
         eventType: 'logout',
         context: {
           session_duration: Date.now() - new Date(user.created_at || Date.now()).getTime()
-        }
+        } as any
       });
     }
     
@@ -386,7 +387,6 @@ export function AuthEventLogger() {
 // EXAMPLE: ERROR BOUNDARY WITH EVENT LOGGING
 // =============================================
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -417,10 +417,9 @@ export class ErrorBoundaryWithLogging extends Component<Props, State> {
         errorMessage: error.message,
         stackTrace: error.stack,
         context: {
-          component_stack: errorInfo.componentStack,
           error_boundary: true,
           timestamp: new Date().toISOString()
-        }
+        } as SystemEventContext
       });
     } catch (logError) {
       console.error('Failed to log component error:', logError);

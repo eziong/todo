@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "../components/ThemeProvider/ThemeProvider";
-import { AuthProvider } from "../components/Auth";
+import { AuthProvider } from "../components/Auth/AuthProvider";
 import { DataProvider } from "../lib/data/DataProvider";
-import { PerformanceMonitor } from "../components/PerformanceMonitor";
-import { AccessibilityProvider, SkipToContent } from "../components/AccessibilityProvider";
+// import { PerformanceMonitor } from "../components/PerformanceMonitor/PerformanceMonitor";
+import { AccessibilityProvider, SkipToContent } from "../components/AccessibilityProvider/AccessibilityProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -65,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>): React.ReactElement {
   const isProduction = process.env.NODE_ENV === 'production';
-  const enablePerformanceMonitoring = process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING === 'true';
+  // const enablePerformanceMonitoring = process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING === 'true';
 
   return (
     <html lang="en">
@@ -95,12 +95,12 @@ export default function RootLayout({
                   {children}
                 </main>
                 {/* Performance monitoring only in production */}
-                {isProduction && enablePerformanceMonitoring && (
+                {/* {isProduction && enablePerformanceMonitoring && (
                   <PerformanceMonitor 
                     enabled={true}
                     debug={!isProduction}
                   />
-                )}
+                )} */}
               </DataProvider>
             </AuthProvider>
           </ThemeProvider>

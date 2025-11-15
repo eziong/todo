@@ -51,6 +51,7 @@ import {
 } from '@mui/icons-material';
 import { useCompletedTasksView, type CompletedTasksViewProps } from './useCompletedTasksView';
 import type { Task, TaskPriority, User } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // INTERFACES
@@ -183,13 +184,13 @@ const CompletedTaskCard: React.FC<CompletedTaskCardProps> = ({
         elevation={1}
         sx={{
           mb: 2,
-          borderRadius: theme.macOS.borderRadius.medium,
-          transition: theme.macOS.animation.fast,
+          borderRadius: designTokens.borderRadius.md,
+          transition: designTokens.animation.fast,
           opacity: 0.8,
           '&:hover': {
             opacity: 1,
             transform: 'translateY(-1px)',
-            boxShadow: theme.macOS.shadows.medium,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           },
         }}
       >
@@ -219,8 +220,8 @@ const CompletedTaskCard: React.FC<CompletedTaskCardProps> = ({
                   sx={{
                     fontSize: '0.75rem',
                     height: '20px',
-                    backgroundColor: theme.macOS.todo.task.priority[task.priority],
-                    color: theme.palette.getContrastText(theme.macOS.todo.task.priority[task.priority]),
+                    backgroundColor: task.priority === 'high' ? '#f44336' : task.priority === 'medium' ? '#ff9800' : '#4caf50',
+                    color: '#ffffff',
                   }}
                 />
               </Box>
@@ -380,7 +381,7 @@ const FilterSearchSection: React.FC<FilterSearchSectionProps> = ({
   const priorities: TaskPriority[] = ['urgent', 'high', 'medium', 'low'];
 
   return (
-    <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: theme.macOS.borderRadius.medium }}>
+    <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: designTokens.borderRadius.md }}>
       <Stack spacing={2}>
         {/* Search and Actions Row */}
         <Stack direction="row" spacing={2} alignItems="center">
@@ -460,12 +461,12 @@ const FilterSearchSection: React.FC<FilterSearchSectionProps> = ({
                   fontSize: '0.75rem',
                   height: '24px',
                   backgroundColor: selectedPriorities.includes(priority) 
-                    ? theme.macOS.todo.task.priority[priority] 
+                    ? (priority === 'high' ? '#f44336' : priority === 'medium' ? '#ff9800' : '#4caf50') 
                     : 'transparent',
-                  borderColor: theme.macOS.todo.task.priority[priority],
+                  borderColor: priority === 'high' ? '#f44336' : priority === 'medium' ? '#ff9800' : '#4caf50',
                   color: selectedPriorities.includes(priority) 
-                    ? theme.palette.getContrastText(theme.macOS.todo.task.priority[priority])
-                    : theme.macOS.todo.task.priority[priority],
+                    ? '#ffffff'
+                    : (priority === 'high' ? '#f44336' : priority === 'medium' ? '#ff9800' : '#4caf50'),
                 }}
               />
             ))}
@@ -542,12 +543,12 @@ const CompletionStats: React.FC<CompletionStatsProps> = ({ stats }) => {
   return (
     <Grid container spacing={2} sx={{ mb: 3 }}>
       {statItems.map((stat) => (
-        <Grid item xs={6} sm={3} key={stat.label}>
+        <Grid size={{ xs: 6, sm: 3 }} key={stat.label}>
           <Card 
             elevation={1}
             sx={{
               textAlign: 'center',
-              borderRadius: theme.macOS.borderRadius.medium,
+              borderRadius: designTokens.borderRadius.md,
               border: `1px solid ${stat.color}30`,
             }}
           >
@@ -657,7 +658,7 @@ export const CompletedTasksView: React.FC<CompletedTasksViewComponentProps> = (p
   if (state.error) {
     return (
       <Box className={props.className} sx={{ p: 3 }}>
-        <Alert severity="error" sx={{ borderRadius: theme.macOS.borderRadius.medium }}>
+        <Alert severity="error" sx={{ borderRadius: designTokens.borderRadius.md }}>
           <Typography variant="body2" gutterBottom>
             Failed to load completed tasks
           </Typography>
@@ -696,7 +697,7 @@ export const CompletedTasksView: React.FC<CompletedTasksViewComponentProps> = (p
           <IconButton
             onClick={actions.refreshTasks}
             disabled={state.isRefreshing}
-            sx={{ borderRadius: theme.macOS.borderRadius.medium }}
+            sx={{ borderRadius: designTokens.borderRadius.md }}
           >
             {state.isRefreshing ? (
               <CircularProgress size={20} />
@@ -787,7 +788,7 @@ export const CompletedTasksView: React.FC<CompletedTasksViewComponentProps> = (p
           sx={{ 
             p: 6, 
             textAlign: 'center',
-            borderRadius: theme.macOS.borderRadius.large,
+            borderRadius: designTokens.borderRadius.lg,
           }}
         >
           <Typography variant="h2" sx={{ mb: 2, opacity: 0.5 }}>

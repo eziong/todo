@@ -108,14 +108,14 @@ export const useActivityRealTime = ({
   const lastEventTime = useRef<number>(0);
   const eventCount = useRef<number>(0);
   const latencyMeasurements = useRef<number[]>([]);
-  const reconnectTimeout = useRef<NodeJS.Timeout>();
-  const eventGeneratorInterval = useRef<NodeJS.Timeout>();
-  const metricsUpdateInterval = useRef<NodeJS.Timeout>();
+  const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
+  const eventGeneratorInterval = useRef<NodeJS.Timeout | null>(null);
+  const metricsUpdateInterval = useRef<NodeJS.Timeout | null>(null);
 
   const { user } = useAuth();
 
   // Mock event generator (in real app, this would be WebSocket/SSE)
-  const generateMockEvent = useCallback((): RealTimeEvent => {
+  const generateMockEvent = useCallback((): RealTimeEvent | null => {
     const eventTypes: EventType[] = ['created', 'updated', 'completed', 'assigned', 'moved', 'deleted'];
     const categories: EventCategory[] = ['user_action', 'system', 'security'];
     const entityTypes = ['task', 'section', 'workspace', 'user'];

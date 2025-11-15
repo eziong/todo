@@ -1,5 +1,53 @@
-import { alpha, Theme } from '@mui/material/styles';
-import { designTokens, type WorkspaceColor, type TaskStatus, type TaskPriority, type ThemeMode } from './index';
+import { alpha, Theme, createTheme } from '@mui/material/styles';
+
+// Type definitions
+export type ThemeMode = 'light' | 'dark' | 'system';
+export type WorkspaceColor = string;
+export type TaskStatus = 'todo' | 'in_progress' | 'completed' | 'cancelled' | 'on_hold';
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
+
+// Design tokens
+export const designTokens = {
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    xxl: 48,
+  },
+  borderRadius: {
+    sm: 4,
+    md: 8,
+    lg: 12,
+    xl: 16,
+  },
+  shadows: {
+    light: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    medium: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    heavy: '0 8px 24px rgba(0, 0, 0, 0.2)',
+  },
+  animation: {
+    fast: '150ms ease-in-out',
+    normal: '300ms ease-in-out',
+    slow: '500ms ease-in-out',
+  },
+  colors: {
+    taskStatus: {
+      todo: '#6B7280',
+      in_progress: '#3B82F6', 
+      completed: '#10B981',
+      cancelled: '#EF4444',
+      on_hold: '#F59E0B',
+    },
+    taskPriority: {
+      low: '#10B981',
+      medium: '#F59E0B',
+      high: '#EF4444',
+      urgent: '#DC2626',
+    },
+  },
+};
 
 /**
  * Theme utilities for consistent design token usage across components
@@ -17,7 +65,7 @@ export const getTaskStatusColor = (status: TaskStatus, mode: ThemeMode = 'light'
     switch (status) {
       case 'todo':
         return '#8E8E93';
-      case 'archived':
+      case 'cancelled':
         return '#48484A';
       default:
         return statusColor;
@@ -101,8 +149,8 @@ export const isColorAccessible = (foreground: string, background: string, level:
 // Component variant utilities
 export const getCardVariantStyles = (variant: 'task' | 'workspace' | 'default', theme: Theme): object => {
   const baseStyles = {
-    borderRadius: getBorderRadius('large'),
-    boxShadow: getShadow('card'),
+    borderRadius: getBorderRadius('lg'),
+    boxShadow: getShadow('light'),
     transition: `all ${getAnimation('fast')}`,
   };
 
@@ -110,7 +158,7 @@ export const getCardVariantStyles = (variant: 'task' | 'workspace' | 'default', 
     case 'task':
       return {
         ...baseStyles,
-        borderRadius: getBorderRadius('medium'),
+        borderRadius: getBorderRadius('md'),
         padding: theme.spacing(1.5, 2),
         cursor: 'pointer',
         '&:hover': {
@@ -122,7 +170,7 @@ export const getCardVariantStyles = (variant: 'task' | 'workspace' | 'default', 
     case 'workspace':
       return {
         ...baseStyles,
-        borderRadius: getBorderRadius('xlarge'),
+        borderRadius: getBorderRadius('xl'),
         padding: theme.spacing(2.5, 3),
       };
     
@@ -142,7 +190,7 @@ export const getButtonVariantStyles = (variant: 'workspace' | 'priority' | 'defa
     case 'workspace':
       return {
         ...baseStyles,
-        borderRadius: getBorderRadius('small'),
+        borderRadius: getBorderRadius('sm'),
         padding: theme.spacing(0.5, 1),
         fontSize: '0.8125rem',
         minWidth: 'auto',
@@ -151,7 +199,7 @@ export const getButtonVariantStyles = (variant: 'workspace' | 'priority' | 'defa
     case 'priority':
       return {
         ...baseStyles,
-        borderRadius: getBorderRadius('xlarge'),
+        borderRadius: getBorderRadius('xl'),
         padding: theme.spacing(0.25, 1),
         fontSize: '0.75rem',
         height: '24px',
@@ -196,7 +244,7 @@ export const getTextColor = (theme: Theme, variant: 'primary' | 'secondary' | 'd
 export const getFocusStyles = (theme: Theme): object => ({
   outline: `2px solid ${theme.palette.primary.main}`,
   outlineOffset: '2px',
-  borderRadius: getBorderRadius('small'),
+  borderRadius: getBorderRadius('sm'),
 });
 
 // Export all utilities as a namespace for organized imports
@@ -236,3 +284,92 @@ export const themeUtils = {
 };
 
 export default themeUtils;
+
+// =============================================
+// THEME CREATION
+// =============================================
+
+export type AppTheme = Theme & {
+  macOS: {
+    borderRadius: {
+      sm: number;
+      md: number;
+      lg: number;
+      xl: number;
+    };
+    animation: {
+      fast: string;
+      normal: string;
+      slow: string;
+    };
+  };
+};
+
+/**
+ * Create Material-UI theme with macOS design tokens
+ */
+export const createAppTheme = (mode: ThemeMode = 'light'): AppTheme => {
+  const effectiveMode = mode === 'system' ? 'light' : mode; // Default system to light for now
+  
+  const baseTheme = createTheme({
+    palette: {
+      mode: effectiveMode,
+      primary: {
+        main: '#007AFF',
+        light: '#5AC8FA',
+        dark: '#0051D0',
+      },
+      secondary: {
+        main: '#34C759',
+        light: '#30D158',
+        dark: '#28A745',
+      },
+      error: {
+        main: '#FF3B30',
+        light: '#FF6B6B',
+        dark: '#D70015',
+      },
+      warning: {
+        main: '#FF9500',
+        light: '#FFB340',
+        dark: '#FF8800',
+      },
+      success: {
+        main: '#34C759',
+        light: '#30D158',
+        dark: '#28A745',
+      },
+      background: {
+        default: effectiveMode === 'dark' ? '#000000' : '#FFFFFF',
+        paper: effectiveMode === 'dark' ? '#1C1C1E' : '#F2F2F7',
+      },
+      text: {
+        primary: effectiveMode === 'dark' ? '#FFFFFF' : '#000000',
+        secondary: effectiveMode === 'dark' ? '#8E8E93' : '#6D6D70',
+      },
+    },
+    typography: {
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+      ].join(','),
+    },
+    shape: {
+      borderRadius: designTokens.borderRadius.md,
+    },
+    spacing: 8,
+  });
+
+  return {
+    ...baseTheme,
+    macOS: {
+      borderRadius: designTokens.borderRadius,
+      animation: designTokens.animation,
+    },
+  } as AppTheme;
+};

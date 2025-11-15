@@ -38,8 +38,9 @@ import {
   KeyboardArrowDown as DownIcon,
 } from '@mui/icons-material';
 import { useTodayTasksView, type TodayTasksViewProps } from './useTodayTasksView';
-import { TaskCard } from '@/components/TaskCard';
+import { TaskCard } from '@/components/TaskCard/TaskCard';
 import type { Task, User } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // INTERFACE
@@ -77,15 +78,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   const theme = useTheme();
 
   const priorities = [
-    { value: 'urgent', label: 'Urgent', color: theme.macOS.todo.task.priority.urgent },
-    { value: 'high', label: 'High', color: theme.macOS.todo.task.priority.high },
-    { value: 'medium', label: 'Medium', color: theme.macOS.todo.task.priority.medium },
-    { value: 'low', label: 'Low', color: theme.macOS.todo.task.priority.low },
+    { value: 'urgent', label: 'Urgent', color: theme.palette.error.dark },
+    { value: 'high', label: 'High', color: theme.palette.error.main },
+    { value: 'medium', label: 'Medium', color: theme.palette.warning.main },
+    { value: 'low', label: 'Low', color: theme.palette.success.main },
   ];
 
   const statuses = [
-    { value: 'todo', label: 'To Do', color: theme.macOS.todo.task.status.todo },
-    { value: 'in_progress', label: 'In Progress', color: theme.macOS.todo.task.status.in_progress },
+    { value: 'todo', label: 'To Do', color: theme.palette.grey[600] },
+    { value: 'in_progress', label: 'In Progress', color: theme.palette.info.main },
   ];
 
   return (
@@ -94,7 +95,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
       sx={{ 
         p: 2, 
         mb: 3, 
-        borderRadius: theme.macOS.borderRadius.large,
+        borderRadius: designTokens.borderRadius.lg,
         background: theme.palette.background.paper,
       }}
     >
@@ -233,7 +234,7 @@ const TaskSection: React.FC<TaskSectionProps> = ({
       <Paper 
         elevation={1} 
         sx={{ 
-          borderRadius: theme.macOS.borderRadius.medium,
+          borderRadius: designTokens.borderRadius.md,
           overflow: 'hidden',
           border: `1px solid ${color}20`,
         }}
@@ -277,6 +278,10 @@ const TaskSection: React.FC<TaskSectionProps> = ({
                   users={users}
                   onClick={() => onTaskClick?.(task)}
                   showDragHandle={false}
+                  onUpdate={async () => {}}
+                  onDelete={async () => {}}
+                  onOpenModal={() => {}}
+                  onToggleComplete={async () => {}}
                 />
               ))}
             </Stack>
@@ -334,17 +339,17 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({ taskCounts }) => {
   return (
     <Grid container spacing={2} sx={{ mb: 3 }}>
       {stats.map((stat) => (
-        <Grid item xs={6} sm={3} key={stat.label}>
+        <Grid size={{ xs: 6, sm: 3 }} key={stat.label}>
           <Card 
             elevation={1}
             sx={{
               textAlign: 'center',
-              borderRadius: theme.macOS.borderRadius.medium,
+              borderRadius: designTokens.borderRadius.md,
               border: `1px solid ${stat.color}30`,
-              transition: theme.macOS.animation.fast,
+              transition: designTokens.animation.fast,
               '&:hover': {
                 transform: 'translateY(-2px)',
-                boxShadow: theme.macOS.shadows.medium,
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.15)',
               },
             }}
           >
@@ -395,7 +400,7 @@ export const TodayTasksView: React.FC<TodayTasksViewComponentProps> = (props) =>
   if (state.error) {
     return (
       <Box className={props.className} sx={{ p: 3 }}>
-        <Alert severity="error" sx={{ borderRadius: theme.macOS.borderRadius.medium }}>
+        <Alert severity="error" sx={{ borderRadius: designTokens.borderRadius.md }}>
           <Typography variant="body2" gutterBottom>
             Failed to load today&apos;s tasks
           </Typography>
@@ -442,7 +447,7 @@ export const TodayTasksView: React.FC<TodayTasksViewComponentProps> = (props) =>
               startIcon={<FilterIcon />}
               onClick={() => setShowFilters(!showFilters)}
               sx={{
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 textTransform: 'none',
               }}
             >
@@ -462,7 +467,7 @@ export const TodayTasksView: React.FC<TodayTasksViewComponentProps> = (props) =>
             <IconButton
               onClick={actions.refreshTasks}
               disabled={state.isRefreshing}
-              sx={{ borderRadius: theme.macOS.borderRadius.medium }}
+              sx={{ borderRadius: designTokens.borderRadius.md }}
             >
               {state.isRefreshing ? (
                 <CircularProgress size={20} />
@@ -484,7 +489,7 @@ export const TodayTasksView: React.FC<TodayTasksViewComponentProps> = (props) =>
           selectedStatuses={state.selectedStatuses}
           showCompletedTasks={state.showCompletedTasks}
           onTogglePriority={actions.togglePriorityFilter}
-          onToggleStatus={actions.toggleStatusFilter}
+          onToggleStatus={(status: string) => actions.toggleStatusFilter(status as any)}
           onToggleShowCompleted={actions.toggleShowCompleted}
           onClearFilters={actions.clearFilters}
           isFiltered={computed.isFiltered}
@@ -556,7 +561,7 @@ export const TodayTasksView: React.FC<TodayTasksViewComponentProps> = (props) =>
               variant="outlined"
               onClick={infinite.fetchNextPage}
               sx={{
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 textTransform: 'none',
               }}
             >
@@ -572,7 +577,7 @@ export const TodayTasksView: React.FC<TodayTasksViewComponentProps> = (props) =>
           sx={{ 
             p: 6, 
             textAlign: 'center',
-            borderRadius: theme.macOS.borderRadius.large,
+            borderRadius: designTokens.borderRadius.lg,
             backgroundColor: theme.palette.background.paper,
           }}
         >

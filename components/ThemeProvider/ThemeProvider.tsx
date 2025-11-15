@@ -3,13 +3,14 @@
 import React from 'react';
 import { ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
-import { type ThemeMode } from '../../theme';
+import { type ThemeMode } from '../../theme/utils';
 import { useTheme } from './useTheme';
 import { ThemeContextProvider } from './ThemeContext';
-import type { BaseComponentProps } from '@/types';
 
-interface ThemeProviderProps extends BaseComponentProps {
+
+interface ThemeProviderProps {
   children: React.ReactNode;
+  className?: string;
   defaultMode?: ThemeMode;
   enableSystemTheme?: boolean;
 }

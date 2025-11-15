@@ -19,7 +19,7 @@ interface RouteParams {
 
 // Helper function to check user permissions for section via workspace
 async function checkSectionPermission(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string, 
   sectionId: string, 
   requiredPermission: 'read' | 'write' | 'delete' | 'admin'
@@ -137,12 +137,16 @@ export async function GET(request: NextRequest, { params }: RouteParams): Promis
     };
 
     // Transform workspace data
+    const workspaceData = Array.isArray(section.workspace) 
+      ? section.workspace[0] 
+      : section.workspace;
+    
     const transformedData = {
       ...section,
-      workspace: section.workspace ? {
-        id: section.workspace.id,
-        name: section.workspace.name,
-        color: section.workspace.color,
+      workspace: workspaceData ? {
+        id: workspaceData.id,
+        name: workspaceData.name,
+        color: workspaceData.color,
       } : null,
       statistics,
     };
@@ -213,6 +217,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
         position,
         color,
         is_archived,
+        is_deleted,
         created_at,
         updated_at
       `)

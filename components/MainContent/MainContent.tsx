@@ -43,17 +43,18 @@ import {
 } from '@mui/icons-material';
 import { useMainContent } from './useMainContent';
 import type { 
-  BaseComponentProps, 
   TaskStatus, 
   TaskPriority,
-  TaskWithRelations,
-} from '@/types';
+  Task,
+} from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // TYPES
 // =============================================
 
-export interface MainContentProps extends BaseComponentProps {
+export interface MainContentProps {
+  className?: string;
   onToggleSidebar?: () => void;
 }
 
@@ -92,9 +93,9 @@ const ContentHeader: React.FC<ContentHeaderProps> = ({
         p: { xs: 2, sm: 3 },
         mb: 3,
         backgroundColor: 'background.paper',
-        borderRadius: theme.macOS.borderRadius.large,
+        borderRadius: designTokens.borderRadius.lg,
         border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-        boxShadow: theme.macOS.shadows.card,
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
       }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -157,7 +158,7 @@ const ContentHeader: React.FC<ContentHeaderProps> = ({
                 onClick={onRefresh}
                 disabled={isRefreshing}
                 sx={{
-                  borderRadius: theme.macOS.borderRadius.medium,
+                  borderRadius: designTokens.borderRadius.md,
                   '&:hover': {
                     backgroundColor: alpha(theme.palette.primary.main, 0.08),
                   },
@@ -183,13 +184,13 @@ const ContentHeader: React.FC<ContentHeaderProps> = ({
               startIcon={<AddIcon />}
               onClick={onCreateTask}
               sx={{
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 textTransform: 'none',
                 fontWeight: 500,
                 px: { xs: 2, sm: 3 },
-                boxShadow: theme.macOS.shadows.subtle,
+                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
                 '&:hover': {
-                  boxShadow: theme.macOS.shadows.medium,
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.15)',
                 },
               }}
             >
@@ -209,9 +210,9 @@ interface FilterBarProps {
   statusFilters: TaskStatus[];
   priorityFilters: TaskPriority[];
   onUpdateFilters: (filters: { status?: TaskStatus[]; priority?: TaskPriority[] }) => void;
-  sortField: keyof TaskWithRelations;
+  sortField: keyof Task;
   sortDirection: 'asc' | 'desc';
-  onUpdateSort: (field: keyof TaskWithRelations, direction?: 'asc' | 'desc') => void;
+  onUpdateSort: (field: keyof Task, direction?: 'asc' | 'desc') => void;
   viewMode: 'grid' | 'list';
   onToggleViewMode: () => void;
   hasFilters: boolean;
@@ -237,21 +238,21 @@ const FilterBar: React.FC<FilterBarProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const statusOptions: { value: TaskStatus; label: string; color: string }[] = [
-    { value: 'todo', label: 'To Do', color: theme.macOS.todo.task.status.todo },
-    { value: 'in_progress', label: 'In Progress', color: theme.macOS.todo.task.status.in_progress },
-    { value: 'completed', label: 'Completed', color: theme.macOS.todo.task.status.completed },
-    { value: 'cancelled', label: 'Cancelled', color: theme.macOS.todo.task.status.archived },
-    { value: 'on_hold', label: 'On Hold', color: theme.macOS.todo.task.status.archived },
+    { value: 'todo', label: 'To Do', color: theme.palette.grey[600] },
+    { value: 'in_progress', label: 'In Progress', color: theme.palette.info.main },
+    { value: 'completed', label: 'Completed', color: theme.palette.success.main },
+    { value: 'cancelled', label: 'Cancelled', color: theme.palette.error.main },
+    { value: 'on_hold', label: 'On Hold', color: theme.palette.warning.main },
   ];
 
   const priorityOptions: { value: TaskPriority; label: string; color: string }[] = [
-    { value: 'low', label: 'Low', color: theme.macOS.todo.task.priority.low },
-    { value: 'medium', label: 'Medium', color: theme.macOS.todo.task.priority.medium },
-    { value: 'high', label: 'High', color: theme.macOS.todo.task.priority.high },
-    { value: 'urgent', label: 'Urgent', color: theme.macOS.todo.task.priority.urgent },
+    { value: 'low', label: 'Low', color: theme.palette.success.main },
+    { value: 'medium', label: 'Medium', color: theme.palette.warning.main },
+    { value: 'high', label: 'High', color: theme.palette.error.main },
+    { value: 'urgent', label: 'Urgent', color: theme.palette.error.dark },
   ];
 
-  const sortOptions: Array<{ value: keyof TaskWithRelations; label: string }> = [
+  const sortOptions: Array<{ value: keyof Task; label: string }> = [
     { value: 'created_at', label: 'Created' },
     { value: 'updated_at', label: 'Modified' },
     { value: 'due_date', label: 'Due Date' },
@@ -266,9 +267,9 @@ const FilterBar: React.FC<FilterBarProps> = ({
         p: { xs: 2, sm: 3 },
         mb: 3,
         backgroundColor: 'background.paper',
-        borderRadius: theme.macOS.borderRadius.large,
+        borderRadius: designTokens.borderRadius.lg,
         border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-        boxShadow: theme.macOS.shadows.subtle,
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
       }}
     >
       <Stack 
@@ -300,7 +301,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             }}
             sx={{
               '& .MuiOutlinedInput-root': {
-                borderRadius: theme.macOS.borderRadius.medium,
+                borderRadius: designTokens.borderRadius.md,
                 backgroundColor: alpha(theme.palette.text.primary, 0.02),
                 '&:hover': {
                   backgroundColor: alpha(theme.palette.text.primary, 0.04),
@@ -422,7 +423,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 variant="outlined"
                 onClick={onClearFilters}
                 sx={{
-                  borderRadius: theme.macOS.borderRadius.medium,
+                  borderRadius: designTokens.borderRadius.md,
                   textTransform: 'none',
                 }}
               >
@@ -463,7 +464,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               size="small"
               sx={{
                 '& .MuiToggleButton-root': {
-                  borderRadius: theme.macOS.borderRadius.medium,
+                  borderRadius: designTokens.borderRadius.md,
                   border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
                   '&.Mui-selected': {
                     backgroundColor: alpha(theme.palette.primary.main, 0.12),
@@ -562,7 +563,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           variant="contained"
           onClick={onAction}
           sx={{
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: designTokens.borderRadius.md,
             textTransform: 'none',
             fontWeight: 500,
             px: 4,
@@ -627,7 +628,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({ isLoading, message, viewMod
               elevation={0}
               sx={{
                 p: 3,
-                borderRadius: theme.macOS.borderRadius.large,
+                borderRadius: designTokens.borderRadius.lg,
                 border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
                 height: viewMode === 'grid' ? 160 : 80,
               }}
@@ -652,7 +653,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({ isLoading, message, viewMod
 // MAIN PRESENTER COMPONENT
 // =============================================
 
-export const MainContent: React.FC<MainContentProps> = ({ className }) => {
+export const MainContent: React.FC<MainContentProps> = React.memo(({ className }) => {
   const theme = useTheme();
   
   const {
@@ -703,7 +704,7 @@ export const MainContent: React.FC<MainContentProps> = ({ className }) => {
     subtitle: state.selectedSection 
       ? `${state.filteredTasks.length} task${state.filteredTasks.length !== 1 ? 's' : ''}`
       : state.activeWorkspace
-      ? `${state.activeWorkspace.taskCount} total task${state.activeWorkspace.taskCount !== 1 ? 's' : ''}`
+      ? `Tasks in ${state.activeWorkspace.name}`
       : undefined,
     breadcrumbs: state.selectedSection && state.activeWorkspace ? [
       { label: state.activeWorkspace.name, onClick: () => {} },
@@ -737,7 +738,7 @@ export const MainContent: React.FC<MainContentProps> = ({ className }) => {
           statusFilters={state.filters.status}
           priorityFilters={state.filters.priority}
           onUpdateFilters={updateFilters}
-          sortField={state.sort.field}
+          sortField={state.sort.field as keyof Task}
           sortDirection={state.sort.direction}
           onUpdateSort={updateSort}
           viewMode={state.view.mode}
@@ -773,7 +774,7 @@ export const MainContent: React.FC<MainContentProps> = ({ className }) => {
               sx={{
                 p: 4,
                 textAlign: 'center',
-                borderRadius: theme.macOS.borderRadius.large,
+                borderRadius: designTokens.borderRadius.lg,
                 border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
                 backgroundColor: alpha(theme.palette.primary.main, 0.02),
               }}
@@ -787,7 +788,7 @@ export const MainContent: React.FC<MainContentProps> = ({ className }) => {
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Current view mode: <strong>{state.view.mode}</strong> • 
-                Sorted by: <strong>{state.sort.field}</strong> ({state.sort.direction})
+                Sorted by: <strong>{String(state.sort.field)}</strong> ({state.sort.direction})
               </Typography>
             </Paper>
           )}
@@ -803,7 +804,7 @@ export const MainContent: React.FC<MainContentProps> = ({ className }) => {
                 disabled={state.pagination.isLoadingMore}
                 startIcon={state.pagination.isLoadingMore && <CircularProgress size={16} />}
                 sx={{
-                  borderRadius: theme.macOS.borderRadius.medium,
+                  borderRadius: designTokens.borderRadius.md,
                   textTransform: 'none',
                   px: 4,
                   py: 1.5,
@@ -817,4 +818,4 @@ export const MainContent: React.FC<MainContentProps> = ({ className }) => {
       </Container>
     </Box>
   );
-};
+});

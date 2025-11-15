@@ -6,28 +6,28 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useAuth } from '@/components/Auth';
+import { useAuth } from '@/components/Auth/useAuth';
 import { useWorkspaceNavigation } from './useWorkspaceNavigation';
 import { useRouter } from '@/hooks/useRouter';
 import type { 
-  WorkspaceWithSections, 
-  SectionWithTasks, 
+  Workspace, 
+  Section, 
   User
-} from '@/types';
+} from '@/types/database';
 
 // =============================================
 // TYPES
 // =============================================
 
 export interface NavigationSearchResults {
-  workspaces: WorkspaceWithSections[];
-  sections: SectionWithTasks[];
+  workspaces: Workspace[];
+  sections: Section[];
   recentItems: Array<{
     id: string;
     title: string;
     type: 'workspace' | 'section';
-    workspace?: WorkspaceWithSections;
-    section?: SectionWithTasks;
+    workspace?: Workspace;
+    section?: Section;
   }>;
 }
 
@@ -53,8 +53,8 @@ export interface UseNavigationSidebarReturn {
   error: string | null;
   
   // Workspace data
-  workspaces: WorkspaceWithSections[];
-  activeWorkspace: WorkspaceWithSections | null;
+  workspaces: Workspace[];
+  activeWorkspace: Workspace | null;
   
   // Responsive behavior
   isMobile: boolean;
@@ -113,14 +113,18 @@ export const useNavigationSidebar = (): UseNavigationSidebarReturn => {
   // Use workspace navigation hook for data management
   const {
     workspaces,
-    activeWorkspace,
     selectedWorkspaceId,
     expandedWorkspaces,
-    loading: workspaceLoading,
+    isLoading: workspaceLoading,
     error: workspaceError,
     selectWorkspace: workspaceSelect,
     toggleWorkspaceExpansion: workspaceToggleExpansion,
   } = useWorkspaceNavigation();
+
+  // Find active workspace from selected ID
+  const activeWorkspace = selectedWorkspaceId 
+    ? workspaces.find(w => w.id === selectedWorkspaceId) || null
+    : null;
   
   // Responsive breakpoints
   const isMobile = useMediaQuery(theme.breakpoints.down(MOBILE_BREAKPOINT));
@@ -178,13 +182,14 @@ export const useNavigationSidebar = (): UseNavigationSidebarReturn => {
       workspace.description?.toLowerCase().includes(lowercaseQuery)
     );
 
-    const matchingSections: SectionWithTasks[] = [];
-    workspaces.forEach(workspace => {
-      const sections = workspace.sections.filter(section =>
-        section.name.toLowerCase().includes(lowercaseQuery)
-      );
-      matchingSections.push(...sections);
-    });
+    const matchingSections: Section[] = [];
+    // TODO: Get sections for each workspace
+    // workspaces.forEach(workspace => {
+    //   const sections = workspace.sections.filter(section =>
+    //     section.name.toLowerCase().includes(lowercaseQuery)
+    //   );
+    //   matchingSections.push(...sections);
+    // });
 
     // Mock recent items (would come from user activity tracking)
     const recentItems = [
@@ -194,13 +199,14 @@ export const useNavigationSidebar = (): UseNavigationSidebarReturn => {
         type: 'workspace' as const, 
         workspace: workspaces[0] 
       },
-      { 
-        id: '1-1', 
-        title: 'Today', 
-        type: 'section' as const, 
-        section: workspaces[0]?.sections[0],
-        workspace: workspaces[0]
-      },
+      // TODO: Add sections when available
+      // { 
+      //   id: '1-1', 
+      //   title: 'Today', 
+      //   type: 'section' as const, 
+      //   section: workspaces[0]?.sections[0],
+      //   workspace: workspaces[0]
+      // },
     ].filter(item =>
       item.title.toLowerCase().includes(lowercaseQuery)
     );

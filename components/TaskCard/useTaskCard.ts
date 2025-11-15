@@ -7,25 +7,27 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { useModalRouter, MODAL_TYPES } from '@/components/ModalRouter/useModalRouter';
 import type { 
-  TaskWithRelations, 
+  Task, 
   TaskStatus,
   TaskPriority,
   User,
-} from '@/types';
+} from '@/types/database';
 
 // =============================================
 // TYPES
 // =============================================
 
 export interface TaskCardProps {
-  task: TaskWithRelations;
-  onUpdate: (id: string, updates: Partial<TaskWithRelations>) => Promise<void>;
+  task: Task;
+  onUpdate: (id: string, updates: Partial<Task>) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
-  onOpenModal: (task: TaskWithRelations) => void;
+  onOpenModal: (task: Task) => void;
   onToggleComplete: (id: string) => Promise<void>;
   users?: User[];
   className?: string;
   disabled?: boolean;
+  onClick?: () => void;
+  showDragHandle?: boolean;
 }
 
 export interface InlineEditState {
@@ -37,7 +39,7 @@ export interface InlineEditState {
 
 export interface TaskCardState {
   // Data
-  task: TaskWithRelations;
+  task: Task;
   
   // UI States
   inlineEdit: InlineEditState;
@@ -57,6 +59,9 @@ export interface TaskCardState {
 export interface UseTaskCardReturn {
   // State
   state: TaskCardState;
+  
+  // Computed data
+  assignee: User | undefined;
   
   // Drag and drop
   dragHandleProps: Record<string, unknown>;
@@ -164,6 +169,7 @@ export const useTaskCard = ({
   onUpdate,
   onOpenModal,
   onToggleComplete,
+  users,
   disabled = false,
 }: TaskCardProps): UseTaskCardReturn => {
   
@@ -403,6 +409,15 @@ export const useTaskCard = ({
   }, []);
   
   // =============================================
+  // COMPUTED DATA
+  // =============================================
+  
+  const assignee = React.useMemo(() => 
+    users?.find(user => user.id === task.assigned_to_user_id),
+    [users, task.assigned_to_user_id]
+  );
+  
+  // =============================================
   // UTILITY FUNCTIONS
   // =============================================
   
@@ -476,6 +491,9 @@ export const useTaskCard = ({
   return {
     // State
     state,
+    
+    // Computed data
+    assignee,
     
     // Drag and drop
     dragHandleProps,

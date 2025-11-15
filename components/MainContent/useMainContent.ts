@@ -5,12 +5,12 @@
 
 import React from 'react';
 import type { 
-  TaskWithRelations, 
-  SectionWithTasks, 
-  WorkspaceWithSections,
+  Task, 
+  Section, 
+  Workspace,
   TaskStatus,
   TaskPriority,
-} from '@/types';
+} from '@/types/database';
 
 // =============================================
 // TYPES
@@ -26,7 +26,7 @@ export interface FilterState {
 }
 
 export interface SortState {
-  field: keyof TaskWithRelations;
+  field: keyof Task;
   direction: 'asc' | 'desc';
 }
 
@@ -47,12 +47,12 @@ export interface PaginationState {
 
 export interface MainContentState {
   // Layout
-  activeWorkspace: WorkspaceWithSections | null;
-  selectedSection: SectionWithTasks | null;
+  activeWorkspace: Workspace | null;
+  selectedSection: Section | null;
   
   // Data
-  tasks: TaskWithRelations[];
-  filteredTasks: TaskWithRelations[];
+  tasks: Task[];
+  filteredTasks: Task[];
   loading: boolean;
   error: string | null;
   
@@ -85,15 +85,15 @@ export interface UseMainContentReturn {
   resetFilters: () => void;
   
   // Sort operations
-  updateSort: (field: keyof TaskWithRelations, direction?: 'asc' | 'desc') => void;
+  updateSort: (field: keyof Task, direction?: 'asc' | 'desc') => void;
   
   // View operations
   toggleViewMode: () => void;
   updateViewState: (view: Partial<ViewState>) => void;
   
   // Navigation
-  setActiveWorkspace: (workspace: WorkspaceWithSections | null) => void;
-  setSelectedSection: (section: SectionWithTasks | null) => void;
+  setActiveWorkspace: (workspace: Workspace | null) => void;
+  setSelectedSection: (section: Section | null) => void;
   
   // Search
   handleSearchChange: (query: string) => void;
@@ -101,7 +101,7 @@ export interface UseMainContentReturn {
   
   // Task operations
   createTask: () => void;
-  selectTask: (task: TaskWithRelations) => void;
+  selectTask: (task: Task) => void;
   
   // Utility
   getEmptyStateProps: () => {
@@ -352,7 +352,7 @@ export const useMainContent = (): UseMainContentReturn => {
   // =============================================
   
   const updateSort = React.useCallback((
-    field: keyof TaskWithRelations, 
+    field: keyof Task, 
     direction?: 'asc' | 'desc'
   ): void => {
     setState(prev => {
@@ -392,7 +392,7 @@ export const useMainContent = (): UseMainContentReturn => {
   // NAVIGATION
   // =============================================
   
-  const setActiveWorkspace = React.useCallback((workspace: WorkspaceWithSections | null): void => {
+  const setActiveWorkspace = React.useCallback((workspace: Workspace | null): void => {
     setState(prev => ({
       ...prev,
       activeWorkspace: workspace,
@@ -402,7 +402,7 @@ export const useMainContent = (): UseMainContentReturn => {
     }));
   }, []);
   
-  const setSelectedSection = React.useCallback((section: SectionWithTasks | null): void => {
+  const setSelectedSection = React.useCallback((section: Section | null): void => {
     setState(prev => ({
       ...prev,
       selectedSection: section,
@@ -434,7 +434,7 @@ export const useMainContent = (): UseMainContentReturn => {
     // TODO: Implement task creation
   }, []);
   
-  const selectTask = React.useCallback((task: TaskWithRelations): void => {
+  const selectTask = React.useCallback((task: Task): void => {
     // TODO: Implement task selection
     void task.id; // Use the task id to avoid unused parameter warning
   }, []);

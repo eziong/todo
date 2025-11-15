@@ -17,7 +17,7 @@ A comprehensive macOS-inspired design system built on Material-UI with full dark
 ### Basic Setup
 
 ```tsx
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeProvider } from '@/components/ThemeProvider/ThemeProvider';
 
 function App() {
   return (
@@ -31,7 +31,7 @@ function App() {
 ### Using Theme Context
 
 ```tsx
-import { useThemeContext } from '@/components/ThemeProvider';
+import { useThemeContext } from '@/components/ThemeProvider/ThemeProvider';
 
 function MyComponent() {
   const { mode, toggleMode, isSystemTheme } = useThemeContext();
@@ -49,7 +49,7 @@ function MyComponent() {
 ### Theme Toggle Component
 
 ```tsx
-import { ThemeToggle } from '@/components/ThemeProvider';
+import { ThemeToggle } from '@/components/ThemeProvider/ThemeProvider';
 
 function Header() {
   return (
@@ -67,7 +67,7 @@ function Header() {
 
 #### Workspace Colors
 ```tsx
-import { designTokens } from '@/theme';
+import { designTokens } from '@/theme/utils';
 
 const colors = designTokens.colors.workspace;
 // ['#007AFF', '#34C759', '#FF9500', '#5856D6', ...]
@@ -178,7 +178,7 @@ function MyComponent() {
 
 ```tsx
 import { Box } from '@mui/material';
-import { designTokens } from '@/theme';
+import { designTokens } from '@/theme/utils';
 
 function MyComponent() {
   return (
@@ -221,7 +221,7 @@ The theme automatically ensures WCAG 2.1 AA compliance:
 ### Custom Theme Creation
 
 ```tsx
-import { createAppTheme } from '@/theme';
+import { createAppTheme } from '@/theme/utils';
 
 const customTheme = createAppTheme('dark');
 // Use with MUIThemeProvider directly
@@ -230,7 +230,7 @@ const customTheme = createAppTheme('dark');
 ### Theme Mode Detection
 
 ```tsx
-import { useTheme } from '@/components/ThemeProvider';
+import { useTheme } from '@/components/ThemeProvider/ThemeProvider';
 
 function MyComponent() {
   const { mode, systemMode, isSystemTheme } = useTheme();
@@ -338,10 +338,10 @@ If updating from a previous theme system:
 1. **Update imports**:
    ```tsx
    // Old
-   import theme from '@/theme';
+   import theme from '@/theme/utils';
    
    // New
-   import { theme, createAppTheme } from '@/theme';
+   import { theme, createAppTheme } from '@/theme/utils';
    ```
 
 2. **Update theme provider**:
@@ -355,7 +355,7 @@ If updating from a previous theme system:
 
 3. **Add theme toggle**:
    ```tsx
-   import { ThemeToggle } from '@/components/ThemeProvider';
+   import { ThemeToggle } from '@/components/ThemeProvider/ThemeProvider';
    <ThemeToggle />
    ```
 

@@ -13,7 +13,7 @@ async function handler(
   req: NextRequest,
   { params }: { params: { workspaceId?: string } }
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   // Verify authentication
   const { data: { user }, error: authError } = await supabase.auth.getUser();

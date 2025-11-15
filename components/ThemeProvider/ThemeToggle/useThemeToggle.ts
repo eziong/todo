@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { useThemeContext } from '../ThemeContext';
-import type { ThemeMode } from '../../../theme';
+import type { ThemeMode } from '@/theme/utils';
 
 interface UseThemeToggleReturn {
   mode: ThemeMode;

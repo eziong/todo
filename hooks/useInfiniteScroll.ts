@@ -162,7 +162,7 @@ export const useInfiniteScroll = <TData = unknown>({
 
   return {
     // Data
-    data: queryData?.pages || [],
+    data: flatData,
     flatData,
     totalCount,
     

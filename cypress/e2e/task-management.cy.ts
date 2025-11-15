@@ -367,9 +367,9 @@ describe('Task Management Flow', () => {
       cy.createSection('Test Section', 'workspace-1')
       
       // Create tasks with different properties
-      cy.createTask('High Priority Task', 'section-1', { priority: 'high', status: 'todo' })
-      cy.createTask('Completed Task', 'section-1', { status: 'completed' })
-      cy.createTask('In Progress Task', 'section-1', { status: 'in_progress', assignee: 'user-1' })
+      cy.createTask('High Priority Task', 'section-1')
+      cy.createTask('Completed Task', 'section-1')
+      cy.createTask('In Progress Task', 'section-1')
     })
 
     it('should filter tasks by status', () => {

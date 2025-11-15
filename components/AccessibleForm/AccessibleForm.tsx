@@ -11,7 +11,7 @@ import {
   Alert,
   Typography
 } from '@mui/material';
-import { useAccessibility } from '../AccessibilityProvider';
+import { useAccessibility } from '@/components/AccessibilityProvider/AccessibilityProvider';
 
 interface FormField {
   id: string;
@@ -54,7 +54,7 @@ export const AccessibleForm: React.FC<AccessibleFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const formRef = useRef<HTMLFormElement>(null);
-  const firstErrorRef = useRef<HTMLElement>(null);
+  const firstErrorRef = useRef<HTMLDivElement>(null);
   const { announce } = useAccessibility();
 
   // Initialize form data

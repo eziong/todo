@@ -128,7 +128,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 // PRESENTER COMPONENT
 // =============================================
 
-export const TaskDetailModal: React.FC<TaskDetailModalProps> = (props) => {
+export const TaskDetailModal: React.FC<TaskDetailModalProps> = React.memo((props) => {
   const theme = useTheme();
   const container = useTaskDetailModal(props);
   const { state } = container;
@@ -451,7 +451,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = (props) => {
       {/* Attachments list */}
       {props.task?.attachments && props.task.attachments.length > 0 ? (
         <List>
-          {props.task.attachments.map((attachment) => (
+          {props.task.attachments.map((attachment: any) => (
             <ListItem key={attachment.id} divider>
               <ListItemIcon>
                 <AttachFileIcon />
@@ -711,4 +711,4 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = (props) => {
       />
     </>
   );
-};
+});

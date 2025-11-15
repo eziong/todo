@@ -64,7 +64,8 @@ import {
   SearchSuggestion,
   SearchHistory 
 } from './useActivitySearch';
-import { ActivityFilters } from '../ActivityFilters';
+import { ActivityFilters } from '@/components/ActivityFilters/ActivityFilters';
+import { designTokens } from '@/theme/utils';
 import type { ActivityFeedItem } from '@/types/database';
 
 // =============================================
@@ -72,28 +73,28 @@ import type { ActivityFeedItem } from '@/types/database';
 // =============================================
 
 const SearchCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.large,
-  boxShadow: theme.macOS.shadows.card,
+  borderRadius: designTokens.borderRadius.lg,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   border: theme.palette.mode === 'light' ? 'none' : `1px solid ${theme.palette.divider}`,
   overflow: 'visible',
 }));
 
 const SearchField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
-    borderRadius: theme.macOS.borderRadius.medium,
+    borderRadius: designTokens.borderRadius.md,
     backgroundColor: theme.palette.mode === 'light' 
       ? alpha(theme.palette.common.white, 0.8) 
       : alpha(theme.palette.grey[900], 0.8),
-    transition: theme.macOS.animation.fast,
+    transition: designTokens.animation.fast,
     '&:hover': {
       backgroundColor: theme.palette.mode === 'light' 
         ? theme.palette.common.white 
         : theme.palette.grey[800],
-      boxShadow: theme.macOS.shadows.subtle,
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
     },
     '&.Mui-focused': {
       backgroundColor: theme.palette.common.white,
-      boxShadow: theme.macOS.shadows.medium,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     },
   },
 }));
@@ -101,8 +102,8 @@ const SearchField = styled(TextField)(({ theme }) => ({
 const SuggestionPopper = styled(Popper)(({ theme }) => ({
   zIndex: theme.zIndex.modal + 1,
   '& .MuiPaper-root': {
-    borderRadius: theme.macOS.borderRadius.medium,
-    boxShadow: theme.macOS.shadows.strong,
+    borderRadius: designTokens.borderRadius.md,
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
     border: `1px solid ${theme.palette.divider}`,
     maxHeight: 400,
     overflow: 'auto',
@@ -110,12 +111,12 @@ const SuggestionPopper = styled(Popper)(({ theme }) => ({
 }));
 
 const ResultCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.medium,
+  borderRadius: designTokens.borderRadius.md,
   border: `1px solid ${theme.palette.divider}`,
-  transition: theme.macOS.animation.fast,
+  transition: designTokens.animation.fast,
   cursor: 'pointer',
   '&:hover': {
-    boxShadow: theme.macOS.shadows.medium,
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     transform: 'translateY(-1px)',
   },
 }));
@@ -578,7 +579,7 @@ export const ActivitySearch: React.FC<ActivitySearchProps> = ({
           <Box mt={2} mb={2}>
             <Divider sx={{ mb: 2 }} />
             <Grid container spacing={2}>
-              <Grid item xs={6} md={3}>
+              <Grid size={{ xs: 6, md: 3 }}>
                 <Box textAlign="center">
                   <Typography variant="h6" color="primary">
                     {searchStats.totalQueries}
@@ -589,7 +590,7 @@ export const ActivitySearch: React.FC<ActivitySearchProps> = ({
                 </Box>
               </Grid>
               
-              <Grid item xs={6} md={3}>
+              <Grid size={{ xs: 6, md: 3 }}>
                 <Box textAlign="center">
                   <Typography variant="h6" color="success.main">
                     {searchStats.averageResults}
@@ -600,7 +601,7 @@ export const ActivitySearch: React.FC<ActivitySearchProps> = ({
                 </Box>
               </Grid>
               
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Box>
                   <Typography variant="caption" color="text.secondary" gutterBottom>
                     Popular searches:

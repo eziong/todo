@@ -103,13 +103,13 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
     try {
       const response = await fetch('/api/monitoring/metrics');
       if (!response.ok) {
-        throw new Error(`Failed to fetch metrics: ${response.status}`);
+        throw new globalThis.Error(`Failed to fetch metrics: ${response.status}`);
       }
       const data = await response.json();
       setMetrics(data);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch metrics');
+      setError(err instanceof globalThis.Error ? err.message : 'Failed to fetch metrics');
       console.error('Monitoring metrics fetch failed:', err);
     } finally {
       setLoading(false);
@@ -163,11 +163,11 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
 
   const getWebVitalsColor = (metric: string, value: number) => {
     const thresholds = {
-      lcp: [2500, 4000], // ms
-      fid: [100, 300], // ms
-      cls: [0.1, 0.25], // score
-      fcp: [1800, 3000], // ms
-      ttfb: [800, 1800] // ms
+      lcp: [2500, 4000] as [number, number], // ms
+      fid: [100, 300] as [number, number], // ms
+      cls: [0.1, 0.25] as [number, number], // score
+      fcp: [1800, 3000] as [number, number], // ms
+      ttfb: [800, 1800] as [number, number] // ms
     };
 
     const rating = getPerformanceRating(value, thresholds[metric as keyof typeof thresholds]);
@@ -230,7 +230,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
         <Grid container spacing={2}>
           {/* System Health */}
           {showHealth && (
-            <Grid item xs={12} md={compact ? 12 : 6}>
+            <Grid size={{ xs: 12, md: compact ? 12 : 6 }}>
               <Box sx={{ mb: 2 }}>
                 <Box 
                   sx={{ 
@@ -281,7 +281,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
 
           {/* Performance Metrics */}
           {showPerformance && (
-            <Grid item xs={12} md={compact ? 12 : 6}>
+            <Grid size={{ xs: 12, md: compact ? 12 : 6 }}>
               <Box sx={{ mb: 2 }}>
                 <Box 
                   sx={{ 
@@ -299,7 +299,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
                 </Box>
 
                 <Grid container spacing={1} sx={{ mt: 1 }}>
-                  <Grid item xs={6}>
+                  <Grid size={{ xs: 6 }}>
                     <Typography variant="body2" color="text.secondary">
                       Response Time
                     </Typography>
@@ -307,7 +307,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
                       {formatMetric(metrics.performance.responseTime, 'ms')}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{ xs: 6 }}>
                     <Typography variant="body2" color="text.secondary">
                       Error Rate
                     </Typography>
@@ -321,7 +321,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
                       {formatMetric(metrics.performance.errorRate, '%')}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{ xs: 6 }}>
                     <Typography variant="body2" color="text.secondary">
                       Throughput
                     </Typography>
@@ -329,7 +329,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
                       {formatMetric(metrics.performance.throughput, ' req/s')}
                     </Typography>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{ xs: 6 }}>
                     <Typography variant="body2" color="text.secondary">
                       Uptime
                     </Typography>
@@ -347,7 +347,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
                   </Typography>
                   <Grid container spacing={1}>
                     {Object.entries(metrics.webVitals).map(([metric, value]) => (
-                      <Grid item xs={6} sm={4} key={metric}>
+                      <Grid size={{ xs: 6, sm: 4 }} key={metric}>
                         <Box sx={{ textAlign: 'center', p: 1 }}>
                           <Chip
                             label={metric.toUpperCase()}
@@ -371,7 +371,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
 
           {/* Recent Errors */}
           {showErrors && metrics.errors.length > 0 && (
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Box>
                 <Box 
                   sx={{ 

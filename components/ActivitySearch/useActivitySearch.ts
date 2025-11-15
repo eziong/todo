@@ -212,6 +212,20 @@ export const useActivitySearch = ({
     return mockResults;
   }, []);
 
+  // Computed values for filters
+  const hasFilters = useMemo(() => {
+    return (
+      filters.eventTypes.length > 0 ||
+      filters.categories.length > 0 ||
+      filters.severities.length > 0 ||
+      filters.entityTypes.length > 0 ||
+      filters.users.length > 0 ||
+      filters.dateRange.from !== null ||
+      filters.dateRange.to !== null ||
+      filters.tags.length > 0
+    );
+  }, [filters]);
+
   // Execute search
   const executeSearch = useCallback(async () => {
     if (!query.trim() && !hasFilters) {
@@ -312,18 +326,6 @@ export const useActivitySearch = ({
 
   // Computed values
   const hasQuery = query.trim().length > 0;
-  const hasFilters = useMemo(() => {
-    return (
-      filters.eventTypes.length > 0 ||
-      filters.categories.length > 0 ||
-      filters.severities.length > 0 ||
-      filters.entityTypes.length > 0 ||
-      filters.users.length > 0 ||
-      filters.dateRange.from !== null ||
-      filters.dateRange.to !== null ||
-      filters.tags.length > 0
-    );
-  }, [filters]);
   
   const hasResults = results.length > 0;
   const resultCount = results.length;

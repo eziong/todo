@@ -7,7 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { validateSectionReorder } from '@/lib/validation/section';
 import type { 
-  ApiResponse 
+  ApiResponse,
+  Section
 } from '@/database/types';
 
 interface RouteParams {
@@ -18,7 +19,7 @@ interface RouteParams {
 
 // Helper function to check user permissions for section via workspace
 async function checkSectionPermission(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string, 
   sectionId: string, 
   requiredPermission: 'read' | 'write' | 'delete' | 'admin'
@@ -199,6 +200,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
           position,
           color,
           is_archived,
+          is_deleted,
           created_at,
           updated_at
         `)

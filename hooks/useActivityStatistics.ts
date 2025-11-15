@@ -290,18 +290,18 @@ export const useActivityStatistics = ({
 
   // Auto refresh
   useEffect(() => {
-    let refreshInterval: NodeJS.Timeout;
+    let refreshIntervalId: NodeJS.Timeout;
 
     if (autoRefresh) {
-      refreshInterval = setInterval(fetchStatistics, refreshInterval);
+      refreshIntervalId = setInterval(fetchStatistics, 30000); // Refresh every 30 seconds
     }
 
     return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
+      if (refreshIntervalId) {
+        clearInterval(refreshIntervalId);
       }
     };
-  }, [autoRefresh, refreshInterval, fetchStatistics]);
+  }, [autoRefresh, fetchStatistics]);
 
   // Initial load
   useEffect(() => {

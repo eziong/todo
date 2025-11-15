@@ -146,7 +146,7 @@ export const useTask = (
               if (!mounted) return;
               
               // Check if the change affects a task the user has access to
-              if (payload.new && !payload.new.is_deleted) {
+              if (payload.new && !(payload.new as any).is_deleted) {
                 // Task was updated/created - verify user still has access
                 try {
                   const { data: taskCheck } = await supabase
@@ -176,7 +176,7 @@ export const useTask = (
                 } catch (err) {
                   console.error('Error checking task access during update:', err);
                 }
-              } else if (payload.event === 'DELETE' || (payload.new && payload.new.is_deleted)) {
+              } else if ((payload as any).event === 'DELETE' || (payload.new && (payload.new as any).is_deleted)) {
                 // Task was deleted or soft-deleted
                 setTask(null);
                 setError('Task has been deleted');

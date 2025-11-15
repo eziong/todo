@@ -54,20 +54,21 @@ import {
   UseActivityEventDetailsProps 
 } from './useActivityEventDetails';
 import type { ActivityFeedItem, EntityActivityTimelineItem } from '@/types/database';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // STYLED COMPONENTS
 // =============================================
 
 const EventCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.large,
-  boxShadow: theme.macOS.shadows.card,
+  borderRadius: designTokens.borderRadius.lg,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   border: theme.palette.mode === 'light' ? 'none' : `1px solid ${theme.palette.divider}`,
   overflow: 'visible',
 }));
 
 const SectionCard = styled(Card)(({ theme }) => ({
-  borderRadius: theme.macOS.borderRadius.medium,
+  borderRadius: designTokens.borderRadius.md,
   backgroundColor: theme.palette.mode === 'light' 
     ? theme.palette.grey[50] 
     : theme.palette.grey[900],
@@ -80,7 +81,7 @@ const CodeBlock = styled(Box)(({ theme }) => ({
     ? theme.palette.grey[100] 
     : theme.palette.grey[800],
   border: `1px solid ${theme.palette.divider}`,
-  borderRadius: theme.macOS.borderRadius.small,
+  borderRadius: designTokens.borderRadius.sm,
   padding: theme.spacing(2),
   fontFamily: 'monospace',
   fontSize: '0.875rem',
@@ -339,7 +340,7 @@ const MetadataGrid: React.FC<MetadataGridProps> = ({
   formatTimestamp
 }) => (
   <Grid container spacing={2}>
-    <Grid item xs={12} sm={6}>
+    <Grid size={{ xs: 12, sm: 6 }}>
       <Typography variant="caption" color="text.secondary">
         Event ID
       </Typography>
@@ -348,7 +349,7 @@ const MetadataGrid: React.FC<MetadataGridProps> = ({
       </Typography>
     </Grid>
     
-    <Grid item xs={12} sm={6}>
+    <Grid size={{ xs: 12, sm: 6 }}>
       <Typography variant="caption" color="text.secondary">
         Timestamp
       </Typography>
@@ -357,7 +358,7 @@ const MetadataGrid: React.FC<MetadataGridProps> = ({
       </Typography>
     </Grid>
     
-    <Grid item xs={12} sm={6}>
+    <Grid size={{ xs: 12, sm: 6 }}>
       <Typography variant="caption" color="text.secondary">
         Category
       </Typography>
@@ -366,7 +367,7 @@ const MetadataGrid: React.FC<MetadataGridProps> = ({
       </Typography>
     </Grid>
     
-    <Grid item xs={12} sm={6}>
+    <Grid size={{ xs: 12, sm: 6 }}>
       <Typography variant="caption" color="text.secondary">
         Severity Level
       </Typography>
@@ -376,7 +377,7 @@ const MetadataGrid: React.FC<MetadataGridProps> = ({
     </Grid>
     
     {metadata.correlationId && (
-      <Grid item xs={12}>
+      <Grid size={{ xs: 12 }}>
         <Typography variant="caption" color="text.secondary">
           Correlation ID
         </Typography>

@@ -392,19 +392,19 @@ describe('Authentication Flow', () => {
       cy.waitForPageLoad()
 
       // Tab through form elements
-      cy.get('body').tab()
+      cy.get('body').type('{tab}')
       cy.focused().should('have.attr', 'data-testid', 'google-signin-button')
 
-      cy.focused().tab()
+      cy.focused().type('{tab}')
       cy.focused().should('have.attr', 'data-testid', 'email-input')
 
-      cy.focused().tab()
+      cy.focused().type('{tab}')
       cy.focused().should('have.attr', 'data-testid', 'password-input')
 
-      cy.focused().tab()
+      cy.focused().type('{tab}')
       cy.focused().should('have.attr', 'data-testid', 'password-toggle')
 
-      cy.focused().tab()
+      cy.focused().type('{tab}')
       cy.focused().should('have.attr', 'data-testid', 'login-submit')
     })
 
@@ -435,11 +435,9 @@ describe('Authentication Flow', () => {
       // Error messages should have proper ARIA attributes
       cy.contains('Email is required')
         .should('have.attr', 'role', 'alert')
-        .or('have.attr', 'aria-live', 'polite')
 
       cy.contains('Password is required')
         .should('have.attr', 'role', 'alert')
-        .or('have.attr', 'aria-live', 'polite')
     })
   })
 })

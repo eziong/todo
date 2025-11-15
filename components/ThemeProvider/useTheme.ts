@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { createAppTheme, type ThemeMode, type AppTheme } from '../../theme';
+import { createAppTheme, type ThemeMode, type AppTheme } from '../../theme/utils';
 
 // Theme Storage Key
 const THEME_STORAGE_KEY = 'todo-app-theme-mode';

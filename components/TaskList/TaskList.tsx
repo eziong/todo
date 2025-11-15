@@ -24,8 +24,9 @@ import {
 import {
   SortableContext,
 } from '@dnd-kit/sortable';
-import { TaskCard } from '../TaskCard';
+import { TaskCard } from '../TaskCard/TaskCard';
 import { useTaskList, type TaskListProps } from './useTaskList';
+import { designTokens } from '@/theme/utils';
 
 // =============================================
 // LOADING SKELETON COMPONENT
@@ -39,7 +40,7 @@ const TaskCardSkeleton: React.FC = () => {
       elevation={0}
       sx={{
         p: 2,
-        borderRadius: theme.macOS.borderRadius.medium,
+        borderRadius: designTokens.borderRadius.md,
         backgroundColor: theme.palette.background.paper,
         border: `1px solid ${theme.palette.divider}`,
       }}
@@ -113,7 +114,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           startIcon={<AddIcon />}
           onClick={onAction}
           sx={{
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: designTokens.borderRadius.md,
             textTransform: 'none',
             px: 3,
           }}
@@ -129,7 +130,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 // PRESENTER COMPONENT
 // =============================================
 
-export const TaskList: React.FC<TaskListProps> = (props) => {
+export const TaskList: React.FC<TaskListProps> = React.memo((props) => {
   const theme = useTheme();
   const container = useTaskList(props);
   const { state } = container;
@@ -174,7 +175,7 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
         severity="error"
         sx={{
           mb: 2,
-          borderRadius: theme.macOS.borderRadius.medium,
+          borderRadius: designTokens.borderRadius.md,
         }}
         onClose={container.clearError}
       >
@@ -198,7 +199,7 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
             sx={{
               position: 'relative',
               '& > *': {
-                transition: theme.macOS.animation.medium,
+                transition: designTokens.animation.normal,
               },
             }}
           >
@@ -247,7 +248,7 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: theme.macOS.borderRadius.medium,
+            borderRadius: designTokens.borderRadius.md,
             zIndex: 1000,
           }}
         >
@@ -264,4 +265,4 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
       )}
     </Box>
   );
-};
+});

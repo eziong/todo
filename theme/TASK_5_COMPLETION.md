@@ -159,7 +159,7 @@ Successfully enhanced the existing macOS-style design system using Material UI T
 
 ### Basic Theme Setup
 ```tsx
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeProvider } from '@/components/ThemeProvider/ThemeProvider';
 
 <ThemeProvider defaultMode="light" enableSystemTheme>
   <App />
@@ -168,14 +168,14 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 
 ### Theme Toggle
 ```tsx
-import { ThemeToggle } from '@/components/ThemeProvider';
+import { ThemeToggle } from '@/components/ThemeProvider/ThemeProvider';
 
 <ThemeToggle size="medium" showSystemIndicator />
 ```
 
 ### Using Design Tokens
 ```tsx
-import { designTokens, themeUtils } from '@/components/ThemeProvider';
+import { designTokens, themeUtils } from '@/components/ThemeProvider/ThemeProvider';
 
 const taskCard = {
   backgroundColor: designTokens.colors.taskStatus.completed,

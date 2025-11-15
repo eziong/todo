@@ -121,6 +121,11 @@ async function createAuditEvent(
       entity_id: taskId,
       old_values: oldValues,
       new_values: newValues,
+      category: 'user_action',
+      severity: 'info',
+      source: 'web',
+      tags: [],
+      context: {}
     };
 
     await supabase.from('events').insert([event]);
@@ -364,7 +369,7 @@ export async function PUT(
       if (updateData.status === 'completed' && !updateData.completed_at) {
         updateData.completed_at = new Date().toISOString();
       } else if (updateData.status !== 'completed' && task.completed_at) {
-        updateData.completed_at = null;
+        updateData.completed_at = undefined;
       }
     }
 

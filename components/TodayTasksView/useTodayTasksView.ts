@@ -6,7 +6,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useInfiniteTaskList } from '@/components/InfiniteTaskList/useInfiniteTaskList';
 import { useRouter } from '@/hooks/useRouter';
-import type { Task, TaskStatus, TaskFilters, User } from '@/types';
+import type { Task, TaskStatus, TaskFilters, User } from '@/types/database';
 
 // =============================================
 // TYPES
@@ -157,11 +157,10 @@ export const useTodayTasksView = (props: TodayTasksViewProps): UseTodayTasksView
 
   // Build filters for infinite task list
   const taskFilters = useMemo((): TaskFilters => ({
-    dueToday: true,
-    status: showCompletedTasks ? undefined : 'pending',
+    status: showCompletedTasks ? undefined : ['pending'] as any,
     priority: selectedPriorities.length > 0 ? selectedPriorities[0] as any : undefined,
     workspaceId: workspaceId,
-  }), [showCompletedTasks, selectedPriorities, workspaceId]);
+  } as any), [showCompletedTasks, selectedPriorities, workspaceId]);
 
   // Use infinite task list
   const {

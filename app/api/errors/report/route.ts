@@ -251,7 +251,7 @@ async function storeErrorReport(errorReport: ErrorReport) {
     // In a real implementation, you would store this in your database
     // For example, using Supabase:
     
-    // const supabase = createClient();
+    // const supabase = await createClient();
     // await supabase
     //   .from('error_reports')
     //   .insert({

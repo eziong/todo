@@ -8,8 +8,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import type { User, UserInsert, UserUpdate } from '@/database/types';
-import type { UseAuthReturn } from '@/types';
 // Remove unused imports for cleaner code
+
+// Auth return type
+export type UseAuthReturn = {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+  signOut: () => Promise<void>;
+  updateProfile: (updates: any) => Promise<User>;
+};
 
 /**
  * Authentication container hook
