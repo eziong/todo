@@ -1,0 +1,18 @@
+{
+  "testUser": {
+    "id": "test-user-id",
+    "email": "test@example.com",
+    "password": "testpassword123",
+    "firstName": "Test",
+    "lastName": "User",
+    "avatarUrl": null
+  },
+  "adminUser": {
+    "id": "admin-user-id",
+    "email": "admin@example.com", 
+    "password": "adminpassword123",
+    "firstName": "Admin",
+    "lastName": "User",
+    "avatarUrl": null
+  }
+}

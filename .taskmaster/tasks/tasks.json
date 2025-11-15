@@ -1,0 +1,583 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Project Foundation Setup",
+        "description": "Initialize Next.js 14+ project with TypeScript, Material UI, and development tools. Install @mui/material, @mui/icons-material, @emotion/react, @emotion/styled. Configure project structure, linting, and coding standards for macOS-style design.",
+        "priority": "high",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "Next.js",
+          "TypeScript",
+          "Material UI",
+          "Project Setup"
+        ],
+        "category": "foundation",
+        "dependencies": [],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 2,
+        "title": "Database Schema Design",
+        "description": "Design and implement Supabase PostgreSQL schema with all required tables: workspace, section, task, user, event, workspace_members. Include proper relationships, constraints, and indexes.",
+        "priority": "high",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "PostgreSQL",
+          "Supabase",
+          "Database Design",
+          "SQL"
+        ],
+        "category": "database",
+        "dependencies": [
+          1
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 3,
+        "title": "TypeScript Type Definitions",
+        "description": "Create comprehensive TypeScript types for all data models: Workspace, Section, Task, User, Event. Ensure type safety across the application.",
+        "priority": "high",
+        "status": "done",
+        "estimatedEffort": "4 hours",
+        "skillsRequired": [
+          "TypeScript",
+          "Type Design"
+        ],
+        "category": "types",
+        "dependencies": [
+          2
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 4,
+        "title": "Google OAuth Authentication",
+        "description": "Implement Google OAuth authentication using Next.js and Supabase Auth. Handle login, logout, session management, and user profile creation.",
+        "priority": "high",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "Next.js Auth",
+          "Google OAuth",
+          "Supabase Auth",
+          "Session Management"
+        ],
+        "category": "authentication",
+        "dependencies": [
+          2,
+          3
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 5,
+        "title": "Design System Foundation",
+        "description": "Create macOS-style design system using MUI ThemeProvider with custom theme configuration. Define color palette, typography, spacing, and component tokens. Implement day/night mode theming support using MUI's dark mode capabilities.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "Design Systems",
+          "Material UI",
+          "UI/UX",
+          "Theme Design"
+        ],
+        "category": "design",
+        "dependencies": [
+          1
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 6,
+        "title": "Navigation Sidebar Component",
+        "description": "Build responsive navigation sidebar using MUI Drawer, List, and ListItem components. Include search bar, user info, workspace/section hierarchy, and settings. Implement resize functionality for tablet/PC modes with MUI breakpoint system.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "10 hours",
+        "skillsRequired": [
+          "React",
+          "TypeScript",
+          "Material UI",
+          "Responsive Design",
+          "Component Architecture"
+        ],
+        "category": "ui-components",
+        "dependencies": [
+          5
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 7,
+        "title": "Main Content Area Layout",
+        "description": "Create main content area using MUI Container, Box, and Grid components with header (refresh IconButton), filter bar, and content sections. Implement responsive layout using MUI Grid system and infinite scroll capability.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "React",
+          "Material UI",
+          "Layout Design",
+          "Infinite Scroll",
+          "Responsive Design"
+        ],
+        "category": "ui-components",
+        "dependencies": [
+          5
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 8,
+        "title": "Task Card Component",
+        "description": "Build task card component using MUI Card, CardContent, and CardActions with inline editing capabilities. Use MUI Select for assignee/status dropdowns, implement drag-and-drop support, and modal trigger functionality.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "React",
+          "Material UI",
+          "Drag & Drop",
+          "Form Controls",
+          "Component Design"
+        ],
+        "category": "ui-components",
+        "dependencies": [
+          5
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 9,
+        "title": "Task Detail Modal",
+        "description": "Create comprehensive task detail modal using MUI Dialog, DialogTitle, and DialogContent components. Implement full task editing with MUI TextField, Select, Button, and FormControl components. Include validation and proper form handling.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "React",
+          "Material UI",
+          "Form Handling",
+          "Modal Design",
+          "Validation"
+        ],
+        "category": "ui-components",
+        "dependencies": [
+          8
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 10,
+        "title": "Spotlight Search Modal",
+        "description": "Implement spotlight-style search modal using MUI Dialog with full-screen overlay, MUI Autocomplete or custom Dialog for search interface. Include auto-focus, keyboard navigation, and search result display with navigation.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "React",
+          "Material UI",
+          "Search Implementation",
+          "Keyboard Navigation",
+          "Modal Design"
+        ],
+        "category": "features",
+        "dependencies": [
+          6,
+          7
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 11,
+        "title": "Workspace Management API",
+        "description": "Implement API endpoints and hooks for workspace CRUD operations, member management, and permission handling.",
+        "priority": "high",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "Next.js API Routes",
+          "Supabase Client",
+          "Permission Logic",
+          "Data Fetching"
+        ],
+        "category": "api",
+        "dependencies": [
+          4
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 12,
+        "title": "Section Management API",
+        "description": "Create API endpoints and hooks for section CRUD operations within workspaces, including proper authorization and data validation.",
+        "priority": "high",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "Next.js API Routes",
+          "Supabase Client",
+          "Data Validation"
+        ],
+        "category": "api",
+        "dependencies": [
+          11
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 13,
+        "title": "Task Management API",
+        "description": "Implement comprehensive task API with CRUD operations, status updates, assignment, drag-and-drop reordering, and soft delete functionality.",
+        "priority": "high",
+        "status": "done",
+        "estimatedEffort": "10 hours",
+        "skillsRequired": [
+          "Next.js API Routes",
+          "Supabase Client",
+          "Complex Business Logic"
+        ],
+        "category": "api",
+        "dependencies": [
+          12
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 14,
+        "title": "Search Functionality",
+        "description": "Implement full-text search across workspace titles, section titles, task titles, and descriptions with relevance ranking.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "PostgreSQL Full-text Search",
+          "Search Algorithms",
+          "Performance Optimization"
+        ],
+        "category": "features",
+        "dependencies": [
+          13
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 15,
+        "title": "Event Logging System",
+        "description": "Implement comprehensive event logging for all user actions with proper tracking and activity history functionality.",
+        "priority": "low",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "Event Architecture",
+          "Database Design",
+          "Activity Tracking"
+        ],
+        "category": "features",
+        "dependencies": [
+          13
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 16,
+        "title": "Today Tasks View",
+        "description": "Create Today Tasks view with proper filtering logic (startAt ≤ today ≤ expiredAt AND status ≠ completed) and priority indicators.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "4 hours",
+        "skillsRequired": [
+          "Date Logic",
+          "Filtering",
+          "UI Implementation"
+        ],
+        "category": "features",
+        "dependencies": [
+          13,
+          7
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 17,
+        "title": "Completed Tasks View",
+        "description": "Implement completed tasks view with filtering, reopen functionality, and proper status handling.",
+        "priority": "low",
+        "status": "done",
+        "estimatedEffort": "4 hours",
+        "skillsRequired": [
+          "Filtering Logic",
+          "State Management",
+          "UI Implementation"
+        ],
+        "category": "features",
+        "dependencies": [
+          13,
+          7
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 18,
+        "title": "Activities Page",
+        "description": "Create activities page showing event history with filtering capabilities and proper pagination.",
+        "priority": "low",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "Event Display",
+          "Filtering",
+          "Pagination",
+          "Date Formatting"
+        ],
+        "category": "features",
+        "dependencies": [
+          15,
+          7
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 19,
+        "title": "URL Routing & Navigation",
+        "description": "Implement proper URL routing for all pages, including search query parameters and deep linking to task modals.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "Next.js Routing",
+          "URL Parameters",
+          "Deep Linking"
+        ],
+        "category": "features",
+        "dependencies": [
+          16,
+          17,
+          18
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 20,
+        "title": "Data Caching & Real-time Updates",
+        "description": "Implement data caching with SWR/React Query and real-time updates for user actions with manual refresh for others.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "SWR/React Query",
+          "Cache Management",
+          "Real-time Updates"
+        ],
+        "category": "performance",
+        "dependencies": [
+          13
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 21,
+        "title": "Infinite Scroll Implementation",
+        "description": "Add infinite scroll functionality for large task lists with proper pagination and performance optimization.",
+        "priority": "low",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "Infinite Scroll",
+          "Performance Optimization",
+          "Pagination"
+        ],
+        "category": "performance",
+        "dependencies": [
+          20
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 22,
+        "title": "Testing Suite Setup",
+        "description": "Set up comprehensive testing with Jest, React Testing Library, and Cypress for unit, integration, and e2e tests.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "Testing Setup",
+          "Jest",
+          "React Testing Library",
+          "Cypress"
+        ],
+        "category": "testing",
+        "dependencies": [
+          1
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 23,
+        "title": "Component Tests",
+        "description": "Write comprehensive unit tests for all React components, hooks, and utilities.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "12 hours",
+        "skillsRequired": [
+          "Unit Testing",
+          "Component Testing",
+          "Mock Strategy"
+        ],
+        "category": "testing",
+        "dependencies": [
+          22,
+          9
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 24,
+        "title": "API Integration Tests",
+        "description": "Create integration tests for all API endpoints, database operations, and authentication flows.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "10 hours",
+        "skillsRequired": [
+          "Integration Testing",
+          "API Testing",
+          "Database Testing"
+        ],
+        "category": "testing",
+        "dependencies": [
+          22,
+          13
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 25,
+        "title": "E2E User Journey Tests",
+        "description": "Implement end-to-end tests covering complete user journeys: login, workspace creation, task management, and search functionality.",
+        "priority": "low",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "E2E Testing",
+          "Cypress",
+          "User Journey Mapping"
+        ],
+        "category": "testing",
+        "dependencies": [
+          22,
+          19
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 26,
+        "title": "Production Deployment Setup",
+        "description": "Configure production deployment pipeline with Vercel/Netlify, environment variables, and database migrations.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "Deployment",
+          "CI/CD",
+          "Environment Management"
+        ],
+        "category": "deployment",
+        "dependencies": [
+          24
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 27,
+        "title": "Performance Optimization",
+        "description": "Optimize application performance with code splitting, image optimization, lazy loading, and bundle analysis.",
+        "priority": "low",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "Performance Optimization",
+          "Code Splitting",
+          "Bundle Analysis"
+        ],
+        "category": "optimization",
+        "dependencies": [
+          21
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 28,
+        "title": "Accessibility Implementation",
+        "description": "Ensure full accessibility compliance with WCAG guidelines, keyboard navigation, screen reader support, and semantic HTML.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "10 hours",
+        "skillsRequired": [
+          "Accessibility",
+          "WCAG",
+          "Keyboard Navigation",
+          "ARIA"
+        ],
+        "category": "accessibility",
+        "dependencies": [
+          9
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 29,
+        "title": "Error Handling & Monitoring",
+        "description": "Implement comprehensive error handling, error boundaries, and monitoring with proper logging and user feedback.",
+        "priority": "medium",
+        "status": "done",
+        "estimatedEffort": "6 hours",
+        "skillsRequired": [
+          "Error Handling",
+          "Monitoring",
+          "Logging",
+          "User Experience"
+        ],
+        "category": "reliability",
+        "dependencies": [
+          20
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      },
+      {
+        "id": 30,
+        "title": "Documentation & User Guide",
+        "description": "Create comprehensive documentation including API docs, component storybook, user guide, and development setup instructions.",
+        "priority": "low",
+        "status": "done",
+        "estimatedEffort": "8 hours",
+        "skillsRequired": [
+          "Technical Writing",
+          "Documentation",
+          "Storybook"
+        ],
+        "category": "documentation",
+        "dependencies": [
+          26
+        ],
+        "createdAt": "2025-11-14T23:25:25.218Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "createdAt": "2025-11-14T23:25:25.218Z",
+      "tag": "master",
+      "totalTasks": 30,
+      "estimatedTotalEffort": "208 hours",
+      "projectDescription": "Todo list application with workspace > section > task hierarchy, macOS-style design, and Google OAuth authentication",
+      "created": "2025-11-14T23:36:14.001Z",
+      "description": "Tasks for master context",
+      "updated": "2025-11-15T04:12:10.278Z"
+    }
+  }
+}

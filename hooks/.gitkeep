@@ -1,0 +1,4 @@
+# Hooks Directory
+
+Shared custom hooks that can be used across multiple components.
+Component-specific hooks should be in their respective component directories.

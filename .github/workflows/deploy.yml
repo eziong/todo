@@ -1,0 +1,65 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@canary
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          NODE_ENV: production
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Run Database Migrations
+        run: |
+          echo "Running database migrations..."
+          # Add your migration commands here
+          # npm run migrate:prod
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+
+      - name: Health Check
+        run: |
+          echo "Waiting for deployment to be ready..."
+          sleep 30
+          curl -f ${{ secrets.VERCEL_URL }}/api/health || exit 1
+
+      - name: Notify on Success
+        uses: 8398a7/action-slack@v3
+        if: success()
+        with:
+          status: success
+          text: '🚀 Deployment successful!'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify on Failure
+        uses: 8398a7/action-slack@v3
+        if: failure()
+        with:
+          status: failure
+          text: '❌ Deployment failed!'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

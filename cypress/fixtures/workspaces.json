@@ -1,0 +1,18 @@
+{
+  "testWorkspace": {
+    "id": "test-workspace-id",
+    "name": "Test Workspace",
+    "description": "A workspace for testing",
+    "color": "#2563eb",
+    "iconType": "emoji",
+    "iconValue": "🏢"
+  },
+  "personalWorkspace": {
+    "id": "personal-workspace-id",
+    "name": "Personal Tasks",
+    "description": "Personal task management",
+    "color": "#7c3aed",
+    "iconType": "emoji", 
+    "iconValue": "👤"
+  }
+}

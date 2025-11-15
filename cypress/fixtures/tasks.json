@@ -1,0 +1,28 @@
+{
+  "sampleTasks": [
+    {
+      "id": "task-1",
+      "title": "Complete project setup",
+      "description": "Set up the initial project structure and configuration",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": null
+    },
+    {
+      "id": "task-2", 
+      "title": "Write documentation",
+      "description": "Create comprehensive documentation for the API",
+      "status": "in_progress",
+      "priority": "medium",
+      "dueDate": "2024-12-31"
+    },
+    {
+      "id": "task-3",
+      "title": "Review code changes",
+      "description": "Review pull requests and provide feedback",
+      "status": "completed",
+      "priority": "low",
+      "dueDate": null
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+# Components Directory
+
+This directory follows the strict container-presenter architecture pattern:
+
+## Directory Structure Pattern
+```
+ComponentName/
+  ├── useComponentName.ts     (Container - business logic)
+  ├── ComponentName.tsx       (Presenter - UI only)
+  └── ChildComponent/         (Child components as subdirectories)
+      ├── useChildComponent.ts
+      └── ChildComponent.tsx
+```
+
+## Rules
+1. Maximum one container-presenter pair per directory
+2. All child components must be in subdirectories
+3. Containers (hooks) contain all business logic and state
+4. Presenters are pure UI components receiving props from containers
+5. Use TypeScript strict mode with explicit typing

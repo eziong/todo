@@ -1,0 +1,220 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  unit-tests:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: todo_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup test environment
+        run: |
+          cp .env.test .env.local
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/todo_test" >> .env.local
+
+      - name: Run database migrations (if any)
+        run: |
+          # Add your database setup commands here
+          # npm run db:migrate:test || true
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run type checking
+        run: npx tsc --noEmit
+
+      - name: Run unit tests
+        run: npm run test:ci
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Setup test environment
+        run: |
+          cp .env.test .env.local
+
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
+          browser: chrome
+          record: true
+          parallel: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          retention-days: 7
+
+      - name: Upload Cypress videos
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          retention-days: 7
+
+  accessibility-tests:
+    name: Accessibility Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: npm start &
+
+      - name: Wait for application
+        run: npx wait-on http://localhost:3000
+
+      - name: Run accessibility tests
+        run: |
+          npx @axe-core/cli http://localhost:3000 \
+            --include="main" \
+            --exclude="iframe" \
+            --tags="wcag2a,wcag2aa" \
+            --save axe-results.json
+
+      - name: Upload accessibility results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: axe-results
+          path: axe-results.json
+          retention-days: 30
+
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
+
+      - name: Run Lighthouse CI
+        run: |
+          npm start &
+          npx wait-on http://localhost:3000
+          lhci autorun --upload.target=temporary-public-storage
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  security-tests:
+    name: Security Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Run npm audit
+        run: npm audit --audit-level high
+
+      - name: Check for known vulnerabilities
+        run: |
+          npx audit-ci --config ./audit-ci.json
