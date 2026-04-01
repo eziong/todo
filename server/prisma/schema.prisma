@@ -1,0 +1,494 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================
+// Tags (Phase 1 — pattern validation)
+// =============================================================
+model tags {
+  id         String   @id @default(uuid())
+  user_id    String
+  name       String
+  color      String?
+  created_at DateTime @default(now())
+
+  todo_tags todo_tags[]
+
+  @@unique([user_id, name], map: "tags_user_name_idx")
+  @@index([user_id], map: "tags_user_id_idx")
+}
+
+// =============================================================
+// Projects
+// =============================================================
+model projects {
+  id          String   @id @default(uuid())
+  user_id     String
+  name        String
+  description String?
+  color       String?
+  icon        String?
+  archived    Boolean  @default(false)
+  position    Int?
+  github_repo String?
+  features    String[] @default(["tasks", "notes", "links"])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+
+  todos              todos[]
+  build_commands     build_commands[]
+  builds             builds[]
+  contents           contents[]
+  assets             assets[]
+  notes              notes[]
+  links              links[]
+  google_tokens      google_tokens[]
+  youtube_channels   youtube_channels[]
+
+  @@index([user_id], map: "projects_user_id_idx")
+  @@index([user_id, archived], map: "projects_user_archived_idx")
+}
+
+// =============================================================
+// Todos
+// =============================================================
+model todos {
+  id           String    @id @default(uuid())
+  user_id      String
+  title        String
+  description  String?   @db.Text
+  status       String    @default("todo")
+  priority     String    @default("none")
+  due_date     DateTime?
+  project_id   String?
+  parent_id    String?
+  position     Int?
+  completed_at DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @default(now())
+
+  project         projects?        @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  parent          todos?           @relation("TodoParent", fields: [parent_id], references: [id], onDelete: Cascade)
+  children        todos[]          @relation("TodoParent")
+  todo_tags       todo_tags[]
+  recurring_rules recurring_rules[]
+
+  @@index([user_id], map: "todos_user_id_idx")
+  @@index([user_id, status], map: "todos_user_status_idx")
+  @@index([user_id, due_date], map: "todos_user_due_date_idx")
+  @@index([project_id], map: "todos_project_id_idx")
+  @@index([parent_id], map: "todos_parent_id_idx")
+  @@index([user_id, priority], map: "todos_user_priority_idx")
+}
+
+// =============================================================
+// Todo Tags (junction)
+// =============================================================
+model todo_tags {
+  todo_id String
+  tag_id  String
+
+  todo todos @relation(fields: [todo_id], references: [id], onDelete: Cascade)
+  tag  tags  @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([todo_id, tag_id])
+  @@index([tag_id], map: "todo_tags_tag_id_idx")
+}
+
+// =============================================================
+// Inbox Items
+// =============================================================
+model inbox_items {
+  id           String   @id @default(uuid())
+  user_id      String
+  content      String
+  created_at   DateTime @default(now())
+  processed    Boolean  @default(false)
+  processed_to String?
+  processed_id String?
+
+  @@index([user_id], map: "inbox_items_user_id_idx")
+  @@index([user_id, processed], map: "inbox_items_user_processed_idx")
+}
+
+// =============================================================
+// Recurring Rules
+// =============================================================
+model recurring_rules {
+  id           String    @id @default(uuid())
+  todo_id      String
+  frequency    String
+  interval     Int       @default(1)
+  days_of_week Int[]     @default([])
+  next_due     DateTime?
+  created_at   DateTime  @default(now())
+
+  todo todos @relation(fields: [todo_id], references: [id], onDelete: Cascade)
+
+  @@index([todo_id], map: "recurring_rules_todo_id_idx")
+  @@index([next_due], map: "recurring_rules_next_due_idx")
+}
+
+// =============================================================
+// Build Commands
+// =============================================================
+model build_commands {
+  id            String  @id @default(uuid())
+  project_id    String
+  label         String
+  url           String
+  method        String  @default("POST")
+  headers       Json    @default("{}")
+  body_template String? @db.Text
+  position      Int?
+
+  project projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  builds  builds[]
+
+  @@index([project_id], map: "build_commands_project_id_idx")
+}
+
+// =============================================================
+// Builds
+// =============================================================
+model builds {
+  id               String    @id @default(uuid())
+  project_id       String
+  build_command_id String?
+  build_number     Int
+  status           String    @default("pending")
+  command          String?
+  log              String?   @db.Text
+  started_at       DateTime?
+  finished_at      DateTime?
+  notes            String?
+  created_at       DateTime  @default(now())
+
+  project       projects        @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  build_command build_commands? @relation(fields: [build_command_id], references: [id], onDelete: SetNull)
+
+  @@unique([project_id, build_number], map: "builds_project_number_idx")
+  @@index([project_id], map: "builds_project_id_idx")
+  @@index([project_id, status], map: "builds_project_status_idx")
+  @@index([build_command_id], map: "builds_build_command_id_idx")
+}
+
+// =============================================================
+// Activity Log
+// =============================================================
+model activity_log {
+  id          String   @id @default(uuid())
+  user_id     String
+  action      String
+  entity_type String
+  entity_id   String?
+  metadata    Json     @default("{}")
+  created_at  DateTime @default(now())
+
+  @@index([user_id], map: "activity_log_user_id_idx")
+  @@index([user_id, created_at(sort: Desc)], map: "activity_log_user_created_idx")
+  @@index([entity_type, entity_id], map: "activity_log_entity_idx")
+}
+
+// =============================================================
+// Note Folders
+// =============================================================
+model note_folders {
+  id         String   @id @default(uuid())
+  user_id    String
+  name       String
+  parent_id  String?
+  position   Int?
+  created_at DateTime @default(now())
+
+  parent   note_folders?  @relation("FolderParent", fields: [parent_id], references: [id], onDelete: Cascade)
+  children note_folders[] @relation("FolderParent")
+  notes    notes[]
+
+  @@index([user_id], map: "note_folders_user_id_idx")
+}
+
+// =============================================================
+// Notes
+// =============================================================
+model notes {
+  id         String   @id @default(uuid())
+  user_id    String
+  folder_id  String?
+  project_id String?
+  title      String
+  content    String?  @db.Text
+  pinned     Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  folder   note_folders? @relation(fields: [folder_id], references: [id], onDelete: SetNull)
+  project  projects?     @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  contents contents[]
+
+  @@index([user_id], map: "notes_user_id_idx")
+  @@index([folder_id], map: "notes_folder_id_idx")
+  @@index([project_id], map: "notes_project_id_idx")
+  @@index([user_id, pinned], map: "notes_user_pinned_idx")
+}
+
+// =============================================================
+// Links
+// =============================================================
+model links {
+  id          String   @id @default(uuid())
+  user_id     String
+  project_id  String?
+  label       String
+  url         String
+  category    String?
+  click_count Int      @default(0)
+  position    Int?
+  created_at  DateTime @default(now())
+
+  project projects? @relation(fields: [project_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id], map: "links_user_id_idx")
+  @@index([project_id], map: "links_project_id_idx")
+  @@index([user_id, category], map: "links_user_category_idx")
+}
+
+// =============================================================
+// Description Templates
+// =============================================================
+model description_templates {
+  id         String   @id @default(uuid())
+  user_id    String
+  name       String
+  content    String
+  is_default Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  contents contents[]
+
+  @@index([user_id], map: "description_templates_user_id_idx")
+}
+
+// =============================================================
+// Contents
+// =============================================================
+model contents {
+  id               String    @id @default(uuid())
+  user_id          String
+  project_id       String?
+  title            String
+  description      String?   @db.Text
+  type             String    @default("video")
+  stage            String    @default("idea")
+  platform         String    @default("youtube")
+  note_id          String?
+  youtube_video_id String?
+  scheduled_at     DateTime?
+  published_at     DateTime?
+  template_id      String?
+  tags             String[]  @default([])
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @default(now())
+
+  project              projects?              @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  note                 notes?                 @relation(fields: [note_id], references: [id], onDelete: SetNull)
+  template             description_templates? @relation(fields: [template_id], references: [id], onDelete: SetNull)
+  content_checklists   content_checklists[]
+  assets               assets[]
+  sponsorships         sponsorships[]
+  sns_reminders        sns_reminders[]
+
+  @@index([user_id], map: "contents_user_id_idx")
+  @@index([user_id, stage], map: "contents_user_stage_idx")
+  @@index([project_id], map: "contents_project_id_idx")
+  @@index([scheduled_at], map: "contents_scheduled_at_idx")
+}
+
+// =============================================================
+// Content Checklists
+// =============================================================
+model content_checklists {
+  id         String  @id @default(uuid())
+  content_id String
+  label      String
+  checked    Boolean @default(false)
+  position   Int?
+
+  content contents @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  @@index([content_id], map: "content_checklists_content_id_idx")
+}
+
+// =============================================================
+// Google Tokens
+// =============================================================
+model google_tokens {
+  id            String   @id @default(uuid())
+  user_id       String
+  project_id    String
+  service       String   // 'youtube' | 'drive'
+  access_token  String
+  refresh_token String
+  token_type    String   @default("Bearer")
+  expires_at    DateTime
+  scopes        String[] @default([])
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
+
+  project projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, project_id, service])
+  @@index([user_id], map: "google_tokens_user_id_idx")
+  @@index([project_id], map: "google_tokens_project_id_idx")
+}
+
+// =============================================================
+// YouTube Channels
+// =============================================================
+model youtube_channels {
+  id               String   @id @default(uuid())
+  user_id          String
+  project_id       String   @unique
+  channel_id       String
+  channel_title    String?
+  subscriber_count Int?
+  video_count      Int?
+  view_count       BigInt?
+  thumbnail_url    String?
+  synced_at        DateTime @default(now())
+
+  project projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "youtube_channels_user_id_idx")
+  @@index([project_id], map: "youtube_channels_project_id_idx")
+}
+
+// =============================================================
+// Assets
+// =============================================================
+model assets {
+  id            String   @id @default(uuid())
+  user_id       String
+  content_id    String?
+  project_id    String?
+  filename      String
+  mime_type     String
+  size_bytes    BigInt
+  storage_type  String
+  storage_path  String
+  thumbnail_url String?
+  tags          String[] @default([])
+  created_at    DateTime @default(now())
+
+  content contents? @relation(fields: [content_id], references: [id], onDelete: SetNull)
+  project projects? @relation(fields: [project_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id], map: "assets_user_id_idx")
+  @@index([content_id], map: "assets_content_id_idx")
+  @@index([project_id], map: "assets_project_id_idx")
+  @@index([user_id, storage_type], map: "assets_storage_type_idx")
+}
+
+// =============================================================
+// Sponsorships
+// =============================================================
+model sponsorships {
+  id           String    @id @default(uuid())
+  user_id      String
+  content_id   String?
+  brand        String
+  amount       Decimal
+  currency     String    @default("KRW")
+  status       String    @default("negotiating")
+  contact_info String?
+  notes        String?   @db.Text
+  due_date     DateTime?
+  paid_at      DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @default(now())
+
+  content contents? @relation(fields: [content_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id], map: "sponsorships_user_id_idx")
+  @@index([content_id], map: "sponsorships_content_id_idx")
+  @@index([user_id, status], map: "sponsorships_status_idx")
+}
+
+// =============================================================
+// Notifications
+// =============================================================
+model notifications {
+  id         String   @id @default(uuid())
+  user_id    String
+  source     String
+  type       String
+  title      String
+  body       String?
+  url        String?
+  entity_id  String?
+  read       Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  @@index([user_id], map: "notifications_user_id_idx")
+  @@index([user_id, read], map: "notifications_user_read_idx")
+  @@index([user_id, source], map: "notifications_user_source_idx")
+  @@index([user_id, created_at(sort: Desc)], map: "notifications_user_created_idx")
+}
+
+// =============================================================
+// SNS Accounts
+// =============================================================
+model sns_accounts {
+  id          String   @id @default(uuid())
+  user_id     String
+  platform    String
+  handle      String
+  profile_url String?
+  created_at  DateTime @default(now())
+
+  @@unique([user_id, platform, handle], map: "sns_accounts_user_platform_handle_idx")
+  @@index([user_id], map: "sns_accounts_user_id_idx")
+}
+
+// =============================================================
+// SNS Reminders
+// =============================================================
+model sns_reminders {
+  id            String   @id @default(uuid())
+  user_id       String
+  content_id    String?
+  platform      String
+  scheduled_at  DateTime
+  template_text String?  @db.Text
+  status        String   @default("pending")
+  created_at    DateTime @default(now())
+
+  content contents? @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "sns_reminders_user_id_idx")
+  @@index([content_id], map: "sns_reminders_content_id_idx")
+  @@index([user_id, status], map: "sns_reminders_user_status_idx")
+}
+
+// =============================================================
+// Change History (Undo/Redo)
+// =============================================================
+model change_history {
+  id         String   @id @default(uuid())
+  user_id    String
+  table_name String
+  record_id  String
+  action     String   // 'create' | 'update' | 'delete'
+  before     Json?
+  after      Json?
+  created_at DateTime @default(now())
+
+  @@index([user_id, created_at], map: "change_history_user_created_idx")
+  @@index([user_id, table_name, record_id], map: "change_history_user_table_record_idx")
+}

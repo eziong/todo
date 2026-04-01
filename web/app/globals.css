@@ -1,0 +1,156 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Dark-mode-first design system - Linear/Raycast inspired */
+:root {
+  /* Backgrounds */
+  --background: #0A0A0B;
+  --background-secondary: #111113;
+  --background-tertiary: #1A1A1E;
+
+  /* Text */
+  --foreground: #EDEDEF;
+  --foreground-secondary: #8B8B8E;
+
+  /* Borders */
+  --border: #2A2A2E;
+  --input: #2A2A2E;
+  --ring: #4C8BF5;
+
+  /* Accent colors */
+  --accent-blue: #4C8BF5;
+  --accent-purple: #8B5CF6;
+  --accent-green: #22C55E;
+  --accent-yellow: #EAB308;
+  --accent-red: #EF4444;
+  --accent-orange: #F97316;
+  --accent-pink: #EC4899;
+  --accent-gray: #6B7280;
+
+  /* Component tokens */
+  --card: #111113;
+  --card-foreground: #EDEDEF;
+  --popover: #111113;
+  --popover-foreground: #EDEDEF;
+  --primary: #4C8BF5;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1A1A1E;
+  --secondary-foreground: #EDEDEF;
+  --muted: #1A1A1E;
+  --muted-foreground: #8B8B8E;
+  --accent: #1A1A1E;
+  --accent-foreground: #EDEDEF;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  /* Sidebar */
+  --sidebar: #111113;
+  --sidebar-foreground: #EDEDEF;
+  --sidebar-primary: #4C8BF5;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #1A1A1E;
+  --sidebar-accent-foreground: #EDEDEF;
+  --sidebar-border: #2A2A2E;
+  --sidebar-ring: #4C8BF5;
+
+  /* Radius */
+  --radius: 0.5rem;
+  --radius-card: 8px;
+  --radius-button: 6px;
+  --radius-badge: 4px;
+}
+
+@theme inline {
+  --font-sans: 'Inter', 'Inter Fallback', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace;
+
+  --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
+  --color-background-tertiary: var(--background-tertiary);
+  --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Accent color utilities */
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-green: var(--accent-green);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-accent-red: var(--accent-red);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-pink: var(--accent-pink);
+  --color-accent-gray: var(--accent-gray);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/70;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Accessibility: respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2A2A2E;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3A3A3E;
+}
