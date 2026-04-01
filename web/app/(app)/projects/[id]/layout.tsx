@@ -107,7 +107,7 @@ export default function ProjectDetailLayout({
   return (
     <div className="flex flex-1 flex-col">
       {/* Project Header */}
-      <div className="border-b border-border px-6 pt-6 pb-0">
+      <div className="border-b border-border pt-6 pb-0">
         <div className="flex items-center gap-3">
           <span className={cn('h-3 w-3 rounded-full', getProjectDotColor(project.color))} />
           <h1 className="text-xl font-semibold text-foreground">{project.name}</h1>

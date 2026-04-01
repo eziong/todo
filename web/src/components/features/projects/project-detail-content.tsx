@@ -90,7 +90,7 @@ export function ProjectDetailContent({
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-6 py-6">
       {/* Progress Bar */}
       <section className="rounded-lg border border-border bg-background-secondary p-4">
         <div className="mb-3 flex items-center justify-between">

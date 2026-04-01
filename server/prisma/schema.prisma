@@ -293,6 +293,7 @@ model contents {
   published_at     DateTime?
   template_id      String?
   tags             String[]  @default([])
+  position         Int?
   created_at       DateTime  @default(now())
   updated_at       DateTime  @default(now())
 

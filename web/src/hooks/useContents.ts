@@ -7,13 +7,16 @@ import {
   createContent,
   updateContent,
   deleteContent,
+  reorderContents,
 } from '@/services/contents'
 import type { ContentId } from '@/types/branded'
 import type {
   ContentWithDetails,
   ContentFilters,
+  ContentStage,
   CreateContentInput,
   UpdateContentInput,
+  ReorderContentItem,
 } from '@/types/domain'
 
 export function useContents(filters?: ContentFilters) {
@@ -121,6 +124,52 @@ export function useDeleteContent() {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.contents.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.contentChecklists.all })
+    },
+  })
+}
+
+export function useReorderContent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (items: ReorderContentItem[]) => reorderContents(items),
+    onMutate: async (items) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.contents.lists() })
+
+      const previousLists = queryClient.getQueriesData<ContentWithDetails[]>({
+        queryKey: queryKeys.contents.lists(),
+      })
+
+      queryClient.setQueriesData<ContentWithDetails[]>(
+        { queryKey: queryKeys.contents.lists() },
+        (old) => {
+          if (!old) return old
+          return old.map((content) => {
+            const reorderItem = items.find((item) => item.id === (content.id as string))
+            if (reorderItem) {
+              return {
+                ...content,
+                stage: reorderItem.stage as ContentStage,
+                position: reorderItem.position,
+              }
+            }
+            return content
+          })
+        },
+      )
+
+      return { previousLists }
+    },
+    onError: (error, _vars, context) => {
+      if (context?.previousLists) {
+        for (const [key, data] of context.previousLists) {
+          queryClient.setQueryData(key, data)
+        }
+      }
+      handleMutationError(error)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.contents.all })
     },
   })
 }

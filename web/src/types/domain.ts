@@ -425,8 +425,15 @@ export interface Content {
   publishedAt: string | null
   templateId: DescriptionTemplateId | null
   tags: string[]
+  position: number | null
   createdAt: string
   updatedAt: string
+}
+
+export interface ReorderContentItem {
+  id: string
+  stage: ContentStage
+  position: number
 }
 
 export interface ContentChecklist {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useContents, useCreateContent, useUpdateContent, useDeleteContent } from '@/hooks/useContents'
+import { useContents, useCreateContent, useUpdateContent, useDeleteContent, useReorderContent } from '@/hooks/useContents'
 import { useProjects } from '@/hooks/useProjects'
 import {
   AlertDialog,
@@ -19,7 +19,7 @@ import { CreateContentDialog } from '@/components/features/content/create-conten
 import { ContentSkeleton } from '@/components/features/content/content-skeleton'
 import { classifyError } from '@/lib/errors'
 import { ContentId } from '@/types/branded'
-import type { ContentFilters, ContentStage, CreateContentInput } from '@/types/domain'
+import type { ContentFilters, ContentStage, CreateContentInput, ReorderContentItem } from '@/types/domain'
 
 export default function ProjectContentPage() {
   const params = useParams<{ id: string }>()
@@ -34,6 +34,7 @@ export default function ProjectContentPage() {
   const createContent = useCreateContent()
   const updateContent = useUpdateContent()
   const deleteContent = useDeleteContent()
+  const reorderContent = useReorderContent()
 
   if (isLoading) return <ContentSkeleton />
 
@@ -57,6 +58,10 @@ export default function ProjectContentPage() {
 
   const handleStageChange = (id: string, stage: ContentStage) => {
     updateContent.mutate({ id: ContentId(id), input: { stage } })
+  }
+
+  const handleReorder = (items: ReorderContentItem[]) => {
+    reorderContent.mutate(items)
   }
 
   const handleCreateContent = (input: CreateContentInput) => {
@@ -90,6 +95,7 @@ export default function ProjectContentPage() {
         filters={filters}
         onFiltersChange={setFilters}
         onStageChange={handleStageChange}
+        onReorder={handleReorder}
         onCreateContent={() => setCreateDialogOpen(true)}
         onDeleteContent={handleDeleteContent}
         onSelectContent={handleSelectContent}

@@ -1,4 +1,5 @@
-const { app, BrowserWindow, shell, globalShortcut } = require('electron');
+const { app, BrowserWindow, shell, ipcMain } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
 const APP_URL = process.env.COMMAND_CENTER_URL || 'https://command-web-549189599662.asia-northeast3.run.app';
@@ -22,6 +23,65 @@ function isAllowedUrl(url) {
 }
 
 let mainWindow;
+
+// --- Auto Updater ---
+
+function setupAutoUpdater() {
+  // Don't auto-download — user clicks "Update" manually
+  autoUpdater.autoDownload = false;
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on('checking-for-update', () => {
+    sendToRenderer('update-checking');
+  });
+
+  autoUpdater.on('update-available', (info) => {
+    sendToRenderer('update-available', {
+      version: info.version,
+      releaseNotes: info.releaseNotes || '',
+      releaseDate: info.releaseDate || '',
+    });
+  });
+
+  autoUpdater.on('update-not-available', () => {
+    sendToRenderer('update-not-available');
+  });
+
+  autoUpdater.on('download-progress', (progress) => {
+    sendToRenderer('update-download-progress', {
+      percent: progress.percent,
+      bytesPerSecond: progress.bytesPerSecond,
+      transferred: progress.transferred,
+      total: progress.total,
+    });
+  });
+
+  autoUpdater.on('update-downloaded', (info) => {
+    sendToRenderer('update-downloaded', {
+      version: info.version,
+    });
+  });
+
+  autoUpdater.on('error', (err) => {
+    sendToRenderer('update-error', {
+      message: err.message || 'Update check failed',
+    });
+  });
+}
+
+function sendToRenderer(channel, data) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send(channel, data);
+  }
+}
+
+// IPC handlers for renderer requests
+ipcMain.handle('get-app-version', () => app.getVersion());
+ipcMain.handle('check-for-updates', () => autoUpdater.checkForUpdates());
+ipcMain.handle('download-update', () => autoUpdater.downloadUpdate());
+ipcMain.handle('install-update', () => autoUpdater.quitAndInstall(false, true));
+
+// --- Window ---
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -79,7 +139,17 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  setupAutoUpdater();
+  createWindow();
+
+  // Check for updates after window is ready (3s delay to not block startup)
+  mainWindow.once('ready-to-show', () => {
+    setTimeout(() => {
+      autoUpdater.checkForUpdates().catch(() => {});
+    }, 3000);
+  });
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

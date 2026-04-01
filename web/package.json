@@ -11,6 +11,9 @@
     "deploy": "gcloud run deploy command-web --source . --region asia-northeast3 --allow-unauthenticated --min-instances 0 --max-instances 2 --memory 512Mi --cpu 1"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-alert-dialog": "1.1.15",

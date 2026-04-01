@@ -7,6 +7,7 @@ import { AppSidebar } from '@/components/layout/app-sidebar'
 import { CommandPalette } from '@/components/layout/command-palette'
 import { useAppStore } from '@/stores/app-store'
 import { useUndo } from '@/hooks/useUndo'
+import { UpdateBanner } from '@/components/features/update/update-banner'
 import { Loader2 } from 'lucide-react'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -86,24 +87,26 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* Desktop Layout (>= 768px) */}
-      <div className="hidden md:flex h-screen bg-background">
-        <AppSidebar
-          collapsed={sidebarCollapsed}
-          onCollapsedChange={setSidebarCollapsed}
-        />
+      <div className="hidden md:flex flex-col h-screen bg-background">
+        <UpdateBanner />
+        <div className="flex flex-1 overflow-hidden">
+          <AppSidebar
+            collapsed={sidebarCollapsed}
+            onCollapsedChange={setSidebarCollapsed}
+          />
 
-        {/* Main content area */}
-        <main className="flex flex-1 flex-col overflow-hidden">
-          <div className="flex-1 overflow-auto px-6 py-6">
-            <div className="mx-auto max-w-[960px]">
+          {/* Main content area */}
+          <main className="flex flex-1 flex-col overflow-hidden">
+            <div className="flex-1 overflow-auto px-6 py-6">
               {children}
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
 
       {/* Mobile Layout (< 768px) - simplified for now */}
       <div className="md:hidden flex flex-col h-screen bg-background">
+        <UpdateBanner />
         <main className="flex-1 overflow-auto px-4 py-4">
           {children}
         </main>

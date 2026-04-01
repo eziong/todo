@@ -9,6 +9,7 @@ import type {
   UpdateContentInput,
   CreateContentChecklistInput,
   UpdateContentChecklistInput,
+  ReorderContentItem,
 } from '@/types/domain'
 
 // --- Server Response Branding ---
@@ -28,6 +29,7 @@ interface ServerContent {
   publishedAt: string | null
   templateId: string | null
   tags: string[]
+  position: number | null
   createdAt: string
   updatedAt: string
 }
@@ -114,6 +116,10 @@ export async function updateContent(id: ContentId, input: UpdateContentInput): P
 
 export async function deleteContent(id: ContentId): Promise<void> {
   await apiDelete(`/api/contents/${id}`)
+}
+
+export async function reorderContents(items: ReorderContentItem[]): Promise<{ updated: number }> {
+  return apiPatch<{ updated: number }>('/api/contents/reorder', { items })
 }
 
 // --- Content Checklist Queries ---

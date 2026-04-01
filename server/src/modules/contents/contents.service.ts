@@ -9,6 +9,7 @@ import { UndoService } from '../undo/undo.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 import { ContentFiltersDto } from './dto/content-filters.dto';
+import { ReorderContentDto } from './dto/reorder-content.dto';
 import { CreateContentChecklistDto } from './dto/create-content-checklist.dto';
 import { UpdateContentChecklistDto } from './dto/update-content-checklist.dto';
 
@@ -27,6 +28,7 @@ export interface ContentResponse {
   publishedAt: string | null;
   templateId: string | null;
   tags: string[];
+  position: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -68,6 +70,7 @@ function mapContent(row: contents): ContentResponse {
     publishedAt: row.published_at?.toISOString() ?? null,
     templateId: row.template_id,
     tags: row.tags ?? [],
+    position: row.position,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
   };
@@ -140,7 +143,7 @@ export class ContentsService {
     const rows = await this.prisma.contents.findMany({
       where,
       include: CONTENT_INCLUDE,
-      orderBy: { updated_at: 'desc' },
+      orderBy: [{ position: 'asc' }, { created_at: 'desc' }],
     });
 
     return rows.map(mapContentWithDetails);
@@ -169,19 +172,28 @@ export class ContentsService {
     userId: string,
     dto: CreateContentDto,
   ): Promise<ContentWithDetailsResponse> {
+    const stage = dto.stage ?? 'idea';
+
+    const maxPos = await this.prisma.contents.aggregate({
+      where: { user_id: userId, stage },
+      _max: { position: true },
+    });
+    const nextPosition = (maxPos._max.position ?? -1) + 1;
+
     const row = await this.prisma.contents.create({
       data: {
         user_id: userId,
         title: dto.title,
         description: dto.description ?? null,
         type: dto.type ?? 'video',
-        stage: dto.stage ?? 'idea',
+        stage,
         platform: dto.platform ?? 'youtube',
         project_id: dto.projectId ?? null,
         note_id: dto.noteId ?? null,
         template_id: dto.templateId ?? null,
         scheduled_at: dto.scheduledAt ? new Date(dto.scheduledAt) : null,
         tags: dto.tags ?? [],
+        position: nextPosition,
       },
       include: CONTENT_INCLUDE,
     });
@@ -253,6 +265,36 @@ export class ContentsService {
       .catch(() => {});
 
     return mapContentWithDetails(row);
+  }
+
+  async reorder(
+    userId: string,
+    dto: ReorderContentDto,
+  ): Promise<{ updated: number }> {
+    const ids = dto.items.map((item) => item.id);
+
+    const existing = await this.prisma.contents.findMany({
+      where: { id: { in: ids }, user_id: userId },
+      select: { id: true },
+    });
+    const existingIds = new Set(existing.map((r) => r.id));
+
+    const validItems = dto.items.filter((item) => existingIds.has(item.id));
+
+    if (validItems.length === 0) {
+      return { updated: 0 };
+    }
+
+    await this.prisma.$transaction(
+      validItems.map((item) =>
+        this.prisma.contents.update({
+          where: { id: item.id },
+          data: { stage: item.stage, position: item.position },
+        }),
+      ),
+    );
+
+    return { updated: validItems.length };
   }
 
   async remove(userId: string, id: string): Promise<void> {

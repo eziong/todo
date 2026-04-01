@@ -8,7 +8,10 @@
     "start": "electron .",
     "build:mac": "electron-builder --mac",
     "build:win": "electron-builder --win",
-    "build:all": "electron-builder --mac --win"
+    "build:all": "electron-builder --mac --win",
+    "publish:mac": "electron-builder --mac --publish always",
+    "publish:win": "electron-builder --win --publish always",
+    "publish:all": "electron-builder --mac --win --publish always"
   },
   "build": {
     "appId": "com.commandcenter.app",
@@ -16,8 +19,16 @@
     "directories": {
       "output": "dist"
     },
+    "publish": {
+      "provider": "github",
+      "owner": "eziong",
+      "repo": "todo"
+    },
     "mac": {
-      "target": "dmg",
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "icon": "icons/icon.icns",
       "category": "public.app-category.productivity"
     },
@@ -31,7 +42,8 @@
     }
   },
   "dependencies": {
-    "electron-store": "^10.0.0"
+    "electron-store": "^10.0.0",
+    "electron-updater": "^6.3.0"
   },
   "devDependencies": {
     "electron": "^35.0.0",

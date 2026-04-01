@@ -1,11 +1,14 @@
 "use client"
 
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import {
   MoreHorizontal,
   ArrowRight,
   Trash2,
   Calendar,
   CheckCircle2,
+  GripVertical,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -55,54 +58,41 @@ interface ContentCardProps {
 }
 
 export function ContentCard({ content, onStageChange, onSelect, onDelete }: ContentCardProps) {
-  const checklistTotal = content.checklists.length
-  const checklistDone = content.checklists.filter((c) => c.checked).length
-  const scheduledDate = content.scheduledAt
-    ? new Date(content.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    : null
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: content.id as string })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
 
   return (
     <div
-      className="group cursor-pointer rounded-[6px] border border-border bg-background p-3 transition-colors hover:border-foreground-secondary/30"
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "group relative cursor-pointer rounded-[6px] border border-border bg-background p-3 transition-colors hover:border-foreground-secondary/30",
+        isDragging && "opacity-40"
+      )}
       onClick={() => onSelect(content.id as string)}
     >
-      {/* Title */}
-      <p className="text-sm font-medium text-foreground line-clamp-2">{content.title}</p>
-
-      {/* Type + Platform badges */}
-      <div className="mt-2 flex flex-wrap items-center gap-1">
-        <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium", TYPE_COLORS[content.type])}>
-          {content.type}
-        </span>
-        <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium", PLATFORM_COLORS[content.platform])}>
-          {content.platform}
-        </span>
+      {/* Drag handle */}
+      <div
+        className="absolute left-0.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+        onClick={(e) => e.stopPropagation()}
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3.5 w-3.5 text-foreground-secondary/50" />
       </div>
 
-      {/* Project dot + date + checklist */}
-      <div className="mt-2 flex items-center gap-2 text-[11px] text-foreground-secondary">
-        {content.projectName && (
-          <div className="flex items-center gap-1">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: content.projectColor ?? '#6b7280' }}
-            />
-            <span className="truncate max-w-[60px]">{content.projectName}</span>
-          </div>
-        )}
-        {scheduledDate && (
-          <div className="flex items-center gap-0.5">
-            <Calendar className="h-3 w-3" />
-            <span>{scheduledDate}</span>
-          </div>
-        )}
-        {checklistTotal > 0 && (
-          <div className="flex items-center gap-0.5">
-            <CheckCircle2 className="h-3 w-3" />
-            <span>{checklistDone}/{checklistTotal}</span>
-          </div>
-        )}
-      </div>
+      <ContentCardBody content={content} />
 
       {/* Menu */}
       <div
@@ -144,6 +134,65 @@ export function ContentCard({ content, onStageChange, onSelect, onDelete }: Cont
         </DropdownMenu>
       </div>
     </div>
+  )
+}
+
+/** Drag overlay version — no sortable hooks, just the visual */
+export function ContentCardOverlay({ content }: { content: ContentWithDetails }) {
+  return (
+    <div className="w-[220px] rounded-[6px] border border-accent-blue/50 bg-background p-3 shadow-lg shadow-black/20">
+      <ContentCardBody content={content} />
+    </div>
+  )
+}
+
+function ContentCardBody({ content }: { content: ContentWithDetails }) {
+  const checklistTotal = content.checklists.length
+  const checklistDone = content.checklists.filter((c) => c.checked).length
+  const scheduledDate = content.scheduledAt
+    ? new Date(content.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : null
+
+  return (
+    <>
+      {/* Title */}
+      <p className="text-sm font-medium text-foreground line-clamp-2">{content.title}</p>
+
+      {/* Type + Platform badges */}
+      <div className="mt-2 flex flex-wrap items-center gap-1">
+        <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium", TYPE_COLORS[content.type])}>
+          {content.type}
+        </span>
+        <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium", PLATFORM_COLORS[content.platform])}>
+          {content.platform}
+        </span>
+      </div>
+
+      {/* Project dot + date + checklist */}
+      <div className="mt-2 flex items-center gap-2 text-[11px] text-foreground-secondary">
+        {content.projectName && (
+          <div className="flex items-center gap-1">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: content.projectColor ?? '#6b7280' }}
+            />
+            <span className="truncate max-w-[60px]">{content.projectName}</span>
+          </div>
+        )}
+        {scheduledDate && (
+          <div className="flex items-center gap-0.5">
+            <Calendar className="h-3 w-3" />
+            <span>{scheduledDate}</span>
+          </div>
+        )}
+        {checklistTotal > 0 && (
+          <div className="flex items-center gap-0.5">
+            <CheckCircle2 className="h-3 w-3" />
+            <span>{checklistDone}/{checklistTotal}</span>
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 

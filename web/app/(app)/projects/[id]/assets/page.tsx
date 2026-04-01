@@ -112,7 +112,7 @@ export default function ProjectAssetsPage() {
   }
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="space-y-8 py-6">
       <UploadZone
         onUploadLocal={handleUploadLocal}
         onUploadDrive={handleUploadDrive}

@@ -1,5 +1,23 @@
 "use client"
 
+import { useState } from "react"
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable"
+import { useDroppable } from "@dnd-kit/core"
 import { Plus, Filter } from "lucide-react"
 import {
   DropdownMenu,
@@ -8,8 +26,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import { ContentCard, STAGES, STAGE_LABELS } from "./content-card"
-import type { ContentStage, ContentType, ContentPlatform, ContentFilters, ContentWithDetails } from "@/types/domain"
+import { ContentCard, ContentCardOverlay, STAGES, STAGE_LABELS } from "./content-card"
+import type { ContentStage, ContentType, ContentPlatform, ContentFilters, ContentWithDetails, ReorderContentItem } from "@/types/domain"
 import type { ProjectWithStats } from "@/types/domain"
 
 const CONTENT_TYPES: ContentType[] = ['video', 'short', 'post', 'blog']
@@ -29,10 +47,77 @@ interface PipelineBoardProps {
   filters: ContentFilters
   onFiltersChange: (filters: ContentFilters) => void
   onStageChange: (id: string, stage: ContentStage) => void
+  onReorder: (items: ReorderContentItem[]) => void
   onCreateContent: () => void
   onDeleteContent: (id: string) => void
   onSelectContent: (id: string) => void
   isCreating: boolean
+}
+
+function DroppableColumn({
+  stage,
+  stageContents,
+  onStageChange,
+  onSelectContent,
+  onDeleteContent,
+}: {
+  stage: ContentStage
+  stageContents: ContentWithDetails[]
+  onStageChange: (id: string, stage: ContentStage) => void
+  onSelectContent: (id: string) => void
+  onDeleteContent: (id: string) => void
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: `column-${stage}` })
+
+  return (
+    <div
+      key={stage}
+      className="min-w-0 flex-1 flex flex-col rounded-[8px] bg-background-secondary/50"
+    >
+      {/* Column header */}
+      <div className="flex items-center justify-between px-3 py-2.5">
+        <span className="text-xs font-medium text-foreground-secondary">
+          {STAGE_LABELS[stage]}
+        </span>
+        <span className={cn(
+          "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-medium text-foreground-secondary",
+          STAGE_COLORS[stage],
+        )}>
+          {stageContents.length}
+        </span>
+      </div>
+
+      {/* Cards */}
+      <div
+        ref={setNodeRef}
+        className={cn(
+          "flex-1 space-y-2 px-2 pb-2 min-h-[80px] rounded-b-[8px] transition-colors",
+          isOver && "bg-accent-blue/5"
+        )}
+      >
+        <SortableContext
+          items={stageContents.map((c) => c.id as string)}
+          strategy={verticalListSortingStrategy}
+        >
+          {stageContents.length === 0 ? (
+            <div className="flex items-center justify-center rounded-[6px] border border-dashed border-border py-6">
+              <span className="text-[11px] text-foreground-secondary/50">Empty</span>
+            </div>
+          ) : (
+            stageContents.map((content) => (
+              <ContentCard
+                key={content.id}
+                content={content}
+                onStageChange={onStageChange}
+                onSelect={onSelectContent}
+                onDelete={onDeleteContent}
+              />
+            ))
+          )}
+        </SortableContext>
+      </div>
+    </div>
+  )
 }
 
 export function PipelineBoard({
@@ -41,20 +126,132 @@ export function PipelineBoard({
   filters,
   onFiltersChange,
   onStageChange,
+  onReorder,
   onCreateContent,
   onDeleteContent,
   onSelectContent,
   isCreating,
 }: PipelineBoardProps) {
-  const contentsByStage = (stage: ContentStage) =>
-    contents.filter((c) => c.stage === stage)
+  const [activeId, setActiveId] = useState<string | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+    useSensor(KeyboardSensor),
+  )
+
+  const sortedContentsByStage = (stage: ContentStage) =>
+    contents
+      .filter((c) => c.stage === stage)
+      .sort((a, b) => {
+        if (a.position !== null && b.position !== null) return a.position - b.position
+        if (a.position !== null) return -1
+        if (b.position !== null) return 1
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      })
+
+  const findContentStage = (contentId: string): ContentStage | null => {
+    const content = contents.find((c) => (c.id as string) === contentId)
+    return content?.stage ?? null
+  }
+
+  const findColumnFromDroppableId = (droppableId: string): ContentStage | null => {
+    if (droppableId.startsWith('column-')) {
+      return droppableId.replace('column-', '') as ContentStage
+    }
+    return findContentStage(droppableId)
+  }
+
+  const activeContent = activeId
+    ? contents.find((c) => (c.id as string) === activeId) ?? null
+    : null
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string)
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    setActiveId(null)
+
+    if (!over) return
+
+    const activeContentId = active.id as string
+    const overId = over.id as string
+
+    const sourceStage = findContentStage(activeContentId)
+    const targetStage = findColumnFromDroppableId(overId)
+
+    if (!sourceStage || !targetStage) return
+
+    const reorderItems: ReorderContentItem[] = []
+
+    if (sourceStage === targetStage) {
+      // Same column — use arrayMove to match sortable's visual behavior exactly
+      const columnItems = sortedContentsByStage(sourceStage)
+      const oldIndex = columnItems.findIndex((c) => (c.id as string) === activeContentId)
+      const newIndex = columnItems.findIndex((c) => (c.id as string) === overId)
+
+      if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return
+
+      const reordered = arrayMove(columnItems, oldIndex, newIndex)
+      reordered.forEach((item, index) => {
+        reorderItems.push({
+          id: item.id as string,
+          stage: sourceStage,
+          position: index,
+        })
+      })
+    } else {
+      // Cross-column — remove from source, insert into target
+      const activeItem = contents.find((c) => (c.id as string) === activeContentId)
+      if (!activeItem) return
+
+      // Target column: find insertion point
+      const targetItems = sortedContentsByStage(targetStage)
+      let insertIndex: number
+      if (overId.startsWith('column-')) {
+        insertIndex = targetItems.length
+      } else {
+        const overIndex = targetItems.findIndex((c) => (c.id as string) === overId)
+        insertIndex = overIndex >= 0 ? overIndex : targetItems.length
+      }
+
+      const newTargetItems = [...targetItems]
+      newTargetItems.splice(insertIndex, 0, activeItem)
+      newTargetItems.forEach((item, index) => {
+        reorderItems.push({
+          id: item.id as string,
+          stage: targetStage,
+          position: index,
+        })
+      })
+
+      // Source column: re-index without the moved item
+      const sourceItems = sortedContentsByStage(sourceStage).filter(
+        (c) => (c.id as string) !== activeContentId
+      )
+      sourceItems.forEach((item, index) => {
+        reorderItems.push({
+          id: item.id as string,
+          stage: sourceStage,
+          position: index,
+        })
+      })
+    }
+
+    if (reorderItems.length > 0) {
+      onReorder(reorderItems)
+    }
+  }
 
   const hasActiveFilters = Boolean(filters.type || filters.platform || filters.projectId)
 
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-6 py-4">
+      <div className="flex items-center justify-between border-b border-border py-4">
         <h1 className="text-lg font-semibold text-foreground">Content Pipeline</h1>
         <div className="flex items-center gap-2">
           {/* Type filter */}
@@ -157,50 +354,29 @@ export function PipelineBoard({
 
       {/* Pipeline columns */}
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="flex gap-3">
-          {STAGES.map((stage) => {
-            const stageContents = contentsByStage(stage)
-            return (
-              <div
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="flex gap-3">
+            {STAGES.map((stage) => (
+              <DroppableColumn
                 key={stage}
-                className="min-w-0 flex-1 flex flex-col rounded-[8px] bg-background-secondary/50"
-              >
-                {/* Column header */}
-                <div className="flex items-center justify-between px-3 py-2.5">
-                  <span className="text-xs font-medium text-foreground-secondary">
-                    {STAGE_LABELS[stage]}
-                  </span>
-                  <span className={cn(
-                    "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-medium text-foreground-secondary",
-                    STAGE_COLORS[stage],
-                  )}>
-                    {stageContents.length}
-                  </span>
-                </div>
+                stage={stage}
+                stageContents={sortedContentsByStage(stage)}
+                onStageChange={onStageChange}
+                onSelectContent={onSelectContent}
+                onDeleteContent={onDeleteContent}
+              />
+            ))}
+          </div>
 
-                {/* Cards */}
-                <div className="flex-1 space-y-2 px-2 pb-2">
-                  {stageContents.length === 0 ? (
-                    <div className="flex items-center justify-center rounded-[6px] border border-dashed border-border py-6">
-                      <span className="text-[11px] text-foreground-secondary/50">Empty</span>
-                    </div>
-                  ) : (
-                    stageContents.map((content) => (
-                      <div key={content.id} className="relative">
-                        <ContentCard
-                          content={content}
-                          onStageChange={onStageChange}
-                          onSelect={onSelectContent}
-                          onDelete={onDeleteContent}
-                        />
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
+          <DragOverlay dropAnimation={null}>
+            {activeContent ? <ContentCardOverlay content={activeContent} /> : null}
+          </DragOverlay>
+        </DndContext>
       </div>
     </div>
   )

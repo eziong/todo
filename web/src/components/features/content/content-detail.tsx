@@ -131,7 +131,7 @@ export function ContentDetail({
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+      <div className="flex items-center justify-between border-b border-border py-3">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
@@ -203,7 +203,7 @@ export function ContentDetail({
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto py-6">
         <div className="mx-auto max-w-3xl space-y-6">
           {/* Title */}
           <input

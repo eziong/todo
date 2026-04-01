@@ -13,6 +13,7 @@ import { AuthUser } from '../../common/types/auth.types';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 import { ContentFiltersDto } from './dto/content-filters.dto';
+import { ReorderContentDto } from './dto/reorder-content.dto';
 import { CreateContentChecklistDto } from './dto/create-content-checklist.dto';
 import { UpdateContentChecklistDto } from './dto/update-content-checklist.dto';
 import { ContentsService } from './contents.service';
@@ -24,6 +25,11 @@ export class ContentsController {
   @Get('contents')
   findAll(@CurrentUser() user: AuthUser, @Query() filters: ContentFiltersDto) {
     return this.contentsService.findAll(user.id, filters);
+  }
+
+  @Patch('contents/reorder')
+  reorder(@CurrentUser() user: AuthUser, @Body() dto: ReorderContentDto) {
+    return this.contentsService.reorder(user.id, dto);
   }
 
   @Get('contents/:id')
