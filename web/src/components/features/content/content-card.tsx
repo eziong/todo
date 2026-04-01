@@ -8,7 +8,6 @@ import {
   Trash2,
   Calendar,
   CheckCircle2,
-  GripVertical,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -77,27 +76,20 @@ export function ContentCard({ content, onStageChange, onSelect, onDelete }: Cont
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative cursor-pointer rounded-[6px] border border-border bg-background p-3 transition-colors hover:border-foreground-secondary/30",
+        "group relative rounded-[6px] border border-border bg-background p-3 transition-colors hover:border-foreground-secondary/30 cursor-grab active:cursor-grabbing",
         isDragging && "opacity-40"
       )}
       onClick={() => onSelect(content.id as string)}
+      {...attributes}
+      {...listeners}
     >
-      {/* Drag handle */}
-      <div
-        className="absolute left-0.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
-        onClick={(e) => e.stopPropagation()}
-        {...attributes}
-        {...listeners}
-      >
-        <GripVertical className="h-3.5 w-3.5 text-foreground-secondary/50" />
-      </div>
-
       <ContentCardBody content={content} />
 
       {/* Menu */}
       <div
         className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
       >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
