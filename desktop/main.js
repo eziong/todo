@@ -3,6 +3,21 @@ const path = require('path');
 
 const APP_URL = process.env.COMMAND_CENTER_URL || 'https://command-web-549189599662.asia-northeast3.run.app';
 
+// OAuth/auth domains that should stay inside the app
+const AUTH_DOMAINS = [
+  'accounts.google.com',
+  'supabase.co',
+];
+
+function isAuthUrl(url) {
+  try {
+    const { hostname } = new URL(url);
+    return AUTH_DOMAINS.some(domain => hostname.endsWith(domain));
+  } catch {
+    return false;
+  }
+}
+
 let mainWindow;
 
 function createWindow() {
@@ -21,13 +36,23 @@ function createWindow() {
 
   mainWindow.loadURL(APP_URL);
 
-  // Open external links in system browser
+  // OAuth URLs stay in-app, other external links open in system browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (!url.startsWith(APP_URL)) {
-      shell.openExternal(url);
-      return { action: 'deny' };
+    if (url.startsWith(APP_URL) || isAuthUrl(url)) {
+      return { action: 'allow' };
     }
-    return { action: 'allow' };
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  // Handle navigation redirects (OAuth callback)
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    // Allow app URL and auth URLs
+    if (url.startsWith(APP_URL) || isAuthUrl(url)) {
+      return;
+    }
+    event.preventDefault();
+    shell.openExternal(url);
   });
 
   mainWindow.on('closed', () => {
