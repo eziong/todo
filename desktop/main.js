@@ -1,18 +1,21 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, globalShortcut } = require('electron');
 const path = require('path');
 
 const APP_URL = process.env.COMMAND_CENTER_URL || 'https://command-web-549189599662.asia-northeast3.run.app';
 
-// OAuth/auth domains that should stay inside the app
-const AUTH_DOMAINS = [
+// Domains that should stay inside the Electron window
+const ALLOWED_DOMAINS = [
   'accounts.google.com',
   'supabase.co',
+  'googleapis.com',
+  'google.com',
+  'gstatic.com',
 ];
 
-function isAuthUrl(url) {
+function isAllowedUrl(url) {
   try {
     const { hostname } = new URL(url);
-    return AUTH_DOMAINS.some(domain => hostname.endsWith(domain));
+    return ALLOWED_DOMAINS.some(domain => hostname.endsWith(domain));
   } catch {
     return false;
   }
@@ -36,19 +39,35 @@ function createWindow() {
 
   mainWindow.loadURL(APP_URL);
 
-  // OAuth URLs stay in-app, other external links open in system browser
+  // F12 opens DevTools for debugging
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'F12') {
+      mainWindow.webContents.toggleDevTools();
+    }
+  });
+
+  // Log all navigations for debugging
+  mainWindow.webContents.on('did-navigate', (event, url) => {
+    console.log('[NAV]', url);
+  });
+
+  mainWindow.webContents.on('did-navigate-in-page', (event, url) => {
+    console.log('[NAV-INPAGE]', url);
+  });
+
+  // OAuth/allowed URLs stay in-app, other external links open in system browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith(APP_URL) || isAuthUrl(url)) {
+    if (url.startsWith(APP_URL) || isAllowedUrl(url)) {
       return { action: 'allow' };
     }
     shell.openExternal(url);
     return { action: 'deny' };
   });
 
-  // Handle navigation redirects (OAuth callback)
+  // Handle in-page navigation — allow app + auth URLs, block others
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    // Allow app URL and auth URLs
-    if (url.startsWith(APP_URL) || isAuthUrl(url)) {
+    console.log('[WILL-NAV]', url);
+    if (url.startsWith(APP_URL) || isAllowedUrl(url)) {
       return;
     }
     event.preventDefault();
