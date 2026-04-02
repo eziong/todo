@@ -37,7 +37,7 @@ export function CommentItem({ comment, onReply, isReplying }: CommentItemProps) 
   }
 
   return (
-    <div className="space-y-3 rounded-[8px] border border-border bg-background-secondary p-4">
+    <div className="space-y-3 rounded-xl border border-border bg-background-secondary p-4">
       {/* Comment Header */}
       <div className="flex items-start gap-3">
         {comment.authorProfileUrl && (
@@ -124,14 +124,14 @@ export function CommentItem({ comment, onReply, isReplying }: CommentItemProps) 
               }
             }}
             placeholder="Write a reply..."
-            className="h-9 flex-1 rounded-[6px] border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+            className="h-9 flex-1 rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             disabled={isReplying}
           />
           <button
             onClick={handleSubmitReply}
             disabled={!replyText.trim() || isReplying}
             className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-[6px] transition-colors",
+              "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
               replyText.trim()
                 ? "bg-accent-blue text-white hover:bg-accent-blue/90"
                 : "bg-background-tertiary text-foreground-secondary"

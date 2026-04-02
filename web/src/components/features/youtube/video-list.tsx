@@ -45,7 +45,7 @@ export function VideoList({
         </div>
         <button
           onClick={onUpload}
-          className="flex items-center gap-2 rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+          className="flex items-center gap-2 rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
         >
           <Upload className="h-4 w-4" />
           Upload
@@ -60,7 +60,7 @@ export function VideoList({
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search videos..."
-          className="h-10 w-full rounded-[6px] border border-border bg-background-secondary pl-10 pr-4 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+          className="h-10 w-full rounded-lg border border-border bg-background-secondary pl-10 pr-4 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
         />
       </form>
 
@@ -90,7 +90,7 @@ export function VideoList({
           <button
             onClick={onLoadMore}
             disabled={isLoading}
-            className="flex items-center gap-2 rounded-[6px] border border-border bg-background-secondary px-6 py-2 text-sm text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg border border-border bg-background-secondary px-6 py-2 text-sm text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
           >
             Load More
             <ChevronRight className="h-4 w-4" />

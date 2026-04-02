@@ -41,7 +41,7 @@ export default function NotificationsPage() {
         {classified.retryable && (
           <button
             onClick={() => refetch()}
-            className="flex items-center gap-1.5 rounded-[6px] bg-accent-blue px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-blue/90"
+            className="flex items-center gap-1.5 rounded-lg bg-accent-blue px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-blue/90"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             Try again

@@ -110,7 +110,7 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
           <Skeleton className="h-6 w-32" />
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
           >
             <X className="h-4 w-4" />
           </button>
@@ -133,17 +133,17 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
           <div className="relative">
             <button
               onClick={() => setShowFolderSelect(!showFolderSelect)}
-              className="flex items-center gap-1.5 rounded-[4px] px-2 py-1 text-xs text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+              className="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
             >
               <Folder className="h-3 w-3" />
               {note.folderName ?? "No folder"}
             </button>
             {showFolderSelect && (
-              <div className="absolute left-0 top-full z-10 mt-1 w-48 rounded-[8px] border border-border bg-background-secondary p-1 shadow-lg">
+              <div className="absolute left-0 top-full z-10 mt-1 w-48 rounded-xl border border-border bg-background-secondary p-1 shadow-lg">
                 <button
                   onClick={() => handleFolderChange(null)}
                   className={cn(
-                    "flex w-full items-center gap-2 rounded-[4px] px-2 py-1.5 text-sm transition-colors",
+                    "flex w-full items-center gap-2 rounded-full px-2 py-1.5 text-sm transition-colors",
                     !note.folderId
                       ? "bg-background-tertiary text-foreground"
                       : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -156,7 +156,7 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
                     key={folder.id}
                     onClick={() => handleFolderChange(folder.id as string)}
                     className={cn(
-                      "flex w-full items-center gap-2 rounded-[4px] px-2 py-1.5 text-sm transition-colors",
+                      "flex w-full items-center gap-2 rounded-full px-2 py-1.5 text-sm transition-colors",
                       (note.folderId as string) === (folder.id as string)
                         ? "bg-background-tertiary text-foreground"
                         : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -175,7 +175,7 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
           <button
             onClick={() => setIsPreview(!isPreview)}
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-[6px] transition-colors",
+              "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
               isPreview
                 ? "bg-background-tertiary text-foreground"
                 : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -191,7 +191,7 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
           <button
             onClick={handleTogglePin}
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-[6px] transition-colors",
+              "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
               note.pinned
                 ? "text-accent-blue"
                 : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -206,14 +206,14 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
           </button>
           <button
             onClick={handleDelete}
-            className="flex h-8 w-8 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-accent-red"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-accent-red"
             aria-label="Delete note"
           >
             <Trash2 className="h-4 w-4" />
           </button>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
             aria-label="Close editor"
           >
             <X className="h-4 w-4" />

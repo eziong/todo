@@ -76,7 +76,7 @@ export function ContentCard({ content, onStageChange, onSelect, onDelete }: Cont
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative rounded-[6px] border border-border bg-background p-3 transition-colors hover:border-foreground-secondary/30 cursor-grab active:cursor-grabbing",
+        "group relative rounded-lg border border-border bg-background p-3 transition-colors hover:border-foreground-secondary/30 cursor-grab active:cursor-grabbing",
         isDragging && "opacity-40"
       )}
       onClick={() => onSelect(content.id as string)}
@@ -93,7 +93,7 @@ export function ContentCard({ content, onStageChange, onSelect, onDelete }: Cont
       >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex h-6 w-6 items-center justify-center rounded-[4px] text-foreground-secondary hover:bg-background-tertiary hover:text-foreground">
+            <button className="flex h-6 w-6 items-center justify-center rounded-full text-foreground-secondary hover:bg-background-tertiary hover:text-foreground">
               <MoreHorizontal className="h-3.5 w-3.5" />
             </button>
           </DropdownMenuTrigger>
@@ -132,7 +132,7 @@ export function ContentCard({ content, onStageChange, onSelect, onDelete }: Cont
 /** Drag overlay version — no sortable hooks, just the visual */
 export function ContentCardOverlay({ content }: { content: ContentWithDetails }) {
   return (
-    <div className="w-[220px] rounded-[6px] border border-accent-blue/50 bg-background p-3 shadow-lg shadow-black/20">
+    <div className="w-[220px] rounded-lg border border-accent-blue/50 bg-background p-3 shadow-lg shadow-black/20">
       <ContentCardBody content={content} />
     </div>
   )
@@ -152,10 +152,10 @@ function ContentCardBody({ content }: { content: ContentWithDetails }) {
 
       {/* Type + Platform badges */}
       <div className="mt-2 flex flex-wrap items-center gap-1">
-        <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium", TYPE_COLORS[content.type])}>
+        <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-medium", TYPE_COLORS[content.type])}>
           {content.type}
         </span>
-        <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium", PLATFORM_COLORS[content.platform])}>
+        <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-medium", PLATFORM_COLORS[content.platform])}>
           {content.platform}
         </span>
       </div>

@@ -112,12 +112,12 @@ export function WebhookConfigsSection({ projectId }: WebhookConfigsSectionProps)
           {configs.map((config) => (
             <div
               key={config.id}
-              className="flex items-center justify-between rounded-[8px] border border-border bg-background-secondary p-3"
+              className="flex items-center justify-between rounded-xl border border-border bg-background-secondary p-3"
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <span
                   className={cn(
-                    "shrink-0 rounded-[4px] px-2 py-0.5 text-xs font-semibold",
+                    "shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold",
                     METHOD_COLORS[config.method] ?? "bg-foreground-secondary/10 text-foreground-secondary"
                   )}
                 >
@@ -154,7 +154,7 @@ export function WebhookConfigsSection({ projectId }: WebhookConfigsSectionProps)
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-[8px] border border-dashed border-border py-8 text-center">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-8 text-center">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background-tertiary">
             <Webhook className="h-5 w-5 text-foreground-secondary" />
           </div>

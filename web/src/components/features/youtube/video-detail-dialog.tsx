@@ -86,7 +86,7 @@ export function VideoDetailDialog({
               <img
                 src={video.thumbnailUrl}
                 alt={video.title}
-                className="h-24 w-auto rounded-[6px] object-cover"
+                className="h-24 w-auto rounded-lg object-cover"
               />
             )}
             <div className="flex flex-col justify-center gap-2">
@@ -119,7 +119,7 @@ export function VideoDetailDialog({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="h-10 w-full rounded-[6px] border border-border bg-background-secondary px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="h-10 w-full rounded-lg border border-border bg-background-secondary px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             />
           </div>
 
@@ -130,7 +130,7 @@ export function VideoDetailDialog({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={6}
-              className="w-full rounded-[6px] border border-border bg-background-secondary px-3 py-2 text-sm text-foreground resize-y focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="w-full rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground resize-y focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             />
           </div>
 
@@ -142,7 +142,7 @@ export function VideoDetailDialog({
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
               placeholder="tag1, tag2, tag3"
-              className="h-10 w-full rounded-[6px] border border-border bg-background-secondary px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="h-10 w-full rounded-lg border border-border bg-background-secondary px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             />
             <p className="text-xs text-foreground-secondary">Separate tags with commas</p>
           </div>
@@ -156,7 +156,7 @@ export function VideoDetailDialog({
                   key={opt.value}
                   onClick={() => setPrivacyStatus(opt.value)}
                   className={cn(
-                    "flex h-9 items-center rounded-[6px] border px-4 text-sm transition-colors",
+                    "flex h-9 items-center rounded-lg border px-4 text-sm transition-colors",
                     privacyStatus === opt.value
                       ? "border-accent-blue bg-accent-blue/10 text-accent-blue"
                       : "border-border bg-background-secondary text-foreground-secondary hover:bg-background-tertiary"
@@ -183,14 +183,14 @@ export function VideoDetailDialog({
         <DialogFooter>
           <button
             onClick={() => onOpenChange(false)}
-            className="h-9 rounded-[6px] border border-border px-4 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary"
+            className="h-9 rounded-lg border border-border px-4 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={isSaving || !title.trim()}
-            className="h-9 rounded-[6px] bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+            className="h-9 rounded-lg bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
           >
             {isSaving ? 'Saving...' : 'Save Changes'}
           </button>

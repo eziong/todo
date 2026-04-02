@@ -67,7 +67,7 @@ export default function LoginPage() {
         <button
           onClick={handleGoogleSignIn}
           disabled={isSigningIn}
-          className="flex h-11 w-full items-center justify-center gap-3 rounded-[8px] border border-border bg-background-secondary text-sm font-medium text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
+          className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background-secondary text-sm font-medium text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
         >
           {isSigningIn ? (
             <Loader2 className="h-5 w-5 animate-spin" />

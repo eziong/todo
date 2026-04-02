@@ -69,7 +69,7 @@ export default function ProjectRevenuePage() {
         {classified.retryable && (
           <button
             onClick={() => refetchSponsorships()}
-            className="rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+            className="rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
           >
             Try Again
           </button>
@@ -149,7 +149,7 @@ export default function ProjectRevenuePage() {
   }
 
   return (
-    <>
+    <div className="-my-6 h-[calc(100%+48px)]">
       <RevenueDashboard
         analyticsData={analyticsData}
         analyticsYear={selectedYear}
@@ -171,6 +171,6 @@ export default function ProjectRevenuePage() {
         onSubmit={handleFormSubmit}
         isPending={createSponsorship.isPending || updateSponsorship.isPending}
       />
-    </>
+    </div>
   )
 }

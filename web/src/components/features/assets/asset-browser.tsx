@@ -101,7 +101,7 @@ export function AssetBrowser({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">Assets</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Assets</h1>
         <div className="flex items-center gap-2">
           {/* Search */}
           <div className="relative">
@@ -111,12 +111,12 @@ export function AssetBrowser({
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="Search files..."
-              className="h-9 w-64 rounded-[6px] border border-border bg-background-secondary pl-9 pr-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="h-9 w-64 rounded-lg border border-border bg-background-secondary pl-9 pr-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             />
           </div>
 
           {/* Storage filter */}
-          <div className="flex items-center rounded-[6px] border border-border">
+          <div className="flex items-center rounded-lg border border-border">
             <button
               onClick={() => handleStorageFilter(undefined)}
               className={cn(
@@ -157,7 +157,7 @@ export function AssetBrowser({
           </div>
 
           {/* View toggle */}
-          <div className="flex items-center rounded-[6px] border border-border">
+          <div className="flex items-center rounded-lg border border-border">
             <button
               onClick={() => setViewMode('grid')}
               className={cn(
@@ -193,7 +193,7 @@ export function AssetBrowser({
             key={tf.value}
             onClick={() => handleTypeFilter(tf.value)}
             className={cn(
-              "flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-sm font-medium transition-colors",
+              "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
               typeFilter === tf.value
                 ? "bg-accent-blue/10 text-accent-blue"
                 : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -219,7 +219,7 @@ export function AssetBrowser({
                 onClick={() => onSelectAsset(asset)}
                 className="group w-full text-left space-y-2"
               >
-                <div className="relative aspect-square overflow-hidden rounded-[8px] border border-border bg-background-secondary transition-colors group-hover:border-accent-blue/50">
+                <div className="relative aspect-square overflow-hidden rounded-xl border border-border bg-background-secondary transition-colors group-hover:border-accent-blue/50">
                   {isImage && asset.thumbnailUrl ? (
                     <img
                       src={asset.thumbnailUrl}
@@ -242,7 +242,7 @@ export function AssetBrowser({
                       e.stopPropagation()
                       onDelete(asset)
                     }}
-                    className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-[4px] bg-black/70 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-500"
+                    className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-500"
                     aria-label="Delete"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -262,7 +262,7 @@ export function AssetBrowser({
         </div>
       ) : (
         /* List View */
-        <div className="divide-y divide-border rounded-[8px] border border-border">
+        <div className="divide-y divide-border rounded-xl border border-border">
           {assets.map((asset) => {
             const MimeIcon = getMimeIcon(asset.mimeType)
             const StorageIcon = getStorageIcon(asset.storageType)
@@ -273,7 +273,7 @@ export function AssetBrowser({
                 onClick={() => onSelectAsset(asset)}
                 className="flex w-full items-center gap-4 px-4 py-3 text-left transition-colors hover:bg-background-secondary"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[6px] bg-background-tertiary">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background-tertiary">
                   <MimeIcon className="h-5 w-5 text-foreground-secondary" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -294,7 +294,7 @@ export function AssetBrowser({
                     e.stopPropagation()
                     onDelete(asset)
                   }}
-                  className="flex h-8 w-8 items-center justify-center rounded-[4px] text-foreground-secondary opacity-0 transition-all group-hover:opacity-100 hover:bg-accent-red/10 hover:text-accent-red"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-foreground-secondary opacity-0 transition-all group-hover:opacity-100 hover:bg-accent-red/10 hover:text-accent-red"
                   aria-label="Delete"
                 >
                   <Trash2 className="h-4 w-4" />

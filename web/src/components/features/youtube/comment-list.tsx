@@ -47,7 +47,7 @@ export function CommentList({
         <select
           value={selectedVideoId ?? ''}
           onChange={(e) => onSelectVideo(e.target.value)}
-          className="h-10 rounded-[6px] border border-border bg-background-secondary px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+          className="h-10 rounded-lg border border-border bg-background-secondary px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
         >
           <option value="" disabled>Select a video...</option>
           {videos.map((video) => (
@@ -57,13 +57,13 @@ export function CommentList({
           ))}
         </select>
 
-        <div className="flex gap-1 rounded-[6px] border border-border bg-background-secondary p-0.5">
+        <div className="flex gap-1 rounded-lg border border-border bg-background-secondary p-0.5">
           {(['all', 'unanswered'] as const).map((f) => (
             <button
               key={f}
               onClick={() => onFilterChange(f)}
               className={cn(
-                "flex items-center gap-1.5 rounded-[4px] px-3 py-1.5 text-sm transition-colors capitalize",
+                "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors capitalize",
                 filter === f
                   ? "bg-background-tertiary text-foreground"
                   : "text-foreground-secondary hover:text-foreground"
@@ -119,7 +119,7 @@ export function CommentList({
         <div className="flex justify-center">
           <button
             onClick={onLoadMore}
-            className="rounded-[6px] border border-border bg-background-secondary px-6 py-2 text-sm text-foreground transition-colors hover:bg-background-tertiary"
+            className="rounded-lg border border-border bg-background-secondary px-6 py-2 text-sm text-foreground transition-colors hover:bg-background-tertiary"
           >
             Load More
           </button>

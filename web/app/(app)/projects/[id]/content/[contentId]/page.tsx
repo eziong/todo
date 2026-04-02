@@ -4,6 +4,7 @@ import { use } from 'react'
 import { useRouter } from 'next/navigation'
 import { useContent, useUpdateContent, useDeleteContent } from '@/hooks/useContents'
 import { useContentChecklists, useCreateContentChecklist, useUpdateContentChecklist, useDeleteContentChecklist } from '@/hooks/useContentChecklists'
+import { useUpsertContentStageData } from '@/hooks/useContentStageData'
 import { useProjects } from '@/hooks/useProjects'
 import { useNotes } from '@/hooks/useNotes'
 import { useDescriptionTemplates } from '@/hooks/useDescriptionTemplates'
@@ -11,7 +12,7 @@ import { ContentDetail } from '@/components/features/content/content-detail'
 import { ContentSkeleton } from '@/components/features/content/content-skeleton'
 import { classifyError } from '@/lib/errors'
 import { ContentId, ContentChecklistId } from '@/types/branded'
-import type { UpdateContentInput, CreateContentChecklistInput, UpdateContentChecklistInput } from '@/types/domain'
+import type { UpdateContentInput, CreateContentChecklistInput, UpdateContentChecklistInput, ContentStage, UpsertStageDataInput } from '@/types/domain'
 
 export default function ProjectContentDetailPage({
   params,
@@ -32,6 +33,7 @@ export default function ProjectContentDetailPage({
   const createChecklist = useCreateContentChecklist()
   const updateChecklist = useUpdateContentChecklist()
   const deleteChecklist = useDeleteContentChecklist()
+  const upsertStageData = useUpsertContentStageData()
 
   if (isLoading) return <ContentSkeleton />
 
@@ -44,7 +46,7 @@ export default function ProjectContentDetailPage({
         {classified.retryable && (
           <button
             onClick={() => refetch()}
-            className="rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+            className="rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
           >
             Try Again
           </button>
@@ -67,6 +69,9 @@ export default function ProjectContentDetailPage({
         updateContent.mutate({ id, input })
       }
       onDelete={(id: ContentId) => deleteContent.mutate(id)}
+      onUpsertStageData={(id: ContentId, stage: ContentStage, input: UpsertStageDataInput) =>
+        upsertStageData.mutate({ contentId: id, stage, input })
+      }
       onCreateChecklist={(input: CreateContentChecklistInput) =>
         createChecklist.mutate(input)
       }

@@ -107,13 +107,13 @@ export function ProjectsContent({
       <div className="space-y-6">
         {/* Page header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-foreground">Projects</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Projects</h1>
           <div className="flex items-center gap-2">
             {archivedProjects.length > 0 && (
               <button
                 onClick={() => setShowArchived(!showArchived)}
                 className={cn(
-                  "flex h-8 items-center gap-2 rounded-[6px] border border-border px-3 text-sm transition-colors",
+                  "flex h-8 items-center gap-2 rounded-lg border border-border px-3 text-sm transition-colors",
                   showArchived
                     ? "bg-background-tertiary text-foreground"
                     : "bg-background-secondary text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -125,7 +125,7 @@ export function ProjectsContent({
             )}
             <button
               onClick={handleNewProject}
-              className="flex h-8 items-center gap-2 rounded-[6px] bg-accent-blue px-3 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+              className="flex h-8 items-center gap-2 rounded-lg bg-accent-blue px-3 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
             >
               <Plus className="h-4 w-4" />
               <span>New Project</span>
@@ -150,7 +150,7 @@ export function ProjectsContent({
             {!showArchived && (
               <button
                 onClick={handleNewProject}
-                className="mt-4 flex items-center gap-2 rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+                className="mt-4 flex items-center gap-2 rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
               >
                 <Plus className="h-4 w-4" />
                 Create Project
@@ -247,7 +247,7 @@ function ProjectCard({
     <div className="group relative">
       <Link
         href={`/projects/${project.id}`}
-        className="block rounded-[8px] border border-border bg-background-secondary p-4 transition-colors hover:bg-background-tertiary"
+        className="block rounded-xl border border-border bg-background-secondary p-4 transition-colors hover:bg-background-tertiary"
       >
         {/* Header */}
         <div className="flex items-center gap-3">
@@ -289,7 +289,7 @@ function ProjectCard({
             onMenuToggle()
           }}
           className={cn(
-            "flex h-7 w-7 items-center justify-center rounded-[4px] text-foreground-secondary transition-all",
+            "flex h-7 w-7 items-center justify-center rounded-full text-foreground-secondary transition-all",
             menuOpen
               ? "bg-background-tertiary text-foreground"
               : "opacity-0 hover:bg-background-tertiary hover:text-foreground group-hover:opacity-100"
@@ -301,14 +301,14 @@ function ProjectCard({
         {menuOpen && (
           <>
             <div className="fixed inset-0 z-40" onClick={onMenuClose} />
-            <div className="absolute right-0 top-full z-50 mt-1 w-40 rounded-[6px] border border-border bg-background-secondary p-1 shadow-xl">
+            <div className="absolute right-0 top-full z-50 mt-1 w-40 rounded-lg border border-border bg-background-secondary p-1 shadow-xl">
               <button
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
                   onEdit()
                 }}
-                className="flex w-full items-center gap-2 rounded-[4px] px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                className="flex w-full items-center gap-2 rounded-full px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 Edit
@@ -319,7 +319,7 @@ function ProjectCard({
                   e.stopPropagation()
                   onArchive()
                 }}
-                className="flex w-full items-center gap-2 rounded-[4px] px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                className="flex w-full items-center gap-2 rounded-full px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
               >
                 {project.archived ? (
                   <>
@@ -339,7 +339,7 @@ function ProjectCard({
                   e.stopPropagation()
                   onDelete()
                 }}
-                className="flex w-full items-center gap-2 rounded-[4px] px-2 py-1.5 text-sm text-accent-red transition-colors hover:bg-accent-red/10"
+                className="flex w-full items-center gap-2 rounded-full px-2 py-1.5 text-sm text-accent-red transition-colors hover:bg-accent-red/10"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Delete

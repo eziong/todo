@@ -152,7 +152,7 @@ export function ProjectFormDialog({
                         type="button"
                         onClick={() => handleTemplateSelect(template)}
                         className={cn(
-                          "flex items-start gap-3 rounded-[8px] border p-3 text-left transition-colors",
+                          "flex items-start gap-3 rounded-xl border p-3 text-left transition-colors",
                           isSelected
                             ? "border-accent-blue bg-accent-blue/5"
                             : "border-border hover:border-foreground-secondary/30 hover:bg-background-tertiary"

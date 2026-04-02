@@ -15,7 +15,7 @@ export function YouTubeSkeleton() {
       {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="rounded-[8px] border border-border bg-background-secondary p-4 space-y-2">
+          <div key={i} className="rounded-xl border border-border bg-background-secondary p-4 space-y-2">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-7 w-28" />
           </div>
@@ -28,7 +28,7 @@ export function YouTubeSkeleton() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="space-y-3">
-              <Skeleton className="aspect-video w-full rounded-[8px]" />
+              <Skeleton className="aspect-video w-full rounded-xl" />
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-3 w-20" />
             </div>

@@ -5,12 +5,14 @@ import {
   DndContext,
   DragOverlay,
   closestCorners,
+  pointerWithin,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
   type DragEndEvent,
+  type CollisionDetection,
 } from "@dnd-kit/core"
 import {
   SortableContext,
@@ -39,6 +41,47 @@ const STAGE_COLORS: Record<ContentStage, string> = {
   editing: 'bg-accent-yellow/20',
   review: 'bg-accent-green/20',
   published: 'bg-accent-blue/30',
+}
+
+const kanbanCollisionDetection: CollisionDetection = (args) => {
+  // First, find which column the pointer is inside using pointerWithin
+  const pointerCollisions = pointerWithin(args)
+  const columnHit = pointerCollisions.find((c) =>
+    String(c.id).startsWith('column-')
+  )
+
+  if (!columnHit) {
+    // Pointer isn't over any column — fall back to closestCorners
+    return closestCorners(args)
+  }
+
+  // Filter droppable containers to only those in the target column
+  const targetStage = String(columnHit.id).replace('column-', '')
+  const filteredContainers = args.droppableContainers.filter((container) => {
+    const id = String(container.id)
+    return id === `column-${targetStage}` || args.active.id !== id && (() => {
+      // Check if this sortable item belongs to the target column
+      // by looking at droppableRects — items in the same column share x-range with the column
+      const columnRect = args.droppableRects.get(columnHit.id)
+      const itemRect = args.droppableRects.get(container.id)
+      if (!columnRect || !itemRect) return false
+      // Item is in this column if its horizontal center is within the column rect
+      const itemCenterX = itemRect.left + itemRect.width / 2
+      return itemCenterX >= columnRect.left && itemCenterX <= columnRect.right
+    })()
+  })
+
+  if (filteredContainers.length === 0) {
+    return [columnHit]
+  }
+
+  // Run closestCorners on only the filtered containers
+  const result = closestCorners({
+    ...args,
+    droppableContainers: filteredContainers,
+  })
+
+  return result.length > 0 ? result : [columnHit]
 }
 
 interface PipelineBoardProps {
@@ -356,7 +399,7 @@ export function PipelineBoard({
       <div className="flex-1 overflow-y-auto p-4">
         <DndContext
           sensors={sensors}
-          collisionDetection={closestCorners}
+          collisionDetection={kanbanCollisionDetection}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >

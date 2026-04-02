@@ -62,7 +62,7 @@ export function RevenueChart({ analyticsData, sponsorships, year }: RevenueChart
   const chartData = buildChartData(analyticsData, sponsorships, year)
 
   return (
-    <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+    <div className="rounded-xl border border-border bg-background-secondary p-4">
       <h3 className="mb-4 text-sm font-medium text-foreground">Monthly Revenue ({year})</h3>
       <ChartContainer config={chartConfig} className="h-[300px] w-full">
         <BarChart data={chartData} barGap={2}>

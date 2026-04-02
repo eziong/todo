@@ -81,8 +81,8 @@ export function InboxContent({
     <div className="space-y-6">
       {/* Page header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">Inbox</h1>
-        <span className="flex h-6 items-center rounded-[4px] bg-background-tertiary px-2 text-sm text-foreground-secondary">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Inbox</h1>
+        <span className="flex h-6 items-center rounded-full bg-background-tertiary px-2 text-sm text-foreground-secondary">
           {unprocessedItems.length} items
         </span>
       </div>
@@ -98,7 +98,7 @@ export function InboxContent({
           placeholder="What's on your mind?"
           disabled={isCreating}
           className={cn(
-            "w-full resize-none rounded-[8px] border border-border bg-background-secondary px-4 py-3 text-base text-foreground placeholder:text-foreground-secondary/60 transition-all duration-200 focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue disabled:opacity-50",
+            "w-full resize-none rounded-xl border border-border bg-background-secondary px-4 py-3 text-base text-foreground placeholder:text-foreground-secondary/60 transition-all duration-200 focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue disabled:opacity-50",
             inputFocused ? "h-24" : "h-12"
           )}
         />
@@ -187,14 +187,14 @@ function InboxItemRow({ item, onProcessToTodo, onDelete }: InboxItemRowProps) {
       <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
         <button
           onClick={onProcessToTodo}
-          className="flex h-7 items-center gap-1.5 rounded-[6px] px-2 text-xs text-foreground-secondary transition-colors hover:bg-background-secondary hover:text-foreground"
+          className="flex h-7 items-center gap-1.5 rounded-lg px-2 text-xs text-foreground-secondary transition-colors hover:bg-background-secondary hover:text-foreground"
         >
           <ArrowRight className="h-3.5 w-3.5" />
           <span>Todo</span>
         </button>
         <button
           onClick={onDelete}
-          className="flex h-7 w-7 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-accent-red/10 hover:text-accent-red"
+          className="flex h-7 w-7 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-accent-red/10 hover:text-accent-red"
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>
@@ -214,7 +214,7 @@ function ProcessedItemRow({ item }: ProcessedItemRowProps) {
       <div className="w-4" />
 
       {/* Checked indicator */}
-      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[4px] border border-border/50 bg-background-tertiary/50">
+      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border/50 bg-background-tertiary/50">
         <Check className="h-3 w-3 text-foreground-secondary/50" strokeWidth={2.5} />
       </div>
 

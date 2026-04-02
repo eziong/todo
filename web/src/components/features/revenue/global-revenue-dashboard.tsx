@@ -31,14 +31,14 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, subtitle, iconClassName }: StatCardProps) {
   return (
-    <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+    <div className="rounded-xl border border-border bg-background-secondary p-4">
       <div className="flex items-center justify-between">
         <span className="text-sm text-foreground-secondary">{label}</span>
-        <div className={cn("flex h-8 w-8 items-center justify-center rounded-[6px]", iconClassName)}>
+        <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg", iconClassName)}>
           <Icon className="h-4 w-4" />
         </div>
       </div>
-      <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
+      <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">{value}</p>
       {subtitle && (
         <p className="mt-1 text-xs text-foreground-secondary">{subtitle}</p>
       )}
@@ -60,7 +60,7 @@ function MonthlyChart({ data }: { data: Array<{ month: string; amount: number }>
   const maxAmount = Math.max(...months.map((m) => m.amount), 1)
 
   return (
-    <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+    <div className="rounded-xl border border-border bg-background-secondary p-4">
       <h3 className="mb-4 text-sm font-medium text-foreground">Monthly Paid Revenue</h3>
       <div className="flex items-end gap-2" style={{ height: 160 }}>
         {months.map((m) => (
@@ -124,7 +124,7 @@ export function GlobalRevenueDashboard({
         {isLoading ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-[104px] animate-pulse rounded-[8px] bg-background-secondary" />
+              <div key={i} className="h-[104px] animate-pulse rounded-xl bg-background-secondary" />
             ))}
           </div>
         ) : (
@@ -165,7 +165,7 @@ export function GlobalRevenueDashboard({
             {summary.monthlyBreakdown.length > 0 ? (
               <MonthlyChart data={summary.monthlyBreakdown} />
             ) : (
-              <div className="rounded-[8px] border border-border bg-background-secondary p-8 text-center">
+              <div className="rounded-xl border border-border bg-background-secondary p-8 text-center">
                 <p className="text-sm text-foreground-secondary">
                   No paid sponsorship revenue recorded for {year}.
                 </p>
@@ -173,7 +173,7 @@ export function GlobalRevenueDashboard({
             )}
 
             {/* Info */}
-            <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+            <div className="rounded-xl border border-border bg-background-secondary p-4">
               <p className="text-sm text-foreground-secondary">
                 This dashboard shows aggregated revenue across all projects.
                 For per-project details including YouTube analytics and individual sponsorship management,

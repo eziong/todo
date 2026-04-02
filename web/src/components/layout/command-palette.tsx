@@ -340,7 +340,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
                           {item.tag && (
                             <span
-                              className={`rounded-[4px] px-1.5 py-0.5 text-xs font-medium ${getTagColorClasses(
+                              className={`rounded-full px-1.5 py-0.5 text-xs font-medium ${getTagColorClasses(
                                 item.tag.color
                               )}`}
                             >

@@ -47,7 +47,7 @@ export default function ProjectContentPage() {
         {classified.retryable && (
           <button
             onClick={() => refetch()}
-            className="rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+            className="rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
           >
             Try Again
           </button>
@@ -88,7 +88,7 @@ export default function ProjectContentPage() {
   }
 
   return (
-    <>
+    <div className="-my-6 h-[calc(100%+48px)]">
       <PipelineBoard
         contents={contents ?? []}
         projects={projects ?? []}
@@ -134,6 +134,6 @@ export default function ProjectContentPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   )
 }

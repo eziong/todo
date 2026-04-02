@@ -8,7 +8,7 @@ export function NotesSkeleton() {
         <Skeleton className="h-5 w-24" />
         <div className="space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-8 w-full rounded-[6px]" />
+            <Skeleton key={i} className="h-8 w-full rounded-lg" />
           ))}
         </div>
       </div>
@@ -18,18 +18,18 @@ export function NotesSkeleton() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <Skeleton className="h-7 w-20" />
-          <Skeleton className="h-9 w-28 rounded-[6px]" />
+          <Skeleton className="h-9 w-28 rounded-lg" />
         </div>
 
         {/* Search */}
-        <Skeleton className="h-9 w-full max-w-sm rounded-[6px]" />
+        <Skeleton className="h-9 w-full max-w-sm rounded-lg" />
 
         {/* Note cards */}
         <div className="grid gap-3">
           {Array.from({ length: 5 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-[8px] border border-border bg-background-secondary p-4 space-y-2"
+              className="rounded-xl border border-border bg-background-secondary p-4 space-y-2"
             >
               <div className="flex items-center justify-between">
                 <Skeleton className="h-5 w-48" />
@@ -38,7 +38,7 @@ export function NotesSkeleton() {
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-3/4" />
               <div className="flex items-center gap-2 pt-1">
-                <Skeleton className="h-5 w-16 rounded-[4px]" />
+                <Skeleton className="h-5 w-16 rounded-full" />
                 <Skeleton className="h-4 w-24" />
               </div>
             </div>

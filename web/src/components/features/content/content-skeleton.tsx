@@ -7,9 +7,9 @@ export function ContentSkeleton() {
       <div className="flex items-center justify-between border-b border-border px-6 py-4">
         <Skeleton className="h-7 w-40" />
         <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-24 rounded-[6px]" />
-          <Skeleton className="h-9 w-24 rounded-[6px]" />
-          <Skeleton className="h-9 w-32 rounded-[6px]" />
+          <Skeleton className="h-9 w-24 rounded-lg" />
+          <Skeleton className="h-9 w-24 rounded-lg" />
+          <Skeleton className="h-9 w-32 rounded-lg" />
         </div>
       </div>
 
@@ -19,7 +19,7 @@ export function ContentSkeleton() {
           {Array.from({ length: 9 }).map((_, i) => (
             <div
               key={i}
-              className="w-[180px] shrink-0 rounded-[8px] border border-border bg-background-secondary p-3 space-y-3"
+              className="w-[180px] shrink-0 rounded-xl border border-border bg-background-secondary p-3 space-y-3"
             >
               {/* Column header */}
               <div className="flex items-center justify-between">
@@ -31,12 +31,12 @@ export function ContentSkeleton() {
               {Array.from({ length: i < 3 ? 2 : 1 }).map((_, j) => (
                 <div
                   key={j}
-                  className="rounded-[6px] border border-border bg-background p-3 space-y-2"
+                  className="rounded-lg border border-border bg-background p-3 space-y-2"
                 >
                   <Skeleton className="h-4 w-full" />
                   <div className="flex items-center gap-1.5">
-                    <Skeleton className="h-4 w-12 rounded-[4px]" />
-                    <Skeleton className="h-4 w-14 rounded-[4px]" />
+                    <Skeleton className="h-4 w-12 rounded-full" />
+                    <Skeleton className="h-4 w-14 rounded-full" />
                   </div>
                   <Skeleton className="h-3 w-20" />
                 </div>

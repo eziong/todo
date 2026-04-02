@@ -13,10 +13,6 @@ export class CreateContentDto {
   title: string;
 
   @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsOptional()
   @IsIn(['video', 'short', 'blog', 'podcast', 'newsletter'])
   type?: string;
 

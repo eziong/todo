@@ -96,7 +96,7 @@ export function TemplateEditor({
               setIsPreview(false)
             }}
             className={cn(
-              "flex w-full items-center gap-2 rounded-[6px] px-3 py-2 text-sm text-left transition-colors",
+              "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-left transition-colors",
               selectedId === template.id
                 ? "bg-background-tertiary text-foreground"
                 : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -113,7 +113,7 @@ export function TemplateEditor({
 
       {/* Editor */}
       {selected && (
-        <div className="flex-1 rounded-[8px] border border-border bg-background-secondary">
+        <div className="flex-1 rounded-xl border border-border bg-background-secondary">
           {/* Template header */}
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <input
@@ -127,7 +127,7 @@ export function TemplateEditor({
               <button
                 onClick={() => setIsPreview(!isPreview)}
                 className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-[4px] transition-colors",
+                  "flex h-7 w-7 items-center justify-center rounded-full transition-colors",
                   isPreview
                     ? "bg-background-tertiary text-foreground"
                     : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -147,7 +147,7 @@ export function TemplateEditor({
                     templates.find((t) => t.id !== selected.id)?.id ?? null
                   )
                 }}
-                className="flex h-7 w-7 items-center justify-center rounded-[4px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-accent-red"
+                className="flex h-7 w-7 items-center justify-center rounded-full text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-accent-red"
                 aria-label="Delete template"
               >
                 <Trash2 className="h-3.5 w-3.5" />

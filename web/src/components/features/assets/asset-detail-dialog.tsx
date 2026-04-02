@@ -105,12 +105,12 @@ export function AssetDetailDialog({
 
         <div className="space-y-4 py-4">
           {/* Preview */}
-          <div className="flex items-center justify-center rounded-[8px] border border-border bg-background-secondary p-4">
+          <div className="flex items-center justify-center rounded-xl border border-border bg-background-secondary p-4">
             {isImage && asset.thumbnailUrl ? (
               <img
                 src={asset.thumbnailUrl}
                 alt={asset.filename}
-                className="max-h-64 rounded-[6px] object-contain"
+                className="max-h-64 rounded-lg object-contain"
               />
             ) : (
               <div className="flex flex-col items-center gap-2 py-8">
@@ -177,13 +177,13 @@ export function AssetDetailDialog({
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
                   placeholder="tag1, tag2, tag3"
-                  className="h-9 flex-1 rounded-[6px] border border-border bg-background-secondary px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+                  className="h-9 flex-1 rounded-lg border border-border bg-background-secondary px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
                   onKeyDown={(e) => e.key === 'Enter' && !e.nativeEvent.isComposing && handleSaveTags()}
                 />
                 <button
                   onClick={handleSaveTags}
                   disabled={isUpdating}
-                  className="h-9 rounded-[6px] bg-accent-blue px-3 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+                  className="h-9 rounded-lg bg-accent-blue px-3 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
                 >
                   {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
                 </button>
@@ -194,7 +194,7 @@ export function AssetDetailDialog({
                   asset.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-[4px] bg-background-tertiary px-2 py-0.5 text-xs text-foreground-secondary"
+                      className="rounded-full bg-background-tertiary px-2 py-0.5 text-xs text-foreground-secondary"
                     >
                       {tag}
                     </span>
@@ -224,7 +224,7 @@ export function AssetDetailDialog({
           <button
             onClick={handleDelete}
             className={cn(
-              "flex items-center gap-2 rounded-[6px] px-4 py-2 text-sm font-medium transition-colors",
+              "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
               confirmDelete
                 ? "bg-accent-red text-white hover:bg-accent-red/90"
                 : "border border-accent-red/30 text-accent-red hover:bg-accent-red/10"
@@ -235,7 +235,7 @@ export function AssetDetailDialog({
           </button>
           <button
             onClick={() => handleClose(false)}
-            className="h-9 rounded-[6px] border border-border px-4 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary"
+            className="h-9 rounded-lg border border-border px-4 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary"
           >
             Close
           </button>

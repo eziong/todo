@@ -65,7 +65,7 @@ export function CreateContentDialog({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Content title..."
-              className="h-9 w-full rounded-[6px] border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
               autoFocus
             />
           </div>
@@ -76,7 +76,7 @@ export function CreateContentDialog({
             <select
               value={type}
               onChange={(e) => setType(e.target.value as ContentType)}
-              className="h-9 w-full rounded-[6px] border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             >
               <option value="video">Video</option>
               <option value="short">Short</option>
@@ -91,7 +91,7 @@ export function CreateContentDialog({
             <select
               value={platform}
               onChange={(e) => setPlatform(e.target.value as ContentPlatform)}
-              className="h-9 w-full rounded-[6px] border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             >
               <option value="youtube">YouTube</option>
               <option value="instagram">Instagram</option>
@@ -107,7 +107,7 @@ export function CreateContentDialog({
             <select
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
-              className="h-9 w-full rounded-[6px] border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             >
               <option value="">No project</option>
               {projects.map((project) => (
@@ -122,14 +122,14 @@ export function CreateContentDialog({
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="rounded-[6px] px-4 py-2 text-sm font-medium text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!title.trim() || isCreating}
-              className="rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+              className="rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
             >
               Create
             </button>

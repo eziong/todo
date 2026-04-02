@@ -175,7 +175,7 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
               <div className="relative">
                 <button
                   onClick={() => setStatusOpen(!statusOpen)}
-                  className="flex items-center gap-2 rounded-[4px] px-2 py-1 text-sm text-foreground transition-colors hover:bg-background-tertiary"
+                  className="flex items-center gap-2 rounded-full px-2 py-1 text-sm text-foreground transition-colors hover:bg-background-tertiary"
                 >
                   <StatusIcon
                     className={cn("h-4 w-4", todo.status === "in_progress" && "animate-spin")}
@@ -215,7 +215,7 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
               <div className="relative">
                 <button
                   onClick={() => setPriorityOpen(!priorityOpen)}
-                  className="flex items-center gap-2 rounded-[4px] px-2 py-1 text-sm text-foreground transition-colors hover:bg-background-tertiary"
+                  className="flex items-center gap-2 rounded-full px-2 py-1 text-sm text-foreground transition-colors hover:bg-background-tertiary"
                 >
                   {currentPriority?.dot && (
                     <div className={cn("h-2.5 w-2.5 rounded-full", currentPriority.dot)} />
@@ -248,7 +248,7 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
             <PropertyRow label="Due Date">
               <Popover open={dueDateOpen} onOpenChange={setDueDateOpen}>
                 <PopoverTrigger asChild>
-                  <button className="flex items-center gap-2 rounded-[4px] px-2 py-1 text-sm text-foreground transition-colors hover:bg-background-tertiary">
+                  <button className="flex items-center gap-2 rounded-full px-2 py-1 text-sm text-foreground transition-colors hover:bg-background-tertiary">
                     <CalendarIcon className={cn("h-4 w-4", todo.dueDate && new Date(todo.dueDate) < new Date() ? "text-accent-red" : "text-foreground-secondary")} />
                     <span>{todo.dueDate ? formatDate(todo.dueDate) : "No date"}</span>
                     <ChevronDown className="h-3.5 w-3.5 text-foreground-secondary" />
@@ -265,7 +265,7 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
                     <div className="border-t border-border p-2">
                       <button
                         onClick={() => handleDueDateChange(undefined)}
-                        className="w-full rounded-[4px] px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                        className="w-full rounded-full px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
                       >
                         Remove date
                       </button>
@@ -278,7 +278,7 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
             {/* Project */}
             {todo.project && (
               <PropertyRow label="Project">
-                <button className="flex items-center gap-2 rounded-[4px] px-2 py-1 text-sm text-foreground transition-colors hover:bg-background-tertiary">
+                <button className="flex items-center gap-2 rounded-full px-2 py-1 text-sm text-foreground transition-colors hover:bg-background-tertiary">
                   <div
                     className={cn("h-2.5 w-2.5 rounded-full", getProjectDotColor(todo.project.color))}
                   />
@@ -294,7 +294,7 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
                   {tags.map((tag) => (
                     <span
                       key={tag.id}
-                      className="flex items-center gap-1 rounded-[4px] bg-background-tertiary px-2 py-0.5 text-xs text-foreground-secondary"
+                      className="flex items-center gap-1 rounded-full bg-background-tertiary px-2 py-0.5 text-xs text-foreground-secondary"
                     >
                       <Hash className="h-3 w-3" />
                       {tag.name}
@@ -317,7 +317,7 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
             onBlur={handleDescriptionBlur}
             placeholder="Add a description..."
             rows={4}
-            className="w-full resize-none rounded-[6px] border border-border bg-background-secondary p-3 text-sm text-foreground placeholder:text-foreground-secondary/50 focus:border-accent-blue focus:outline-none"
+            className="w-full resize-none rounded-lg border border-border bg-background-secondary p-3 text-sm text-foreground placeholder:text-foreground-secondary/50 focus:border-accent-blue focus:outline-none"
           />
         </div>
 
@@ -330,7 +330,7 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
             {subtasks?.map((subtask) => (
               <div
                 key={subtask.id}
-                className="flex items-center gap-2 rounded-[4px] px-1 py-1.5 transition-colors hover:bg-background-tertiary"
+                className="flex items-center gap-2 rounded-full px-1 py-1.5 transition-colors hover:bg-background-tertiary"
               >
                 <button
                   onClick={() => handleToggleSubtask(subtask.id, subtask.status)}
@@ -416,7 +416,7 @@ function TaskDetailHeader({
       <button
         onClick={onToggleComplete}
         className={cn(
-          "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] border-2 transition-colors",
+          "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
           todo.status === "completed"
             ? "border-accent-blue bg-accent-blue text-white"
             : "border-border hover:border-foreground-secondary"
@@ -453,7 +453,7 @@ function TaskDetailHeader({
 
       <button
         onClick={onClose}
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
       >
         <X className="h-4 w-4" />
       </button>
@@ -467,9 +467,9 @@ function TaskDetailSkeleton() {
   return (
     <div className="fixed right-0 top-0 z-50 flex h-full w-[400px] flex-col border-l border-border bg-background-secondary shadow-2xl">
       <div className="flex items-start gap-3 border-b border-border p-4">
-        <Skeleton className="mt-0.5 h-6 w-6 rounded-[4px]" />
+        <Skeleton className="mt-0.5 h-6 w-6 rounded-full" />
         <Skeleton className="h-7 flex-1" />
-        <Skeleton className="h-7 w-7 rounded-[4px]" />
+        <Skeleton className="h-7 w-7 rounded-full" />
       </div>
       <div className="space-y-4 p-4">
         {Array.from({ length: 5 }).map((_, i) => (
@@ -498,7 +498,7 @@ function DropdownMenu({ children, onClose }: { children: React.ReactNode; onClos
   return (
     <>
       <div className="fixed inset-0 z-10" onClick={onClose} />
-      <div className="absolute left-0 top-full z-20 mt-1 min-w-[160px] rounded-[6px] border border-border bg-background-secondary p-1 shadow-lg">
+      <div className="absolute left-0 top-full z-20 mt-1 min-w-[160px] rounded-lg border border-border bg-background-secondary p-1 shadow-lg">
         {children}
       </div>
     </>
@@ -518,7 +518,7 @@ function DropdownItem({
     <button
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-2 rounded-[4px] px-2 py-1.5 text-sm transition-colors",
+        "flex w-full items-center gap-2 rounded-full px-2 py-1.5 text-sm transition-colors",
         selected
           ? "bg-background-tertiary text-foreground"
           : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"

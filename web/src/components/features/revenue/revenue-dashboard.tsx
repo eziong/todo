@@ -94,7 +94,7 @@ export function RevenueDashboard({
         )}
 
         {!isYouTubeConnected && (
-          <div className="rounded-[8px] border border-border bg-background-secondary p-8 text-center">
+          <div className="rounded-xl border border-border bg-background-secondary p-8 text-center">
             <p className="text-sm text-foreground-secondary">
               Connect your YouTube account in Settings to view ad revenue analytics.
             </p>
@@ -102,7 +102,7 @@ export function RevenueDashboard({
         )}
 
         {/* Sponsorships */}
-        <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+        <div className="rounded-xl border border-border bg-background-secondary p-4">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-medium text-foreground">Sponsorships</h3>
             <Button

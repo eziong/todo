@@ -47,10 +47,10 @@ export function ProjectIntegrations({ projectId }: ProjectIntegrationsProps) {
       </div>
       <div className="space-y-3">
         {/* YouTube */}
-        <div className="rounded-[8px] border border-border bg-background-secondary">
+        <div className="rounded-xl border border-border bg-background-secondary">
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-background-tertiary">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background-tertiary">
                   <Youtube className="h-5 w-5 text-foreground-secondary" />
                 </div>
                 <div>
@@ -69,7 +69,7 @@ export function ProjectIntegrations({ projectId }: ProjectIntegrationsProps) {
                 <button
                   onClick={() => disconnectYouTube.mutate()}
                   disabled={disconnectYouTube.isPending}
-                  className="flex h-8 items-center gap-2 rounded-[6px] border border-accent-red/30 px-3 text-sm text-accent-red transition-colors hover:bg-accent-red/10 disabled:opacity-50"
+                  className="flex h-8 items-center gap-2 rounded-lg border border-accent-red/30 px-3 text-sm text-accent-red transition-colors hover:bg-accent-red/10 disabled:opacity-50"
                 >
                   <Unplug className="h-3.5 w-3.5" />
                   {disconnectYouTube.isPending ? 'Disconnecting...' : 'Disconnect'}
@@ -78,7 +78,7 @@ export function ProjectIntegrations({ projectId }: ProjectIntegrationsProps) {
                 <button
                   onClick={() => connectYouTube.mutate()}
                   disabled={connectYouTube.isPending}
-                  className="flex h-8 items-center gap-2 rounded-[6px] border border-border bg-background-tertiary px-3 text-sm text-foreground-secondary transition-colors hover:bg-background hover:text-foreground disabled:opacity-50"
+                  className="flex h-8 items-center gap-2 rounded-lg border border-border bg-background-tertiary px-3 text-sm text-foreground-secondary transition-colors hover:bg-background hover:text-foreground disabled:opacity-50"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   {connectYouTube.isPending ? 'Connecting...' : 'Connect'}
@@ -122,7 +122,7 @@ export function ProjectIntegrations({ projectId }: ProjectIntegrationsProps) {
                   </div>
                   <button
                     onClick={() => router.push(`/projects/${projectId}/youtube?selectChannel=true`)}
-                    className="flex h-8 items-center gap-1.5 rounded-[6px] border border-border px-3 text-xs text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                    className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
                   >
                     <RefreshCw className="h-3 w-3" />
                     Change
@@ -133,9 +133,9 @@ export function ProjectIntegrations({ projectId }: ProjectIntegrationsProps) {
           </div>
 
         {/* Google Drive */}
-        <div className="flex items-center justify-between rounded-[8px] border border-border bg-background-secondary p-4">
+        <div className="flex items-center justify-between rounded-xl border border-border bg-background-secondary p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-background-tertiary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background-tertiary">
                 <HardDrive className="h-5 w-5 text-foreground-secondary" />
               </div>
               <div>
@@ -154,7 +154,7 @@ export function ProjectIntegrations({ projectId }: ProjectIntegrationsProps) {
               <button
                 onClick={() => disconnectDrive.mutate()}
                 disabled={disconnectDrive.isPending}
-                className="flex h-8 items-center gap-2 rounded-[6px] border border-accent-red/30 px-3 text-sm text-accent-red transition-colors hover:bg-accent-red/10 disabled:opacity-50"
+                className="flex h-8 items-center gap-2 rounded-lg border border-accent-red/30 px-3 text-sm text-accent-red transition-colors hover:bg-accent-red/10 disabled:opacity-50"
               >
                 <Unplug className="h-3.5 w-3.5" />
                 {disconnectDrive.isPending ? 'Disconnecting...' : 'Disconnect'}
@@ -163,7 +163,7 @@ export function ProjectIntegrations({ projectId }: ProjectIntegrationsProps) {
               <button
                 onClick={() => connectDrive.mutate()}
                 disabled={connectDrive.isPending}
-                className="flex h-8 items-center gap-2 rounded-[6px] border border-border bg-background-tertiary px-3 text-sm text-foreground-secondary transition-colors hover:bg-background hover:text-foreground disabled:opacity-50"
+                className="flex h-8 items-center gap-2 rounded-lg border border-border bg-background-tertiary px-3 text-sm text-foreground-secondary transition-colors hover:bg-background hover:text-foreground disabled:opacity-50"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 {connectDrive.isPending ? 'Connecting...' : 'Connect'}

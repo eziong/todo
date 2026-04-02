@@ -26,7 +26,7 @@ function ConnectCTA({ onConnect, isPending }: { onConnect: () => void; isPending
       <button
         onClick={onConnect}
         disabled={isPending}
-        className="flex items-center gap-2 rounded-[6px] bg-accent-blue px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+        className="flex items-center gap-2 rounded-lg bg-accent-blue px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
       >
         {isPending ? 'Connecting...' : 'Connect YouTube'}
         <ExternalLink className="h-3.5 w-3.5" />
@@ -93,7 +93,7 @@ export default function ProjectYouTubePage() {
         {classified.retryable && (
           <button
             onClick={() => refetch()}
-            className="rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+            className="rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
           >
             Try Again
           </button>

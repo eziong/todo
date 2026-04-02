@@ -147,7 +147,7 @@ export function NotesContent({
             onClick={handleCreateNote}
             disabled={isCreating}
             className={cn(
-              "flex items-center gap-2 rounded-[6px] bg-accent-blue text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50",
+              "flex items-center gap-2 rounded-lg bg-accent-blue text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50",
               hasEditor ? "h-7 w-7 justify-center p-0" : "px-3 py-2"
             )}
           >
@@ -166,7 +166,7 @@ export function NotesContent({
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="Search notes..."
               className={cn(
-                "h-9 w-full rounded-[6px] border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue",
+                "h-9 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue",
                 !hasEditor && "max-w-sm"
               )}
             />
@@ -182,7 +182,7 @@ export function NotesContent({
                     projectId: e.target.value || undefined,
                   })
                 }
-                className="h-9 appearance-none rounded-[6px] border border-border bg-background pl-9 pr-8 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+                className="h-9 appearance-none rounded-lg border border-border bg-background pl-9 pr-8 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
               >
                 <option value="">All Projects</option>
                 {projects.map((p) => (
@@ -215,7 +215,7 @@ export function NotesContent({
                 key={note.id}
                 onClick={() => onSelectNote(note.id)}
                 className={cn(
-                  "group w-full rounded-[8px] border p-3 text-left transition-colors",
+                  "group w-full rounded-xl border p-3 text-left transition-colors",
                   selectedNoteId === note.id
                     ? "border-accent-blue/50 bg-accent-blue/5"
                     : "border-border bg-background-secondary hover:border-foreground-secondary/30"
@@ -244,7 +244,7 @@ export function NotesContent({
                 </p>
                 <div className="mt-2 flex items-center gap-2">
                   {note.folderName && (
-                    <span className="rounded-[4px] bg-background-tertiary px-1.5 py-0.5 text-xs text-foreground-secondary truncate max-w-[100px]">
+                    <span className="rounded-full bg-background-tertiary px-1.5 py-0.5 text-xs text-foreground-secondary truncate max-w-[100px]">
                       {note.folderName}
                     </span>
                   )}

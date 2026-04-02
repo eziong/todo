@@ -131,14 +131,14 @@ export function UploadDialog({
             {!file ? (
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex w-full flex-col items-center justify-center gap-2 rounded-[8px] border-2 border-dashed border-border bg-background-secondary p-8 text-foreground-secondary transition-colors hover:border-accent-blue hover:text-accent-blue"
+                className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-background-secondary p-8 text-foreground-secondary transition-colors hover:border-accent-blue hover:text-accent-blue"
               >
                 <Upload className="h-8 w-8" />
                 <span className="text-sm">Click to select a video file</span>
                 <span className="text-xs">MP4, MOV, AVI, MKV supported</span>
               </button>
             ) : (
-              <div className="flex items-center gap-3 rounded-[6px] border border-border bg-background-secondary p-3">
+              <div className="flex items-center gap-3 rounded-lg border border-border bg-background-secondary p-3">
                 <File className="h-5 w-5 text-foreground-secondary" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-foreground truncate">{file.name}</p>
@@ -183,13 +183,13 @@ export function UploadDialog({
           )}
 
           {uploadState === 'done' && (
-            <div className="rounded-[6px] bg-accent-green/10 p-3 text-sm text-accent-green">
+            <div className="rounded-lg bg-accent-green/10 p-3 text-sm text-accent-green">
               Upload complete! Your video is now being processed by YouTube.
             </div>
           )}
 
           {uploadState === 'error' && (
-            <div className="rounded-[6px] bg-accent-red/10 p-3 text-sm text-accent-red">
+            <div className="rounded-lg bg-accent-red/10 p-3 text-sm text-accent-red">
               Upload failed. Please try again.
             </div>
           )}
@@ -204,7 +204,7 @@ export function UploadDialog({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Video title"
-                  className="h-10 w-full rounded-[6px] border border-border bg-background-secondary px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+                  className="h-10 w-full rounded-lg border border-border bg-background-secondary px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
                 />
               </div>
 
@@ -215,7 +215,7 @@ export function UploadDialog({
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   placeholder="Video description"
-                  className="w-full rounded-[6px] border border-border bg-background-secondary px-3 py-2 text-sm text-foreground resize-y placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+                  className="w-full rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground resize-y placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
                 />
               </div>
 
@@ -226,7 +226,7 @@ export function UploadDialog({
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
                   placeholder="tag1, tag2, tag3"
-                  className="h-10 w-full rounded-[6px] border border-border bg-background-secondary px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+                  className="h-10 w-full rounded-lg border border-border bg-background-secondary px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
                 />
               </div>
 
@@ -238,7 +238,7 @@ export function UploadDialog({
                       key={opt}
                       onClick={() => setPrivacyStatus(opt)}
                       className={cn(
-                        "h-9 rounded-[6px] border px-4 text-sm capitalize transition-colors",
+                        "h-9 rounded-lg border px-4 text-sm capitalize transition-colors",
                         privacyStatus === opt
                           ? "border-accent-blue bg-accent-blue/10 text-accent-blue"
                           : "border-border bg-background-secondary text-foreground-secondary hover:bg-background-tertiary"
@@ -257,7 +257,7 @@ export function UploadDialog({
           {uploadState === 'done' ? (
             <button
               onClick={() => handleClose(false)}
-              className="h-9 rounded-[6px] bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+              className="h-9 rounded-lg bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
             >
               Done
             </button>
@@ -265,14 +265,14 @@ export function UploadDialog({
             <>
               <button
                 onClick={() => handleClose(false)}
-                className="h-9 rounded-[6px] border border-border px-4 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary"
+                className="h-9 rounded-lg border border-border px-4 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={!file || !title.trim() || isCreatingSession}
-                className="h-9 rounded-[6px] bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+                className="h-9 rounded-lg bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
               >
                 {isCreatingSession ? 'Preparing...' : 'Upload'}
               </button>

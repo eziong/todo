@@ -18,6 +18,7 @@ export type LinkId = Brand<string, 'LinkId'>
 export type DescriptionTemplateId = Brand<string, 'DescriptionTemplateId'>
 export type ContentId = Brand<string, 'ContentId'>
 export type ContentChecklistId = Brand<string, 'ContentChecklistId'>
+export type ContentStageDataId = Brand<string, 'ContentStageDataId'>
 export type UserId = Brand<string, 'UserId'>
 export type YouTubeChannelId = Brand<string, 'YouTubeChannelId'>
 export type AssetId = Brand<string, 'AssetId'>
@@ -39,6 +40,7 @@ export const LinkId = (id: string): LinkId => id as LinkId
 export const DescriptionTemplateId = (id: string): DescriptionTemplateId => id as DescriptionTemplateId
 export const ContentId = (id: string): ContentId => id as ContentId
 export const ContentChecklistId = (id: string): ContentChecklistId => id as ContentChecklistId
+export const ContentStageDataId = (id: string): ContentStageDataId => id as ContentStageDataId
 export const UserId = (id: string): UserId => id as UserId
 export const YouTubeChannelId = (id: string): YouTubeChannelId => id as YouTubeChannelId
 export const AssetId = (id: string): AssetId => id as AssetId

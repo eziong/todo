@@ -7,13 +7,13 @@ export function TasksSkeleton() {
       <div className="flex items-center justify-between">
         <Skeleton className="h-8 w-32" />
         <div className="flex items-center gap-2">
-          <Skeleton className="h-8 w-20 rounded-[6px]" />
-          <Skeleton className="h-8 w-16 rounded-[6px]" />
+          <Skeleton className="h-8 w-20 rounded-lg" />
+          <Skeleton className="h-8 w-16 rounded-lg" />
         </div>
       </div>
 
       {/* Quick add input */}
-      <Skeleton className="h-12 w-full rounded-[8px]" />
+      <Skeleton className="h-12 w-full rounded-xl" />
 
       {/* Task sections */}
       {[1, 2, 3].map((section) => (
@@ -26,9 +26,9 @@ export function TasksSkeleton() {
             <div key={i} className="flex items-center gap-3 px-2 py-2.5">
               <Skeleton className="h-4 w-4" />
               <Skeleton className="h-2.5 w-2.5 rounded-full" />
-              <Skeleton className="h-5 w-5 rounded-[4px]" />
+              <Skeleton className="h-5 w-5 rounded-full" />
               <Skeleton className="h-4 flex-1 max-w-[200px]" />
-              <Skeleton className="h-5 w-14 rounded-[4px]" />
+              <Skeleton className="h-5 w-14 rounded-full" />
             </div>
           ))}
         </div>

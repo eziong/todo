@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Filter,
   ArrowUpDown,
+  Plus,
   X,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -167,13 +168,22 @@ export function TasksContent({
       <div className="space-y-6">
         {/* Page header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-foreground">All Tasks</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">All Tasks</h1>
           <div className="flex items-center gap-2">
+            {/* Add task */}
+            <button
+              onClick={() => quickAddInputRef.current?.focus()}
+              className="flex h-9 items-center gap-2 rounded-lg bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+            >
+              <Plus className="h-4 w-4" />
+              Add Task
+            </button>
+
             {/* Clear filters */}
             {activeFilterCount > 0 && (
               <button
                 onClick={handleClearFilters}
-                className="flex h-8 items-center gap-1.5 rounded-[6px] px-2 text-xs text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                className="flex h-8 items-center gap-1.5 rounded-lg px-2 text-xs text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
                 Clear filters
@@ -185,7 +195,7 @@ export function TasksContent({
               <button
                 onClick={() => { setFilterOpen(!filterOpen); setSortOpen(false) }}
                 className={cn(
-                  "flex h-8 items-center gap-2 rounded-[6px] border border-border px-3 text-sm transition-colors",
+                  "flex h-8 items-center gap-2 rounded-lg border border-border px-3 text-sm transition-colors",
                   filterOpen || activeFilterCount > 0
                     ? "bg-background-tertiary text-foreground"
                     : "bg-background-secondary text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -202,7 +212,7 @@ export function TasksContent({
               </button>
 
               {filterOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-64 rounded-[8px] border border-border bg-background-secondary p-1 shadow-xl">
+                <div className="absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border border-border bg-background-secondary p-1 shadow-xl">
                   <FilterSection title="Priority">
                     <FilterOption label="All" selected={filters.priority === "all"} onClick={() => setFilters((f) => ({ ...f, priority: "all" }))} />
                     <FilterOption label="Urgent" dot="bg-accent-red" selected={filters.priority === "urgent"} onClick={() => setFilters((f) => ({ ...f, priority: "urgent" }))} />
@@ -238,7 +248,7 @@ export function TasksContent({
               <button
                 onClick={() => { setSortOpen(!sortOpen); setFilterOpen(false) }}
                 className={cn(
-                  "flex h-8 items-center gap-2 rounded-[6px] border border-border px-3 text-sm transition-colors",
+                  "flex h-8 items-center gap-2 rounded-lg border border-border px-3 text-sm transition-colors",
                   sortOpen
                     ? "bg-background-tertiary text-foreground"
                     : "bg-background-secondary text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -250,13 +260,13 @@ export function TasksContent({
               </button>
 
               {sortOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-[8px] border border-border bg-background-secondary p-1 shadow-xl">
+                <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-border bg-background-secondary p-1 shadow-xl">
                   {SORT_OPTIONS.map((option) => (
                     <button
                       key={option.field}
                       onClick={() => handleSortChange(option.field)}
                       className={cn(
-                        "flex w-full items-center justify-between rounded-[4px] px-2 py-1.5 text-sm transition-colors",
+                        "flex w-full items-center justify-between rounded-full px-2 py-1.5 text-sm transition-colors",
                         sort.field === option.field
                           ? "bg-background-tertiary text-foreground"
                           : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -288,7 +298,7 @@ export function TasksContent({
             }}
             placeholder="+ Add task..."
             disabled={isCreating}
-            className="w-full rounded-[8px] border border-border bg-background-secondary px-4 py-3 text-sm text-foreground placeholder:text-foreground-secondary/60 transition-colors focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue disabled:opacity-50"
+            className="w-full rounded-xl border border-border bg-background-secondary px-4 py-3 text-sm text-foreground placeholder:text-foreground-secondary/60 transition-colors focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue disabled:opacity-50"
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-foreground-secondary/50 font-mono">
             Cmd+N

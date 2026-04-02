@@ -110,28 +110,28 @@ export function BuildsContent({
     switch (status) {
       case "running":
         return (
-          <span className="flex items-center gap-1.5 rounded-[4px] bg-accent-yellow/10 px-2 py-0.5 text-xs font-medium text-accent-yellow">
+          <span className="flex items-center gap-1.5 rounded-full bg-accent-yellow/10 px-2 py-0.5 text-xs font-medium text-accent-yellow">
             <Loader2 className="h-3 w-3 animate-spin" />
             Running
           </span>
         )
       case "success":
         return (
-          <span className="flex items-center gap-1.5 rounded-[4px] bg-accent-green/10 px-2 py-0.5 text-xs font-medium text-accent-green">
+          <span className="flex items-center gap-1.5 rounded-full bg-accent-green/10 px-2 py-0.5 text-xs font-medium text-accent-green">
             <Check className="h-3 w-3" />
             Success
           </span>
         )
       case "failed":
         return (
-          <span className="flex items-center gap-1.5 rounded-[4px] bg-accent-red/10 px-2 py-0.5 text-xs font-medium text-accent-red">
+          <span className="flex items-center gap-1.5 rounded-full bg-accent-red/10 px-2 py-0.5 text-xs font-medium text-accent-red">
             <X className="h-3 w-3" />
             Failed
           </span>
         )
       default:
         return (
-          <span className="flex items-center gap-1.5 rounded-[4px] bg-foreground-secondary/10 px-2 py-0.5 text-xs font-medium text-foreground-secondary">
+          <span className="flex items-center gap-1.5 rounded-full bg-foreground-secondary/10 px-2 py-0.5 text-xs font-medium text-foreground-secondary">
             Pending
           </span>
         )
@@ -142,11 +142,11 @@ export function BuildsContent({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">Builds</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Builds</h1>
         <button
           onClick={() => setNewBuildModalOpen(true)}
           disabled={projects.length === 0}
-          className="flex h-9 items-center gap-2 rounded-[6px] bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+          className="flex h-9 items-center gap-2 rounded-lg bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
         >
           <Play className="h-4 w-4" />
           New Build
@@ -212,7 +212,7 @@ export function BuildsContent({
                 <div
                   key={build.id}
                   className={cn(
-                    "overflow-hidden rounded-[8px] border border-border bg-background-secondary border-l-4",
+                    "overflow-hidden rounded-xl border border-border bg-background-secondary border-l-4",
                     getStatusColor(build.status)
                   )}
                 >
@@ -253,7 +253,7 @@ export function BuildsContent({
                       {/* Terminal log area */}
                       {logLines.length > 0 && (
                         <div className="bg-background p-4">
-                          <div className="rounded-[6px] bg-[#0A0A0B] p-4">
+                          <div className="rounded-lg bg-[#0A0A0B] p-4">
                             <pre className="font-mono text-sm leading-relaxed">
                               {logLines.map((line, idx) => (
                                 <div

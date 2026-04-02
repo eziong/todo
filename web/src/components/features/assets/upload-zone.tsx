@@ -100,7 +100,7 @@ export function UploadZone({
         onDrop={handleDrop}
         onClick={() => !selectedFile && fileInputRef.current?.click()}
         className={cn(
-          "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-[8px] border-2 border-dashed p-8 transition-colors",
+          "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 transition-colors",
           dragOver
             ? "border-accent-blue bg-accent-blue/5"
             : selectedFile
@@ -125,7 +125,7 @@ export function UploadZone({
                 e.stopPropagation()
                 setSelectedFile(null)
               }}
-              className="flex h-7 w-7 items-center justify-center rounded-[4px] text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
+              className="flex h-7 w-7 items-center justify-center rounded-full text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
             >
               <X className="h-4 w-4" />
             </button>
@@ -156,7 +156,7 @@ export function UploadZone({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xs text-foreground-secondary">Upload to:</span>
-            <div className="flex items-center rounded-[6px] border border-border">
+            <div className="flex items-center rounded-lg border border-border">
               <button
                 onClick={() => setStorageTarget('auto')}
                 className={cn(
@@ -203,7 +203,7 @@ export function UploadZone({
           </div>
           <button
             onClick={handleUpload}
-            className="flex items-center gap-2 rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+            className="flex items-center gap-2 rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
           >
             <Upload className="h-4 w-4" />
             Upload

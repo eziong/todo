@@ -181,7 +181,7 @@ export function WebhookConfigDialog({
               </Button>
             </div>
             {headers.length > 0 && (
-              <div className="space-y-2 rounded-[6px] border border-border bg-background p-3">
+              <div className="space-y-2 rounded-lg border border-border bg-background p-3">
                 {headers.map((header, idx) => (
                   <div key={idx} className="flex items-center gap-2">
                     <Input

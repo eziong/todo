@@ -65,7 +65,7 @@ export function SettingsContent() {
   return (
     <div className="mx-auto max-w-[640px] space-y-8">
       {/* Page header */}
-      <h1 className="text-2xl font-semibold text-foreground">Settings</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-foreground">Settings</h1>
 
       {/* Profile Section */}
       <section className="space-y-4">
@@ -78,7 +78,7 @@ export function SettingsContent() {
               type="email"
               value={user?.email ?? ""}
               readOnly
-              className="h-10 w-full cursor-not-allowed rounded-[6px] border border-border bg-background-secondary/50 px-3 text-sm text-foreground-secondary"
+              className="h-10 w-full cursor-not-allowed rounded-lg border border-border bg-background-secondary/50 px-3 text-sm text-foreground-secondary"
             />
             <p className="text-xs text-foreground-secondary">Google Account</p>
           </div>
@@ -101,7 +101,7 @@ export function SettingsContent() {
                   key={option}
                   onClick={() => setTheme(option)}
                   className={cn(
-                    "flex h-9 items-center rounded-[6px] border px-4 text-sm capitalize transition-colors",
+                    "flex h-9 items-center rounded-lg border px-4 text-sm capitalize transition-colors",
                     activeTheme === option
                       ? "border-accent-blue bg-accent-blue/10 text-accent-blue"
                       : "border-border bg-background-secondary text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -142,7 +142,7 @@ export function SettingsContent() {
       {/* Keyboard Shortcuts Section */}
       <section className="space-y-4">
         <h2 className="text-lg font-medium text-foreground">Keyboard Shortcuts</h2>
-        <div className="rounded-[8px] border border-border bg-background-secondary overflow-hidden">
+        <div className="rounded-xl border border-border bg-background-secondary overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
@@ -183,7 +183,7 @@ export function SettingsContent() {
         {/* Backup info */}
         {backupInfo && (
           <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+            <div className="rounded-xl border border-border bg-background-secondary p-4">
               <div className="flex items-center gap-2 text-sm text-foreground-secondary">
                 <Database className="h-4 w-4" />
                 Database
@@ -192,7 +192,7 @@ export function SettingsContent() {
                 {formatBytes(backupInfo.dbSizeBytes)}
               </p>
             </div>
-            <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+            <div className="rounded-xl border border-border bg-background-secondary p-4">
               <div className="flex items-center gap-2 text-sm text-foreground-secondary">
                 <HardDrive className="h-4 w-4" />
                 Assets
@@ -201,7 +201,7 @@ export function SettingsContent() {
                 {backupInfo.assetCount} files
               </p>
             </div>
-            <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+            <div className="rounded-xl border border-border bg-background-secondary p-4">
               <div className="flex items-center gap-2 text-sm text-foreground-secondary">
                 <FileArchive className="h-4 w-4" />
                 Total Size
@@ -218,7 +218,7 @@ export function SettingsContent() {
           <button
             onClick={() => exportMutation.mutate(false)}
             disabled={exportMutation.isPending}
-            className="flex h-9 items-center gap-2 rounded-[6px] border border-border bg-background-secondary px-4 text-sm text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
+            className="flex h-9 items-center gap-2 rounded-lg border border-border bg-background-secondary px-4 text-sm text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
           >
             {exportMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -230,7 +230,7 @@ export function SettingsContent() {
           <button
             onClick={() => exportMutation.mutate(true)}
             disabled={exportMutation.isPending}
-            className="flex h-9 items-center gap-2 rounded-[6px] border border-border bg-background-secondary px-4 text-sm text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
+            className="flex h-9 items-center gap-2 rounded-lg border border-border bg-background-secondary px-4 text-sm text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
           >
             {exportMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -253,7 +253,7 @@ export function SettingsContent() {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={importMutation.isPending}
-            className="flex h-9 items-center gap-2 rounded-[6px] border border-border bg-background-secondary px-4 text-sm text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
+            className="flex h-9 items-center gap-2 rounded-lg border border-border bg-background-secondary px-4 text-sm text-foreground transition-colors hover:bg-background-tertiary disabled:opacity-50"
           >
             {importMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

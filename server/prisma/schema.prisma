@@ -283,7 +283,6 @@ model contents {
   user_id          String
   project_id       String?
   title            String
-  description      String?   @db.Text
   type             String    @default("video")
   stage            String    @default("idea")
   platform         String    @default("youtube")
@@ -301,6 +300,7 @@ model contents {
   note                 notes?                 @relation(fields: [note_id], references: [id], onDelete: SetNull)
   template             description_templates? @relation(fields: [template_id], references: [id], onDelete: SetNull)
   content_checklists   content_checklists[]
+  content_stage_data   content_stage_data[]
   assets               assets[]
   sponsorships         sponsorships[]
   sns_reminders        sns_reminders[]
@@ -317,6 +317,7 @@ model contents {
 model content_checklists {
   id         String  @id @default(uuid())
   content_id String
+  stage      String  @default("idea")
   label      String
   checked    Boolean @default(false)
   position   Int?
@@ -324,6 +325,24 @@ model content_checklists {
   content contents @relation(fields: [content_id], references: [id], onDelete: Cascade)
 
   @@index([content_id], map: "content_checklists_content_id_idx")
+}
+
+// =============================================================
+// Content Stage Data
+// =============================================================
+model content_stage_data {
+  id           String    @id @default(uuid())
+  content_id   String
+  stage        String
+  description  String?   @db.Text
+  completed_at DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @default(now())
+
+  content contents @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  @@unique([content_id, stage])
+  @@index([content_id], map: "content_stage_data_content_id_idx")
 }
 
 // =============================================================

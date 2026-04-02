@@ -75,14 +75,14 @@ export function ContentCalendar({
                 caption: 'flex items-center justify-between mb-4',
                 caption_label: 'text-sm font-medium text-foreground',
                 nav: 'flex items-center gap-1',
-                nav_button: 'h-7 w-7 rounded-[6px] flex items-center justify-center text-foreground-secondary hover:bg-background-tertiary hover:text-foreground transition-colors',
+                nav_button: 'h-7 w-7 rounded-lg flex items-center justify-center text-foreground-secondary hover:bg-background-tertiary hover:text-foreground transition-colors',
                 table: 'w-full border-collapse',
                 head_row: '',
                 head_cell: 'w-10 pb-2 text-center text-xs font-medium text-foreground-secondary',
                 row: '',
                 cell: 'relative p-0 text-center',
                 day: cn(
-                  'h-10 w-10 mx-auto rounded-[6px] text-sm transition-colors',
+                  'h-10 w-10 mx-auto rounded-lg text-sm transition-colors',
                   'text-foreground hover:bg-background-tertiary',
                   'aria-selected:bg-accent-blue aria-selected:text-white',
                 ),
@@ -138,16 +138,16 @@ export function ContentCalendar({
                       <button
                         key={content.id}
                         onClick={() => onSelectContent(content.id as string)}
-                        className="w-full rounded-[6px] border border-border bg-background p-3 text-left transition-colors hover:border-foreground-secondary/30"
+                        className="w-full rounded-lg border border-border bg-background p-3 text-left transition-colors hover:border-foreground-secondary/30"
                       >
                         <p className="text-sm font-medium text-foreground line-clamp-2">
                           {content.title}
                         </p>
                         <div className="mt-1.5 flex items-center gap-1">
-                          <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium", TYPE_COLORS[content.type])}>
+                          <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-medium", TYPE_COLORS[content.type])}>
                             {content.type}
                           </span>
-                          <span className={cn("rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium", PLATFORM_COLORS[content.platform])}>
+                          <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-medium", PLATFORM_COLORS[content.platform])}>
                             {content.platform}
                           </span>
                         </div>

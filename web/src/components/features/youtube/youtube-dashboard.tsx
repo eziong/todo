@@ -61,13 +61,13 @@ export function YouTubeDashboard({
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-[8px] border border-border bg-background-secondary p-4"
+            className="rounded-xl border border-border bg-background-secondary p-4"
           >
             <div className="flex items-center gap-2 text-foreground-secondary">
               <stat.icon className="h-4 w-4" />
               <span className="text-sm">{stat.label}</span>
             </div>
-            <p className="mt-1 text-2xl font-semibold text-foreground">{stat.value}</p>
+            <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -76,7 +76,7 @@ export function YouTubeDashboard({
       <div className="flex gap-3">
         <button
           onClick={onNavigateToVideos}
-          className="flex items-center gap-2 rounded-[6px] border border-border bg-background-secondary px-4 py-2 text-sm text-foreground transition-colors hover:bg-background-tertiary"
+          className="flex items-center gap-2 rounded-lg border border-border bg-background-secondary px-4 py-2 text-sm text-foreground transition-colors hover:bg-background-tertiary"
         >
           <Film className="h-4 w-4" />
           Manage Videos
@@ -84,7 +84,7 @@ export function YouTubeDashboard({
         </button>
         <button
           onClick={onNavigateToComments}
-          className="flex items-center gap-2 rounded-[6px] border border-border bg-background-secondary px-4 py-2 text-sm text-foreground transition-colors hover:bg-background-tertiary"
+          className="flex items-center gap-2 rounded-lg border border-border bg-background-secondary px-4 py-2 text-sm text-foreground transition-colors hover:bg-background-tertiary"
         >
           Comments
           <ArrowRight className="h-3.5 w-3.5 text-foreground-secondary" />

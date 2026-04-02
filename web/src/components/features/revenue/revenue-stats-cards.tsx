@@ -29,14 +29,14 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, subtitle, iconClassName }: StatCardProps) {
   return (
-    <div className="rounded-[8px] border border-border bg-background-secondary p-4">
+    <div className="rounded-xl border border-border bg-background-secondary p-4">
       <div className="flex items-center justify-between">
         <span className="text-sm text-foreground-secondary">{label}</span>
-        <div className={cn("flex h-8 w-8 items-center justify-center rounded-[6px]", iconClassName)}>
+        <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg", iconClassName)}>
           <Icon className="h-4 w-4" />
         </div>
       </div>
-      <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
+      <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">{value}</p>
       {subtitle && (
         <p className="mt-1 text-xs text-foreground-secondary">{subtitle}</p>
       )}

@@ -93,7 +93,7 @@ export function MobileDashboard({ onOpenCommandPalette }: MobileDashboardProps) 
       <header className="flex h-12 shrink-0 items-center justify-between border-b border-border px-4">
         <button
           onClick={() => setMenuOpen(true)}
-          className="flex h-11 w-11 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors active:bg-background-tertiary"
+          className="flex h-11 w-11 items-center justify-center rounded-lg text-foreground-secondary transition-colors active:bg-background-tertiary"
           aria-label="Open menu"
         >
           <Menu className="h-5 w-5" />
@@ -101,7 +101,7 @@ export function MobileDashboard({ onOpenCommandPalette }: MobileDashboardProps) 
         <span className="text-base font-semibold text-foreground">Command</span>
         <button
           onClick={onOpenCommandPalette}
-          className="flex h-11 w-11 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors active:bg-background-tertiary"
+          className="flex h-11 w-11 items-center justify-center rounded-lg text-foreground-secondary transition-colors active:bg-background-tertiary"
           aria-label="Search"
         >
           <Search className="h-5 w-5" />
@@ -214,7 +214,7 @@ export function MobileDashboard({ onOpenCommandPalette }: MobileDashboardProps) 
             key={item.label}
             href={item.href}
             className={cn(
-              "flex h-11 min-w-[64px] flex-col items-center justify-center gap-0.5 rounded-[6px] px-3 transition-colors",
+              "flex h-11 min-w-[64px] flex-col items-center justify-center gap-0.5 rounded-lg px-3 transition-colors",
               isActive(item.href) ? "text-accent-blue" : "text-foreground-secondary"
             )}
           >
@@ -235,7 +235,7 @@ export function MobileDashboard({ onOpenCommandPalette }: MobileDashboardProps) 
               <span className="text-lg font-semibold text-foreground">Menu</span>
               <button
                 onClick={() => setMenuOpen(false)}
-                className="flex h-11 w-11 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors active:bg-background-tertiary"
+                className="flex h-11 w-11 items-center justify-center rounded-lg text-foreground-secondary transition-colors active:bg-background-tertiary"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -246,7 +246,7 @@ export function MobileDashboard({ onOpenCommandPalette }: MobileDashboardProps) 
                   key={item.label}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 rounded-[6px] px-3 py-3 text-foreground-secondary transition-colors active:bg-background-tertiary active:text-foreground"
+                  className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground-secondary transition-colors active:bg-background-tertiary active:text-foreground"
                 >
                   <item.icon className="h-5 w-5" />
                   <span className="text-sm">{item.label}</span>

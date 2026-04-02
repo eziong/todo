@@ -135,7 +135,7 @@ export function LinksContent({
   }
 
   return (
-    <div className="py-6">
+    <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-semibold text-foreground">Links</h1>
@@ -148,7 +148,7 @@ export function LinksContent({
               setFormCategory("affiliate")
             }}
             disabled={isCreatingLink}
-            className="flex items-center gap-2 rounded-[6px] bg-accent-blue px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-accent-blue px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             Add Link
@@ -160,7 +160,7 @@ export function LinksContent({
               onCreateTemplate({ name: "New Template", content: "" })
             }
             disabled={isCreatingTemplate}
-            className="flex items-center gap-2 rounded-[6px] bg-accent-blue px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-accent-blue px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             New Template
@@ -204,7 +204,7 @@ export function LinksContent({
                   key={cat.label}
                   onClick={() => setCategoryFilter(cat.value)}
                   className={cn(
-                    "rounded-[6px] px-3 py-1.5 text-sm transition-colors",
+                    "rounded-lg px-3 py-1.5 text-sm transition-colors",
                     categoryFilter === cat.value
                       ? "bg-background-tertiary text-foreground"
                       : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -220,7 +220,7 @@ export function LinksContent({
                 <select
                   value={projectFilter ?? ''}
                   onChange={(e) => onProjectFilterChange(e.target.value || undefined)}
-                  className="h-9 appearance-none rounded-[6px] border border-border bg-background pl-9 pr-8 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+                  className="h-9 appearance-none rounded-lg border border-border bg-background pl-9 pr-8 text-sm text-foreground focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
                 >
                   <option value="">All Projects</option>
                   {projects.map((p) => (
@@ -235,7 +235,7 @@ export function LinksContent({
 
           {/* Add link form */}
           {isAddingLink && (
-            <div className="mb-4 rounded-[8px] border border-accent-blue/30 bg-background-secondary p-4">
+            <div className="mb-4 rounded-xl border border-accent-blue/30 bg-background-secondary p-4">
               <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
                 <div>
                   <label className="mb-1 block text-xs text-foreground-secondary">
@@ -246,7 +246,7 @@ export function LinksContent({
                     value={formLabel}
                     onChange={(e) => setFormLabel(e.target.value)}
                     placeholder="My affiliate link"
-                    className="h-9 w-full rounded-[6px] border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none"
+                    className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none"
                     autoFocus
                   />
                 </div>
@@ -259,7 +259,7 @@ export function LinksContent({
                     value={formUrl}
                     onChange={(e) => setFormUrl(e.target.value)}
                     placeholder="https://example.com"
-                    className="h-9 w-full rounded-[6px] border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none"
+                    className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none"
                   />
                 </div>
                 <div>
@@ -271,7 +271,7 @@ export function LinksContent({
                     onChange={(e) =>
                       setFormCategory(e.target.value as LinkCategory)
                     }
-                    className="h-9 rounded-[6px] border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none"
+                    className="h-9 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none"
                   >
                     <option value="affiliate">Affiliate</option>
                     <option value="social">Social</option>
@@ -283,14 +283,14 @@ export function LinksContent({
               <div className="mt-3 flex items-center gap-2 justify-end">
                 <button
                   onClick={cancelForm}
-                  className="rounded-[6px] px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                  className="rounded-lg px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddLink}
                   disabled={!formLabel.trim() || !formUrl.trim()}
-                  className="rounded-[6px] bg-accent-blue px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+                  className="rounded-lg bg-accent-blue px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
                 >
                   Add
                 </button>
@@ -314,7 +314,7 @@ export function LinksContent({
               {filteredLinks.map((link) => (
                 <div
                   key={link.id}
-                  className="group flex items-center justify-between rounded-[8px] border border-border bg-background-secondary p-4 transition-colors hover:border-foreground-secondary/30"
+                  className="group flex items-center justify-between rounded-xl border border-border bg-background-secondary p-4 transition-colors hover:border-foreground-secondary/30"
                 >
                   {editingLinkId === link.id ? (
                     <div className="flex-1 space-y-3">
@@ -323,21 +323,21 @@ export function LinksContent({
                           type="text"
                           value={formLabel}
                           onChange={(e) => setFormLabel(e.target.value)}
-                          className="h-8 rounded-[6px] border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none"
+                          className="h-8 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none"
                           autoFocus
                         />
                         <input
                           type="url"
                           value={formUrl}
                           onChange={(e) => setFormUrl(e.target.value)}
-                          className="h-8 rounded-[6px] border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none"
+                          className="h-8 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-accent-blue focus:outline-none"
                         />
                         <select
                           value={formCategory}
                           onChange={(e) =>
                             setFormCategory(e.target.value as LinkCategory)
                           }
-                          className="h-8 rounded-[6px] border border-border bg-background px-2 text-sm text-foreground focus:border-accent-blue focus:outline-none"
+                          className="h-8 rounded-lg border border-border bg-background px-2 text-sm text-foreground focus:border-accent-blue focus:outline-none"
                         >
                           <option value="affiliate">Affiliate</option>
                           <option value="social">Social</option>
@@ -348,14 +348,14 @@ export function LinksContent({
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={cancelForm}
-                          className="flex h-7 items-center gap-1 rounded-[4px] px-2 text-xs text-foreground-secondary hover:bg-background-tertiary"
+                          className="flex h-7 items-center gap-1 rounded-full px-2 text-xs text-foreground-secondary hover:bg-background-tertiary"
                         >
                           <X className="h-3 w-3" />
                           Cancel
                         </button>
                         <button
                           onClick={handleSaveEdit}
-                          className="flex h-7 items-center gap-1 rounded-[4px] bg-accent-blue px-2 text-xs text-white hover:bg-accent-blue/90"
+                          className="flex h-7 items-center gap-1 rounded-full bg-accent-blue px-2 text-xs text-white hover:bg-accent-blue/90"
                         >
                           <Check className="h-3 w-3" />
                           Save
@@ -372,7 +372,7 @@ export function LinksContent({
                           {link.category && (
                             <span
                               className={cn(
-                                "rounded-[4px] px-1.5 py-0.5 text-xs font-medium",
+                                "rounded-full px-1.5 py-0.5 text-xs font-medium",
                                 getCategoryColor(link.category)
                               )}
                             >
@@ -399,13 +399,13 @@ export function LinksContent({
                         <div className="hidden items-center gap-1 group-hover:flex">
                           <button
                             onClick={() => handleEditLink(link)}
-                            className="flex h-7 w-7 items-center justify-center rounded-[4px] text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
+                            className="flex h-7 w-7 items-center justify-center rounded-full text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
                           >
                             <Pencil className="h-3.5 w-3.5" />
                           </button>
                           <button
                             onClick={() => onDeleteLink(link.id)}
-                            className="flex h-7 w-7 items-center justify-center rounded-[4px] text-foreground-secondary hover:bg-background-tertiary hover:text-accent-red"
+                            className="flex h-7 w-7 items-center justify-center rounded-full text-foreground-secondary hover:bg-background-tertiary hover:text-accent-red"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>

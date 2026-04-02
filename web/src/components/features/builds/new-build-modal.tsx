@@ -108,7 +108,7 @@ export function NewBuildModal({
             <div className="relative">
               <button
                 onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
-                className="flex h-10 w-full items-center justify-between rounded-[6px] border border-border bg-background px-3 text-sm transition-colors hover:bg-background-tertiary"
+                className="flex h-10 w-full items-center justify-between rounded-lg border border-border bg-background px-3 text-sm transition-colors hover:bg-background-tertiary"
               >
                 <span className="text-foreground">
                   {selectedProject?.name ?? "Select a project"}
@@ -122,7 +122,7 @@ export function NewBuildModal({
                     className="fixed inset-0 z-10"
                     onClick={() => setProjectDropdownOpen(false)}
                   />
-                  <div className="absolute left-0 top-full z-20 mt-1 w-full rounded-[8px] border border-border bg-background-secondary p-1 shadow-lg">
+                  <div className="absolute left-0 top-full z-20 mt-1 w-full rounded-xl border border-border bg-background-secondary p-1 shadow-lg">
                     {projects.map((project) => (
                       <button
                         key={project.id}
@@ -132,7 +132,7 @@ export function NewBuildModal({
                           setSelectedWebhookId("")
                         }}
                         className={cn(
-                          "flex w-full items-center gap-2 rounded-[4px] px-3 py-2 text-left text-sm transition-colors",
+                          "flex w-full items-center gap-2 rounded-full px-3 py-2 text-left text-sm transition-colors",
                           selectedProjectId === project.id
                             ? "bg-accent-blue/10 text-accent-blue"
                             : "text-foreground hover:bg-background-tertiary"
@@ -176,7 +176,7 @@ export function NewBuildModal({
                   </SelectContent>
                 </Select>
                 {selectedWebhook && (
-                  <div className="rounded-[6px] border border-border bg-background px-3 py-2">
+                  <div className="rounded-lg border border-border bg-background px-3 py-2">
                     <p className="truncate font-mono text-xs text-foreground-secondary">
                       {selectedWebhook.method} {selectedWebhook.url}
                     </p>
@@ -184,7 +184,7 @@ export function NewBuildModal({
                 )}
               </>
             ) : (
-              <div className="flex items-center gap-2 rounded-[6px] border border-dashed border-border px-3 py-3">
+              <div className="flex items-center gap-2 rounded-lg border border-dashed border-border px-3 py-3">
                 <Webhook className="h-4 w-4 text-foreground-secondary" />
                 <p className="text-sm text-foreground-secondary">
                   No webhooks configured for this project. Add one in project settings.
@@ -200,7 +200,7 @@ export function NewBuildModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add release notes..."
-              className="h-20 w-full resize-none rounded-[6px] border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-secondary/50 focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+              className="h-20 w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-secondary/50 focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
             />
           </div>
         </div>
@@ -209,14 +209,14 @@ export function NewBuildModal({
         <div className="flex items-center justify-between border-t border-border px-5 py-4">
           <button
             onClick={() => onOpenChange(false)}
-            className="h-9 rounded-[6px] px-4 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+            className="h-9 rounded-lg px-4 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
           >
             Cancel
           </button>
           <button
             onClick={handleStartBuild}
             disabled={!selectedProjectId || !selectedWebhookId || isPending}
-            className="flex h-9 items-center gap-2 rounded-[6px] bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
+            className="flex h-9 items-center gap-2 rounded-lg bg-accent-blue px-4 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90 disabled:opacity-50"
           >
             <Play className="h-4 w-4" />
             Start Build

@@ -6,11 +6,11 @@ export function InboxSkeleton() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <Skeleton className="h-8 w-20" />
-        <Skeleton className="h-6 w-16 rounded-[4px]" />
+        <Skeleton className="h-6 w-16 rounded-full" />
       </div>
 
       {/* Quick add */}
-      <Skeleton className="h-12 w-full rounded-[8px]" />
+      <Skeleton className="h-12 w-full rounded-xl" />
 
       {/* Items */}
       <div className="space-y-0">
@@ -20,7 +20,7 @@ export function InboxSkeleton() {
             className="flex items-start gap-3 border-b border-border px-2 py-3"
           >
             <Skeleton className="mt-0.5 h-4 w-4" />
-            <Skeleton className="mt-0.5 h-5 w-5 rounded-[4px]" />
+            <Skeleton className="mt-0.5 h-5 w-5 rounded-full" />
             <div className="flex-1 space-y-1.5">
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-3 w-20" />

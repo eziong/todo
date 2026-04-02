@@ -6,7 +6,7 @@ export function NotificationSkeleton() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-6 py-4">
         <Skeleton className="h-7 w-40" />
-        <Skeleton className="h-9 w-28 rounded-[6px]" />
+        <Skeleton className="h-9 w-28 rounded-lg" />
       </div>
 
       {/* Filter chips */}
@@ -19,14 +19,14 @@ export function NotificationSkeleton() {
       {/* List items */}
       <div className="flex-1 px-6 space-y-1">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="flex items-start gap-3 rounded-[8px] p-3">
-            <Skeleton className="h-8 w-8 shrink-0 rounded-[6px]" />
+          <div key={i} className="flex items-start gap-3 rounded-xl p-3">
+            <Skeleton className="h-8 w-8 shrink-0 rounded-lg" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-3 w-1/2" />
               <Skeleton className="h-3 w-24" />
             </div>
-            <Skeleton className="h-7 w-7 rounded-[6px]" />
+            <Skeleton className="h-7 w-7 rounded-lg" />
           </div>
         ))}
       </div>

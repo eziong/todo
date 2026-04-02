@@ -125,7 +125,7 @@ function NotificationItem({ notification, onMarkRead, onDelete }: NotificationIt
   return (
     <div
       className={cn(
-        "group relative flex items-start gap-3 rounded-[8px] p-3 transition-colors",
+        "group relative flex items-start gap-3 rounded-xl p-3 transition-colors",
         !notification.read
           ? "bg-accent-blue/5 hover:bg-accent-blue/10"
           : "hover:bg-background-secondary"
@@ -139,7 +139,7 @@ function NotificationItem({ notification, onMarkRead, onDelete }: NotificationIt
       {/* Source icon */}
       <div
         className={cn(
-          "flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px]",
+          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
           config.badgeClass
         )}
       >
@@ -179,7 +179,7 @@ function NotificationItem({ notification, onMarkRead, onDelete }: NotificationIt
         {!notification.read && (
           <button
             onClick={() => onMarkRead(notification.id)}
-            className="flex h-7 w-7 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
             aria-label="Mark as read"
           >
             <Check className="h-3.5 w-3.5" />
@@ -187,7 +187,7 @@ function NotificationItem({ notification, onMarkRead, onDelete }: NotificationIt
         )}
         <button
           onClick={() => onDelete(notification.id)}
-          className="flex h-7 w-7 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-red-400"
+          className="flex h-7 w-7 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-red-400"
           aria-label="Delete notification"
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -226,7 +226,7 @@ export function NotificationList({
         {hasUnread && (
           <button
             onClick={onMarkAllRead}
-            className="flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-xs font-medium text-foreground-secondary transition-colors hover:bg-background-secondary hover:text-foreground"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-foreground-secondary transition-colors hover:bg-background-secondary hover:text-foreground"
           >
             <CheckCheck className="h-3.5 w-3.5" />
             Mark all read

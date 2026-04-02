@@ -123,7 +123,7 @@ export function DashboardContent({
     <div className="flex flex-col gap-6">
       {/* Page Header */}
       <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">{greeting}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{greeting}</h1>
         <span className="text-sm text-foreground-secondary">{dateStr}</span>
       </header>
 
@@ -157,7 +157,7 @@ export function DashboardContent({
               <button
                 key={task.id}
                 onClick={() => handleToggleTask(task.id, task.status)}
-                className="group flex items-center gap-3 rounded-[6px] p-2 text-left transition-colors hover:bg-background-tertiary"
+                className="group flex items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-background-tertiary"
               >
                 {task.status === 'completed' ? (
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-accent-green" />
@@ -177,7 +177,7 @@ export function DashboardContent({
                 {task.project && (
                   <span
                     className={cn(
-                      "flex shrink-0 items-center gap-1.5 rounded-[4px] px-2 py-0.5 text-xs font-medium",
+                      "flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium",
                       getProjectBadgeClasses(task.project.color)
                     )}
                   >
@@ -206,7 +206,7 @@ export function DashboardContent({
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-base font-medium text-foreground">Inbox</h2>
             {inboxUnprocessedCount > 0 && (
-              <span className="rounded-[4px] bg-accent-blue/15 px-2 py-0.5 text-xs font-medium text-accent-blue">
+              <span className="rounded-full bg-accent-blue/15 px-2 py-0.5 text-xs font-medium text-accent-blue">
                 {inboxUnprocessedCount} items to sort
               </span>
             )}
@@ -222,7 +222,7 @@ export function DashboardContent({
               {inboxItems.slice(0, 3).map((item) => (
                 <p
                   key={item.id}
-                  className="truncate rounded-[6px] px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                  className="truncate rounded-lg px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
                 >
                   {item.content}
                 </p>
@@ -258,7 +258,7 @@ export function DashboardContent({
                     {upcoming.tomorrow.map((task) => (
                       <p
                         key={task.id}
-                        className="truncate rounded-[6px] px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                        className="truncate rounded-lg px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
                       >
                         {task.title}
                       </p>
@@ -276,7 +276,7 @@ export function DashboardContent({
                     {upcoming.thisWeek.map((task) => (
                       <p
                         key={task.id}
-                        className="truncate rounded-[6px] px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                        className="truncate rounded-lg px-2 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
                       >
                         {task.title}
                       </p>
@@ -341,7 +341,7 @@ export function DashboardContent({
               return (
                 <div
                   key={activity.id}
-                  className="flex items-center gap-3 rounded-[6px] px-2 py-2 transition-colors hover:bg-background-tertiary"
+                  className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-background-tertiary"
                 >
                   <span className="w-16 shrink-0 text-xs text-foreground-secondary/60">
                     {formatActivityTime(activity.createdAt)}

@@ -101,7 +101,7 @@ export default function ProjectSettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8 py-6">
+    <div className="mx-auto max-w-2xl space-y-8">
       {/* Project Info */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
@@ -115,7 +115,7 @@ export default function ProjectSettingsPage() {
             Edit Project
           </Button>
         </div>
-        <div className="rounded-[8px] border border-border bg-background-secondary p-4 space-y-3">
+        <div className="rounded-xl border border-border bg-background-secondary p-4 space-y-3">
           <div>
             <span className="text-xs font-medium uppercase tracking-wider text-foreground-secondary">Name</span>
             <p className="mt-0.5 text-sm text-foreground">{project.name}</p>
@@ -142,7 +142,7 @@ export default function ProjectSettingsPage() {
             <label
               key={f.value}
               className={cn(
-                'flex items-start gap-3 rounded-[8px] border p-3 cursor-pointer transition-colors',
+                'flex items-start gap-3 rounded-xl border p-3 cursor-pointer transition-colors',
                 project.features.includes(f.value)
                   ? 'border-accent-blue/30 bg-accent-blue/5'
                   : 'border-border hover:border-foreground-secondary/30'
@@ -168,7 +168,7 @@ export default function ProjectSettingsPage() {
       {/* Danger Zone */}
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-foreground">Danger Zone</h2>
-        <div className="rounded-[8px] border border-accent-red/20 p-4 space-y-3">
+        <div className="rounded-xl border border-accent-red/20 p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-foreground">

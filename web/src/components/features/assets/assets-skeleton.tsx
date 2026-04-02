@@ -15,7 +15,7 @@ export function AssetsSkeleton() {
       {/* Filter tabs */}
       <div className="flex items-center gap-2">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-8 w-20 rounded-[6px]" />
+          <Skeleton key={i} className="h-8 w-20 rounded-lg" />
         ))}
       </div>
 
@@ -23,7 +23,7 @@ export function AssetsSkeleton() {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="space-y-2">
-            <Skeleton className="aspect-square w-full rounded-[8px]" />
+            <Skeleton className="aspect-square w-full rounded-xl" />
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-3 w-1/2" />
           </div>

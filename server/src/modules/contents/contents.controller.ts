@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -16,6 +17,7 @@ import { ContentFiltersDto } from './dto/content-filters.dto';
 import { ReorderContentDto } from './dto/reorder-content.dto';
 import { CreateContentChecklistDto } from './dto/create-content-checklist.dto';
 import { UpdateContentChecklistDto } from './dto/update-content-checklist.dto';
+import { UpsertStageDataDto } from './dto/upsert-stage-data.dto';
 import { ContentsService } from './contents.service';
 
 @Controller()
@@ -55,6 +57,28 @@ export class ContentsController {
   remove(@CurrentUser() user: AuthUser, @Param('id') id: string) {
     return this.contentsService.remove(user.id, id);
   }
+
+  // --- Stage Data ---
+
+  @Get('contents/:contentId/stage-data')
+  findStageData(
+    @CurrentUser() user: AuthUser,
+    @Param('contentId') contentId: string,
+  ) {
+    return this.contentsService.findStageData(user.id, contentId);
+  }
+
+  @Put('contents/:contentId/stage-data/:stage')
+  upsertStageData(
+    @CurrentUser() user: AuthUser,
+    @Param('contentId') contentId: string,
+    @Param('stage') stage: string,
+    @Body() dto: UpsertStageDataDto,
+  ) {
+    return this.contentsService.upsertStageData(user.id, contentId, stage, dto);
+  }
+
+  // --- Checklists ---
 
   @Get('contents/:contentId/checklists')
   findChecklists(

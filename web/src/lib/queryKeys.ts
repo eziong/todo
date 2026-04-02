@@ -78,6 +78,11 @@ export const queryKeys = {
     lists: () => [...queryKeys.contentChecklists.all, 'list'] as const,
     list: (contentId: ContentId) => [...queryKeys.contentChecklists.lists(), contentId] as const,
   },
+  contentStageData: {
+    all: ['contentStageData'] as const,
+    lists: () => [...queryKeys.contentStageData.all, 'list'] as const,
+    list: (contentId: ContentId) => [...queryKeys.contentStageData.lists(), contentId] as const,
+  },
   youtube: {
     all: ['youtube'] as const,
     channel: (projectId: string) => [...queryKeys.youtube.all, 'channel', projectId] as const,

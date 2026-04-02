@@ -6,7 +6,7 @@ export function ProjectsSkeleton() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <Skeleton className="h-8 w-28" />
-        <Skeleton className="h-9 w-28 rounded-[6px]" />
+        <Skeleton className="h-9 w-28 rounded-lg" />
       </div>
 
       {/* Grid */}
@@ -14,7 +14,7 @@ export function ProjectsSkeleton() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-[8px] border border-border bg-background-secondary p-4 space-y-3"
+            className="rounded-xl border border-border bg-background-secondary p-4 space-y-3"
           >
             <div className="flex items-center gap-3">
               <Skeleton className="h-3 w-3 rounded-full" />

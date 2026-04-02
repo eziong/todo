@@ -64,7 +64,7 @@ export function NoteFolderSidebar({
         <button
           onClick={() => onSelectFolder(null)}
           className={cn(
-            "flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-sm transition-colors",
+            "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors",
             !selectedFolderId && !showPinned
               ? "bg-background-tertiary text-foreground"
               : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -78,7 +78,7 @@ export function NoteFolderSidebar({
         <button
           onClick={onTogglePinned}
           className={cn(
-            "flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-sm transition-colors",
+            "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors",
             showPinned
               ? "bg-background-tertiary text-foreground"
               : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -119,12 +119,12 @@ export function NoteFolderSidebar({
                 }
               }}
               placeholder="Folder name"
-              className="h-7 flex-1 rounded-[4px] border border-border bg-background px-2 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none"
+              className="h-7 flex-1 rounded-full border border-border bg-background px-2 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none"
               autoFocus
             />
             <button
               onClick={handleCreateFolder}
-              className="flex h-6 w-6 items-center justify-center rounded-[4px] text-accent-green hover:bg-background-tertiary"
+              className="flex h-6 w-6 items-center justify-center rounded-full text-accent-green hover:bg-background-tertiary"
             >
               <Check className="h-3.5 w-3.5" />
             </button>
@@ -133,7 +133,7 @@ export function NoteFolderSidebar({
                 setIsCreating(false)
                 setNewFolderName("")
               }}
-              className="flex h-6 w-6 items-center justify-center rounded-[4px] text-foreground-secondary hover:bg-background-tertiary"
+              className="flex h-6 w-6 items-center justify-center rounded-full text-foreground-secondary hover:bg-background-tertiary"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -156,12 +156,12 @@ export function NoteFolderSidebar({
                       setEditingName("")
                     }
                   }}
-                  className="h-7 flex-1 rounded-[4px] border border-border bg-background px-2 text-sm text-foreground focus:border-accent-blue focus:outline-none"
+                  className="h-7 flex-1 rounded-full border border-border bg-background px-2 text-sm text-foreground focus:border-accent-blue focus:outline-none"
                   autoFocus
                 />
                 <button
                   onClick={() => handleUpdateFolder(folder.id)}
-                  className="flex h-6 w-6 items-center justify-center rounded-[4px] text-accent-green hover:bg-background-tertiary"
+                  className="flex h-6 w-6 items-center justify-center rounded-full text-accent-green hover:bg-background-tertiary"
                 >
                   <Check className="h-3.5 w-3.5" />
                 </button>
@@ -170,7 +170,7 @@ export function NoteFolderSidebar({
                     setEditingId(null)
                     setEditingName("")
                   }}
-                  className="flex h-6 w-6 items-center justify-center rounded-[4px] text-foreground-secondary hover:bg-background-tertiary"
+                  className="flex h-6 w-6 items-center justify-center rounded-full text-foreground-secondary hover:bg-background-tertiary"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -180,7 +180,7 @@ export function NoteFolderSidebar({
                 <button
                   onClick={() => onSelectFolder(folder.id as string)}
                   className={cn(
-                    "flex flex-1 items-center gap-2 rounded-[6px] px-2 py-1.5 text-sm transition-colors",
+                    "flex flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors",
                     selectedFolderId === (folder.id as string)
                       ? "bg-background-tertiary text-foreground"
                       : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -195,13 +195,13 @@ export function NoteFolderSidebar({
                       setEditingId(folder.id)
                       setEditingName(folder.name)
                     }}
-                    className="flex h-6 w-6 items-center justify-center rounded-[4px] text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
                   >
                     <Pencil className="h-3 w-3" />
                   </button>
                   <button
                     onClick={() => onDeleteFolder(folder.id)}
-                    className="flex h-6 w-6 items-center justify-center rounded-[4px] text-foreground-secondary hover:bg-background-tertiary hover:text-accent-red"
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-foreground-secondary hover:bg-background-tertiary hover:text-accent-red"
                   >
                     <Trash2 className="h-3 w-3" />
                   </button>

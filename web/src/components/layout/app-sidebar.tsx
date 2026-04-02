@@ -103,9 +103,9 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
         key={item.label}
         href={item.href}
         className={cn(
-          "group relative flex w-full items-center gap-3 rounded-[6px] px-2 py-2 text-sm transition-colors",
+          "group relative flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors",
           isActive(item.href)
-            ? "bg-background-tertiary text-foreground before:absolute before:left-0 before:top-1/2 before:h-4 before:-translate-y-1/2 before:w-0.5 before:rounded-r before:bg-accent-blue"
+            ? "bg-background-tertiary text-foreground before:absolute before:left-0 before:top-1/2 before:h-4 before:-translate-y-1/2 before:w-[3px] before:rounded-full before:bg-accent-blue"
             : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground",
           collapsed && "justify-center px-0"
         )}
@@ -115,7 +115,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
           <>
             <span className="flex-1 text-left">{item.label}</span>
             {badgeCount !== undefined && badgeCount > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-[4px] bg-accent-blue px-1.5 text-xs font-medium text-white">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-blue px-1.5 text-xs font-medium text-white">
                 {badgeCount}
               </span>
             )}
@@ -128,7 +128,8 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
   return (
     <aside
       className={cn(
-        "group/sidebar flex h-screen flex-col border-r border-border bg-background-secondary transition-all duration-200",
+        "group/sidebar flex h-screen flex-col bg-background-secondary transition-all duration-200",
+        "dark:border-r dark:border-border/50",
         collapsed ? "w-12" : "w-60"
       )}
     >
@@ -140,7 +141,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
         <button
           onClick={() => onCollapsedChange(!collapsed)}
           className={cn(
-            "flex h-7 w-7 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground",
+            "flex h-7 w-7 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground",
             collapsed && "mx-auto"
           )}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -162,7 +163,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
             onChange={(e) => setQuickTaskValue(e.target.value)}
             onKeyDown={handleQuickTask}
             placeholder="New task... (Cmd+N)"
-            className="h-9 w-full rounded-[6px] border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+            className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
           />
         </div>
       )}
@@ -179,7 +180,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
           <div className="mt-6">
             <button
               onClick={() => setProjectsExpanded(!projectsExpanded)}
-              className="flex w-full items-center gap-2 px-2 py-1.5 text-xs font-medium uppercase tracking-wider text-foreground-secondary transition-colors hover:text-foreground"
+              className="flex w-full items-center gap-2 px-2 py-1.5 text-[11px] font-mono uppercase tracking-[0.08em] text-foreground-secondary transition-colors hover:text-foreground"
             >
               <ChevronDown
                 className={cn(
@@ -196,7 +197,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
                     key={project.id}
                     href={`/projects/${project.id}`}
                     className={cn(
-                      "flex w-full items-center gap-3 rounded-[6px] px-2 py-2 text-sm transition-colors",
+                      "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors",
                       pathname === `/projects/${project.id}`
                         ? "bg-background-tertiary text-foreground"
                         : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -208,7 +209,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
                 ))}
                 <Link
                   href="/projects"
-                  className="flex w-full items-center gap-3 rounded-[6px] px-2 py-2 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+                  className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
                 >
                   <Plus className="h-4 w-4" />
                   <span>New Project</span>
@@ -221,7 +222,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
             <Link
               href="/projects"
               className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-[6px] transition-colors",
+                "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
                 isActive("/projects")
                   ? "bg-background-tertiary text-foreground"
                   : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -238,7 +239,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
           <div className="mt-6">
             <button
               onClick={() => setLibraryExpanded(!libraryExpanded)}
-              className="flex w-full items-center gap-2 px-2 py-1.5 text-xs font-medium uppercase tracking-wider text-foreground-secondary transition-colors hover:text-foreground"
+              className="flex w-full items-center gap-2 px-2 py-1.5 text-[11px] font-mono uppercase tracking-[0.08em] text-foreground-secondary transition-colors hover:text-foreground"
             >
               <ChevronDown
                 className={cn(
@@ -269,7 +270,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
         <Link
           href="/settings"
           className={cn(
-            "flex h-8 w-8 items-center justify-center rounded-[6px] transition-colors",
+            "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
             isActive("/settings")
               ? "bg-background-tertiary text-foreground"
               : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"
@@ -280,7 +281,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
         </Link>
         <button
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-          className="flex h-8 w-8 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
           aria-label="Toggle theme"
         >
           {!mounted || resolvedTheme === "dark" ? (
@@ -291,7 +292,7 @@ export function AppSidebar({ collapsed, onCollapsedChange }: AppSidebarProps) {
         </button>
         <button
           onClick={signOut}
-          className="flex h-8 w-8 items-center justify-center rounded-[6px] text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground"
           aria-label="Log out"
         >
           <LogOut className="h-4 w-4" />

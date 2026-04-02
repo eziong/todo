@@ -10,7 +10,7 @@ async function getAuthToken(): Promise<string | null> {
 }
 
 async function apiRequest<T>(
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   path: string,
   body?: unknown,
 ): Promise<T> {
@@ -72,6 +72,10 @@ export function apiPost<T>(path: string, body?: unknown): Promise<T> {
 
 export function apiPatch<T>(path: string, body?: unknown): Promise<T> {
   return apiRequest<T>('PATCH', path, body)
+}
+
+export function apiPut<T>(path: string, body?: unknown): Promise<T> {
+  return apiRequest<T>('PUT', path, body)
 }
 
 export function apiDelete(path: string): Promise<void> {

@@ -30,7 +30,7 @@ function ChannelCard({
     <button
       onClick={() => onSelect(channel.channelId)}
       disabled={disabled}
-      className="flex w-full items-center gap-3 rounded-[8px] border border-border bg-background-secondary p-4 text-left transition-colors hover:border-accent-blue/30 hover:bg-accent-blue/5 disabled:opacity-50"
+      className="flex w-full items-center gap-3 rounded-xl border border-border bg-background-secondary p-4 text-left transition-colors hover:border-accent-blue/30 hover:bg-accent-blue/5 disabled:opacity-50"
     >
       {channel.thumbnailUrl ? (
         <img
@@ -119,7 +119,7 @@ export function ChannelPicker({ projectId, onSelected }: ChannelPickerProps) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search channels by name..."
-          className="h-10 w-full rounded-[6px] border border-border bg-background-secondary pl-10 pr-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
+          className="h-10 w-full rounded-lg border border-border bg-background-secondary pl-10 pr-3 text-sm text-foreground placeholder:text-foreground-secondary focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue"
         />
       </div>
 

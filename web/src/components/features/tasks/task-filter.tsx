@@ -31,7 +31,7 @@ export function FilterOption({ label, selected, dot, onClick }: FilterOptionProp
     <button
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-2 rounded-[4px] px-2 py-1.5 text-sm transition-colors",
+        "flex w-full items-center gap-2 rounded-full px-2 py-1.5 text-sm transition-colors",
         selected
           ? "bg-background-tertiary text-foreground"
           : "text-foreground-secondary hover:bg-background-tertiary hover:text-foreground"

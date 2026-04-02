@@ -52,7 +52,7 @@ export function VideoCard({ video, onSelect }: VideoCardProps) {
       className="group w-full text-left space-y-2"
     >
       {/* Thumbnail */}
-      <div className="relative aspect-video overflow-hidden rounded-[8px] bg-background-tertiary">
+      <div className="relative aspect-video overflow-hidden rounded-xl bg-background-tertiary">
         {video.thumbnailUrl && (
           <img
             src={video.thumbnailUrl}

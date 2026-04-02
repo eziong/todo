@@ -15,6 +15,7 @@ import type {
   DescriptionTemplateId,
   ContentId,
   ContentChecklistId,
+  ContentStageDataId,
   UserId,
   YouTubeChannelId,
   AssetId,
@@ -415,7 +416,6 @@ export interface Content {
   userId: UserId
   projectId: ProjectId | null
   title: string
-  description: string | null
   type: ContentType
   stage: ContentStage
   platform: ContentPlatform
@@ -439,9 +439,20 @@ export interface ReorderContentItem {
 export interface ContentChecklist {
   id: ContentChecklistId
   contentId: ContentId
+  stage: ContentStage
   label: string
   checked: boolean
   position: number | null
+}
+
+export interface ContentStageData {
+  id: ContentStageDataId
+  contentId: ContentId
+  stage: ContentStage
+  description: string | null
+  completedAt: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 // --- Content View Types ---
@@ -451,13 +462,13 @@ export interface ContentWithDetails extends Content {
   projectColor: string | null
   noteTitle: string | null
   checklists: ContentChecklist[]
+  stageData: ContentStageData[]
 }
 
 // --- Content Input Types ---
 
 export interface CreateContentInput {
   title: string
-  description?: string
   type?: ContentType
   stage?: ContentStage
   platform?: ContentPlatform
@@ -470,7 +481,6 @@ export interface CreateContentInput {
 
 export interface UpdateContentInput {
   title?: string
-  description?: string | null
   type?: ContentType
   stage?: ContentStage
   platform?: ContentPlatform
@@ -485,8 +495,13 @@ export interface UpdateContentInput {
 
 export interface CreateContentChecklistInput {
   contentId: string
+  stage?: ContentStage
   label: string
   position?: number
+}
+
+export interface UpsertStageDataInput {
+  description?: string | null
 }
 
 export interface UpdateContentChecklistInput {

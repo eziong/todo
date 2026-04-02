@@ -3,7 +3,7 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { Prisma, contents, content_checklists } from '@prisma/client';
+import { Prisma, contents, content_checklists, content_stage_data } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UndoService } from '../undo/undo.service';
 import { CreateContentDto } from './dto/create-content.dto';
@@ -12,13 +12,13 @@ import { ContentFiltersDto } from './dto/content-filters.dto';
 import { ReorderContentDto } from './dto/reorder-content.dto';
 import { CreateContentChecklistDto } from './dto/create-content-checklist.dto';
 import { UpdateContentChecklistDto } from './dto/update-content-checklist.dto';
+import { UpsertStageDataDto } from './dto/upsert-stage-data.dto';
 
 export interface ContentResponse {
   id: string;
   userId: string;
   projectId: string | null;
   title: string;
-  description: string | null;
   type: string;
   stage: string;
   platform: string;
@@ -36,9 +36,20 @@ export interface ContentResponse {
 export interface ContentChecklistResponse {
   id: string;
   contentId: string;
+  stage: string;
   label: string;
   checked: boolean;
   position: number | null;
+}
+
+export interface ContentStageDataResponse {
+  id: string;
+  contentId: string;
+  stage: string;
+  description: string | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ContentWithDetailsResponse extends ContentResponse {
@@ -46,12 +57,14 @@ export interface ContentWithDetailsResponse extends ContentResponse {
   projectColor: string | null;
   noteTitle: string | null;
   checklists: ContentChecklistResponse[];
+  stageData: ContentStageDataResponse[];
 }
 
 interface ContentRowWithDetails extends contents {
   project: { id: string; name: string; color: string | null } | null;
   note: { id: string; title: string } | null;
   content_checklists: content_checklists[];
+  content_stage_data: content_stage_data[];
 }
 
 function mapContent(row: contents): ContentResponse {
@@ -60,7 +73,6 @@ function mapContent(row: contents): ContentResponse {
     userId: row.user_id,
     projectId: row.project_id,
     title: row.title,
-    description: row.description,
     type: row.type,
     stage: row.stage,
     platform: row.platform,
@@ -80,9 +92,22 @@ function mapChecklist(row: content_checklists): ContentChecklistResponse {
   return {
     id: row.id,
     contentId: row.content_id,
+    stage: row.stage,
     label: row.label,
     checked: row.checked,
     position: row.position,
+  };
+}
+
+function mapStageData(row: content_stage_data): ContentStageDataResponse {
+  return {
+    id: row.id,
+    contentId: row.content_id,
+    stage: row.stage,
+    description: row.description,
+    completedAt: row.completed_at?.toISOString() ?? null,
+    createdAt: row.created_at.toISOString(),
+    updatedAt: row.updated_at.toISOString(),
   };
 }
 
@@ -95,6 +120,7 @@ function mapContentWithDetails(
     projectColor: row.project?.color ?? null,
     noteTitle: row.note?.title ?? null,
     checklists: row.content_checklists.map(mapChecklist),
+    stageData: row.content_stage_data.map(mapStageData),
   };
 }
 
@@ -104,6 +130,7 @@ const CONTENT_INCLUDE = {
   content_checklists: {
     orderBy: { position: 'asc' },
   },
+  content_stage_data: true,
 } satisfies Prisma.contentsInclude;
 
 @Injectable()
@@ -136,7 +163,6 @@ export class ContentsService {
     if (filters.search) {
       where.OR = [
         { title: { contains: filters.search } },
-        { description: { contains: filters.search } },
       ];
     }
 
@@ -184,7 +210,6 @@ export class ContentsService {
       data: {
         user_id: userId,
         title: dto.title,
-        description: dto.description ?? null,
         type: dto.type ?? 'video',
         stage,
         platform: dto.platform ?? 'youtube',
@@ -194,6 +219,12 @@ export class ContentsService {
         scheduled_at: dto.scheduledAt ? new Date(dto.scheduledAt) : null,
         tags: dto.tags ?? [],
         position: nextPosition,
+        content_stage_data: {
+          create: {
+            stage,
+            description: null,
+          },
+        },
       },
       include: CONTENT_INCLUDE,
     });
@@ -221,7 +252,6 @@ export class ContentsService {
 
     const data: Prisma.contentsUpdateInput = {};
     if (dto.title !== undefined) data.title = dto.title;
-    if (dto.description !== undefined) data.description = dto.description;
     if (dto.type !== undefined) data.type = dto.type;
     if (dto.stage !== undefined) data.stage = dto.stage;
     if (dto.platform !== undefined) data.platform = dto.platform;
@@ -315,9 +345,70 @@ export class ContentsService {
   }
 
   private toRawData(row: any): Record<string, unknown> {
-    const { project, note, content_checklists, ...data } = row;
+    const { project, note, content_checklists, content_stage_data, ...data } = row;
     return data;
   }
+
+  // --- Stage Data ---
+
+  async findStageData(
+    userId: string,
+    contentId: string,
+  ): Promise<ContentStageDataResponse[]> {
+    const content = await this.prisma.contents.findUnique({
+      where: { id: contentId },
+    });
+
+    if (!content) {
+      throw new NotFoundException('Content not found');
+    }
+    if (content.user_id !== userId) {
+      throw new ForbiddenException('Not allowed to access this content');
+    }
+
+    const rows = await this.prisma.content_stage_data.findMany({
+      where: { content_id: contentId },
+    });
+
+    return rows.map(mapStageData);
+  }
+
+  async upsertStageData(
+    userId: string,
+    contentId: string,
+    stage: string,
+    dto: UpsertStageDataDto,
+  ): Promise<ContentStageDataResponse> {
+    const content = await this.prisma.contents.findUnique({
+      where: { id: contentId },
+    });
+
+    if (!content) {
+      throw new NotFoundException('Content not found');
+    }
+    if (content.user_id !== userId) {
+      throw new ForbiddenException('Not allowed to modify this content');
+    }
+
+    const row = await this.prisma.content_stage_data.upsert({
+      where: {
+        content_id_stage: { content_id: contentId, stage },
+      },
+      create: {
+        content_id: contentId,
+        stage,
+        description: dto.description ?? null,
+      },
+      update: {
+        description: dto.description ?? null,
+        updated_at: new Date(),
+      },
+    });
+
+    return mapStageData(row);
+  }
+
+  // --- Checklists ---
 
   async findChecklists(
     userId: string,
@@ -361,6 +452,7 @@ export class ContentsService {
     const row = await this.prisma.content_checklists.create({
       data: {
         content_id: contentId,
+        stage: dto.stage ?? 'idea',
         label: dto.label,
         position: dto.position ?? null,
       },

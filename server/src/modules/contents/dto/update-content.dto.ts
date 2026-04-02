@@ -12,10 +12,6 @@ export class UpdateContentDto {
   title?: string;
 
   @IsOptional()
-  @IsString()
-  description?: string | null;
-
-  @IsOptional()
   @IsIn(['video', 'short', 'blog', 'podcast', 'newsletter'])
   type?: string;
 

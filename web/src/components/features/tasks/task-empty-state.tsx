@@ -35,7 +35,7 @@ export function TaskEmptyState({ onCreateTask, isCreating }: TaskEmptyStateProps
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">All Tasks</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">All Tasks</h1>
       </div>
 
       <Empty className="py-20">
@@ -63,12 +63,12 @@ export function TaskEmptyState({ onCreateTask, isCreating }: TaskEmptyStateProps
             }}
             placeholder="Task name..."
             disabled={isCreating}
-            className="w-full max-w-xs rounded-[8px] border border-border bg-background-secondary px-4 py-3 text-sm text-foreground placeholder:text-foreground-secondary/60 transition-colors focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue disabled:opacity-50"
+            className="w-full max-w-xs rounded-xl border border-border bg-background-secondary px-4 py-3 text-sm text-foreground placeholder:text-foreground-secondary/60 transition-colors focus:border-accent-blue focus:outline-none focus:ring-1 focus:ring-accent-blue disabled:opacity-50"
           />
         ) : (
           <button
             onClick={handleShowInput}
-            className="flex items-center gap-2 rounded-[6px] bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
+            className="flex items-center gap-2 rounded-lg bg-accent-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-blue/90"
           >
             <Plus className="h-4 w-4" />
             Create Task

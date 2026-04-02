@@ -1,14 +1,17 @@
-import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api-client'
-import { ContentId, ContentChecklistId, ProjectId, NoteId, DescriptionTemplateId, UserId } from '@/types/branded'
+import { apiGet, apiPost, apiPatch, apiPut, apiDelete } from '@/lib/api-client'
+import { ContentId, ContentChecklistId, ContentStageDataId, ProjectId, NoteId, DescriptionTemplateId, UserId } from '@/types/branded'
 import type {
   Content,
   ContentChecklist,
+  ContentStageData,
   ContentWithDetails,
   ContentFilters,
+  ContentStage,
   CreateContentInput,
   UpdateContentInput,
   CreateContentChecklistInput,
   UpdateContentChecklistInput,
+  UpsertStageDataInput,
   ReorderContentItem,
 } from '@/types/domain'
 
@@ -19,7 +22,6 @@ interface ServerContent {
   userId: string
   projectId: string | null
   title: string
-  description: string | null
   type: string
   stage: string
   platform: string
@@ -37,9 +39,20 @@ interface ServerContent {
 interface ServerContentChecklist {
   id: string
   contentId: string
+  stage: string
   label: string
   checked: boolean
   position: number | null
+}
+
+interface ServerContentStageData {
+  id: string
+  contentId: string
+  stage: string
+  description: string | null
+  completedAt: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 interface ServerContentWithDetails extends ServerContent {
@@ -47,6 +60,7 @@ interface ServerContentWithDetails extends ServerContent {
   projectColor: string | null
   noteTitle: string | null
   checklists: ServerContentChecklist[]
+  stageData: ServerContentStageData[]
 }
 
 function brandContent(raw: ServerContent): Content {
@@ -68,6 +82,16 @@ function brandChecklist(raw: ServerContentChecklist): ContentChecklist {
     ...raw,
     id: ContentChecklistId(raw.id),
     contentId: ContentId(raw.contentId),
+    stage: raw.stage as ContentStage,
+  }
+}
+
+function brandStageData(raw: ServerContentStageData): ContentStageData {
+  return {
+    ...raw,
+    id: ContentStageDataId(raw.id),
+    contentId: ContentId(raw.contentId),
+    stage: raw.stage as ContentStage,
   }
 }
 
@@ -78,6 +102,7 @@ function brandContentWithDetails(raw: ServerContentWithDetails): ContentWithDeta
     projectColor: raw.projectColor,
     noteTitle: raw.noteTitle,
     checklists: (raw.checklists ?? []).map(brandChecklist),
+    stageData: (raw.stageData ?? []).map(brandStageData),
   }
 }
 
@@ -122,6 +147,27 @@ export async function reorderContents(items: ReorderContentItem[]): Promise<{ up
   return apiPatch<{ updated: number }>('/api/contents/reorder', { items })
 }
 
+// --- Stage Data Queries ---
+
+export async function fetchContentStageData(contentId: string): Promise<ContentStageData[]> {
+  const data = await apiGet<ServerContentStageData[]>(`/api/contents/${contentId}/stage-data`)
+  return data.map(brandStageData)
+}
+
+// --- Stage Data Mutations ---
+
+export async function upsertContentStageData(
+  contentId: string,
+  stage: ContentStage,
+  input: UpsertStageDataInput,
+): Promise<ContentStageData> {
+  const data = await apiPut<ServerContentStageData>(
+    `/api/contents/${contentId}/stage-data/${stage}`,
+    input,
+  )
+  return brandStageData(data)
+}
+
 // --- Content Checklist Queries ---
 
 export async function fetchContentChecklists(contentId: string): Promise<ContentChecklist[]> {
@@ -134,7 +180,7 @@ export async function fetchContentChecklists(contentId: string): Promise<Content
 export async function createContentChecklist(input: CreateContentChecklistInput): Promise<ContentChecklist> {
   const data = await apiPost<ServerContentChecklist>(
     `/api/contents/${input.contentId}/checklists`,
-    { label: input.label, position: input.position },
+    { label: input.label, stage: input.stage, position: input.position },
   )
   return brandChecklist(data)
 }

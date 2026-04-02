@@ -154,7 +154,6 @@ export interface ContentRow {
   user_id: string
   project_id: string | null
   title: string
-  description: string | null
   type: ContentType
   stage: ContentStage
   platform: ContentPlatform
@@ -171,6 +170,7 @@ export interface ContentRow {
 export interface ContentChecklistRow {
   id: string
   content_id: string
+  stage: string
   label: string
   checked: boolean
   position: number | null
