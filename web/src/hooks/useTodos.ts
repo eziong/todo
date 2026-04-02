@@ -1,11 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/queryKeys'
 import { handleMutationError } from '@/lib/errors'
-import { fetchTodos, createTodo, updateTodo, deleteTodo } from '@/services/todos'
+import { fetchTodos, createTodo, updateTodo, deleteTodo, moveTodo } from '@/services/todos'
 import type { TodoId } from '@/types/branded'
-import type { TodoFilters, CreateTodoInput, UpdateTodoInput, TodoWithProject } from '@/types/domain'
+import type { TodoFilters, CreateTodoInput, UpdateTodoInput, MoveTodoInput, TodoWithProject, ContentStage } from '@/types/domain'
+import type { ContentId } from '@/types/branded'
 
 export function useTodos(filters?: TodoFilters) {
+  return useQuery({
+    queryKey: queryKeys.todos.list(filters),
+    queryFn: () => fetchTodos(filters),
+  })
+}
+
+export function useContentTodos(contentId: ContentId, contentStage?: ContentStage) {
+  const filters: TodoFilters = { contentId: contentId as string, ...(contentStage ? { contentStage } : {}) }
   return useQuery({
     queryKey: queryKeys.todos.list(filters),
     queryFn: () => fetchTodos(filters),
@@ -93,6 +102,32 @@ export function useUpdateTodo() {
   })
 }
 
+export function useUnlinkTodoFromContent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: TodoId) =>
+      updateTodo(id, { contentId: null, contentStage: null }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.todos.all })
+    },
+    onError: handleMutationError,
+  })
+}
+
+export function useLinkTodoToContent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, contentId, contentStage }: { id: TodoId; contentId: string; contentStage: ContentStage }) =>
+      updateTodo(id, { contentId, contentStage }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.todos.all })
+    },
+    onError: handleMutationError,
+  })
+}
+
 export function useDeleteTodo() {
   const queryClient = useQueryClient()
 
@@ -124,5 +159,17 @@ export function useDeleteTodo() {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.todos.lists() })
     },
+  })
+}
+
+export function useMoveTodo() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (input: MoveTodoInput) => moveTodo(input),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.todos.all })
+    },
+    onError: handleMutationError,
   })
 }

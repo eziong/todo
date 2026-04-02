@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import {
@@ -11,6 +11,9 @@ import {
   FileText,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useBeforeUnload } from "@/hooks/useBeforeUnload"
+import { useSaveStatus } from "@/hooks/useSaveStatus"
+import { SaveStatus } from "@/components/ui/save-status"
 import type { DescriptionTemplateId } from "@/types/branded"
 import type {
   Link,
@@ -46,16 +49,35 @@ export function TemplateEditor({
     templates[0]?.id ?? null
   )
   const [isPreview, setIsPreview] = useState(false)
-  const [autoSaveTimer, setAutoSaveTimer] = useState<ReturnType<typeof setTimeout> | null>(null)
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pendingUpdateRef = useRef<{ id: DescriptionTemplateId; updates: UpdateDescriptionTemplateInput } | null>(null)
+
+  const { status: saveStatus, markSaving, markSaved } = useSaveStatus()
 
   const selected = templates.find((t) => t.id === selectedId)
 
+  // Track dirty state — pending timer means unsaved edits
+  useBeforeUnload(pendingUpdateRef.current !== null)
+
+  // Flush pending auto-save on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current)
+      if (pendingUpdateRef.current) {
+        onUpdateTemplate(pendingUpdateRef.current.id, pendingUpdateRef.current.updates)
+      }
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const scheduleAutoSave = (id: DescriptionTemplateId, updates: UpdateDescriptionTemplateInput) => {
-    if (autoSaveTimer) clearTimeout(autoSaveTimer)
-    const timer = setTimeout(() => {
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current)
+    pendingUpdateRef.current = { id, updates }
+    autoSaveTimerRef.current = setTimeout(() => {
+      pendingUpdateRef.current = null
+      markSaving()
       onUpdateTemplate(id, updates)
+      markSaved()
     }, 1000)
-    setAutoSaveTimer(timer)
   }
 
   const handleNameChange = (value: string) => {
@@ -116,13 +138,16 @@ export function TemplateEditor({
         <div className="flex-1 rounded-xl border border-border bg-background-secondary">
           {/* Template header */}
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <input
-              type="text"
-              defaultValue={selected.name}
-              key={selected.id + "-name"}
-              onChange={(e) => handleNameChange(e.target.value)}
-              className="border-none bg-transparent text-sm font-medium text-foreground focus:outline-none"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                defaultValue={selected.name}
+                key={selected.id + "-name"}
+                onChange={(e) => handleNameChange(e.target.value)}
+                className="border-none bg-transparent text-sm font-medium text-foreground focus:outline-none"
+              />
+              <SaveStatus status={saveStatus} />
+            </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setIsPreview(!isPreview)}

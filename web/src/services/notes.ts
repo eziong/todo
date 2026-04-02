@@ -34,7 +34,7 @@ interface ServerNoteFolder {
   userId: string
   name: string
   parentId: string | null
-  position: number | null
+  position: string | null
   createdAt: string
 }
 

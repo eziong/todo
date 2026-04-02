@@ -13,6 +13,7 @@ import { AuthUser } from '../../common/types/auth.types';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TodoFiltersDto } from './dto/todo-filters.dto';
+import { MoveTodoDto } from './dto/move-todo.dto';
 import { TodosService } from './todos.service';
 
 @Controller('todos')
@@ -32,6 +33,11 @@ export class TodosController {
   @Get(':id/subtasks')
   findSubtasks(@CurrentUser() user: AuthUser, @Param('id') id: string) {
     return this.todosService.findSubtasks(user.id, id);
+  }
+
+  @Patch('move')
+  moveTodo(@CurrentUser() user: AuthUser, @Body() dto: MoveTodoDto) {
+    return this.todosService.moveTodo(user.id, dto);
   }
 
   @Post()

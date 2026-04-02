@@ -16,4 +16,12 @@ export class TodoFiltersDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsString()
+  contentId?: string;
+
+  @IsOptional()
+  @IsString()
+  contentStage?: string;
 }

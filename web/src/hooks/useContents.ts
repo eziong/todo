@@ -7,7 +7,7 @@ import {
   createContent,
   updateContent,
   deleteContent,
-  reorderContents,
+  moveContent,
 } from '@/services/contents'
 import type { ContentId } from '@/types/branded'
 import type {
@@ -16,7 +16,7 @@ import type {
   ContentStage,
   CreateContentInput,
   UpdateContentInput,
-  ReorderContentItem,
+  MoveContentInput,
 } from '@/types/domain'
 
 export function useContents(filters?: ContentFilters) {
@@ -123,40 +123,34 @@ export function useDeleteContent() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.contents.all })
-      queryClient.invalidateQueries({ queryKey: queryKeys.contentChecklists.all })
     },
   })
 }
 
-export function useReorderContent() {
+export function useMoveContent() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (items: ReorderContentItem[]) => reorderContents(items),
-    onMutate: async (items) => {
+    mutationFn: (input: MoveContentInput) => moveContent(input),
+    onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.contents.lists() })
 
       const previousLists = queryClient.getQueriesData<ContentWithDetails[]>({
         queryKey: queryKeys.contents.lists(),
       })
 
-      queryClient.setQueriesData<ContentWithDetails[]>(
-        { queryKey: queryKeys.contents.lists() },
-        (old) => {
-          if (!old) return old
-          return old.map((content) => {
-            const reorderItem = items.find((item) => item.id === (content.id as string))
-            if (reorderItem) {
-              return {
-                ...content,
-                stage: reorderItem.stage as ContentStage,
-                position: reorderItem.position,
-              }
-            }
-            return content
-          })
-        },
-      )
+      // Optimistic: update stage if moving to a different stage
+      if (input.stage) {
+        queryClient.setQueriesData<ContentWithDetails[]>(
+          { queryKey: queryKeys.contents.lists() },
+          (old) =>
+            old?.map((content) =>
+              (content.id as string) === input.id
+                ? { ...content, stage: input.stage as ContentStage }
+                : content,
+            ),
+        )
+      }
 
       return { previousLists }
     },

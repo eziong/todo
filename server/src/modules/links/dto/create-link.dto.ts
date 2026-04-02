@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateLinkDto {
   @IsString()
@@ -14,8 +14,8 @@ export class CreateLinkDto {
   category?: string;
 
   @IsOptional()
-  @IsInt()
-  position?: number;
+  @IsString()
+  position?: string;
 
   @IsOptional()
   @IsUUID()

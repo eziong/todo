@@ -17,7 +17,7 @@ export interface LinkResponse {
   url: string;
   category: string | null;
   clickCount: number;
-  position: number | null;
+  position: string | null;
   createdAt: string;
 }
 

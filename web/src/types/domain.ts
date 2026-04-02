@@ -14,7 +14,6 @@ import type {
   LinkId,
   DescriptionTemplateId,
   ContentId,
-  ContentChecklistId,
   ContentStageDataId,
   UserId,
   YouTubeChannelId,
@@ -98,7 +97,7 @@ export interface Project {
   color: string | null
   icon: string | null
   archived: boolean
-  position: number | null
+  position: string | null
   githubRepo: string | null
   features: ProjectFeature[]
   createdAt: string
@@ -115,8 +114,10 @@ export interface Todo {
   dueDate: string | null
   projectId: ProjectId | null
   parentId: TodoId | null
-  position: number | null
+  position: string | null
   completedAt: string | null
+  contentId: ContentId | null
+  contentStage: ContentStage | null
   createdAt: string
   updatedAt: string
 }
@@ -153,7 +154,7 @@ export interface BuildCommand {
   method: WebhookMethod
   headers: Record<string, string>
   bodyTemplate: string | null
-  position: number | null
+  position: string | null
 }
 
 export interface ActivityLog {
@@ -187,7 +188,9 @@ export interface CreateTodoInput {
   dueDate?: string
   projectId?: string
   parentId?: string
-  position?: number
+  position?: string
+  contentId?: string
+  contentStage?: ContentStage
 }
 
 export interface UpdateTodoInput {
@@ -197,7 +200,9 @@ export interface UpdateTodoInput {
   priority?: TodoPriority
   dueDate?: string | null
   projectId?: string | null
-  position?: number
+  position?: string
+  contentId?: string | null
+  contentStage?: ContentStage | null
 }
 
 export interface CreateProjectInput {
@@ -215,7 +220,7 @@ export interface UpdateProjectInput {
   color?: string | null
   icon?: string | null
   archived?: boolean
-  position?: number
+  position?: string
   githubRepo?: string | null
   features?: ProjectFeature[]
 }
@@ -252,7 +257,7 @@ export interface CreateBuildCommandInput {
   method?: WebhookMethod
   headers?: Record<string, string>
   bodyTemplate?: string
-  position?: number
+  position?: string
 }
 
 export interface UpdateBuildCommandInput {
@@ -261,7 +266,7 @@ export interface UpdateBuildCommandInput {
   method?: WebhookMethod
   headers?: Record<string, string>
   bodyTemplate?: string
-  position?: number
+  position?: string
 }
 
 // --- Filter Types ---
@@ -272,6 +277,8 @@ export interface TodoFilters {
   projectId?: string
   hasDueDate?: boolean
   search?: string
+  contentId?: string
+  contentStage?: ContentStage
 }
 
 // ===================================================================
@@ -285,7 +292,7 @@ export interface NoteFolder {
   userId: UserId
   name: string
   parentId: NoteFolderId | null
-  position: number | null
+  position: string | null
   createdAt: string
 }
 
@@ -328,13 +335,13 @@ export interface UpdateNoteInput {
 export interface CreateNoteFolderInput {
   name: string
   parentId?: string
-  position?: number
+  position?: string
 }
 
 export interface UpdateNoteFolderInput {
   name?: string
   parentId?: string | null
-  position?: number
+  position?: string
 }
 
 // --- Note Filter Types ---
@@ -356,7 +363,7 @@ export interface Link {
   url: string
   category: LinkCategory | null
   clickCount: number
-  position: number | null
+  position: string | null
   createdAt: string
 }
 
@@ -376,7 +383,7 @@ export interface CreateLinkInput {
   label: string
   url: string
   category?: LinkCategory
-  position?: number
+  position?: string
   projectId?: string
 }
 
@@ -384,7 +391,7 @@ export interface UpdateLinkInput {
   label?: string
   url?: string
   category?: LinkCategory | null
-  position?: number
+  position?: string
   projectId?: string | null
 }
 
@@ -425,24 +432,22 @@ export interface Content {
   publishedAt: string | null
   templateId: DescriptionTemplateId | null
   tags: string[]
-  position: number | null
+  position: string | null
   createdAt: string
   updatedAt: string
 }
 
-export interface ReorderContentItem {
+export interface MoveContentInput {
   id: string
-  stage: ContentStage
-  position: number
+  stage?: ContentStage
+  afterId?: string
+  beforeId?: string
 }
 
-export interface ContentChecklist {
-  id: ContentChecklistId
-  contentId: ContentId
-  stage: ContentStage
-  label: string
-  checked: boolean
-  position: number | null
+export interface MoveTodoInput {
+  id: string
+  afterId?: string
+  beforeId?: string
 }
 
 export interface ContentStageData {
@@ -461,7 +466,6 @@ export interface ContentWithDetails extends Content {
   projectName: string | null
   projectColor: string | null
   noteTitle: string | null
-  checklists: ContentChecklist[]
   stageData: ContentStageData[]
 }
 
@@ -493,21 +497,8 @@ export interface UpdateContentInput {
   youtubeVideoId?: string | null
 }
 
-export interface CreateContentChecklistInput {
-  contentId: string
-  stage?: ContentStage
-  label: string
-  position?: number
-}
-
 export interface UpsertStageDataInput {
   description?: string | null
-}
-
-export interface UpdateContentChecklistInput {
-  label?: string
-  checked?: boolean
-  position?: number
 }
 
 // --- Content Filter Types ---

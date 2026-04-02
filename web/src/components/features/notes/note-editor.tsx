@@ -13,6 +13,9 @@ import {
   Folder,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useBeforeUnload } from "@/hooks/useBeforeUnload"
+import { useSaveStatus } from "@/hooks/useSaveStatus"
+import { SaveStatus } from "@/components/ui/save-status"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,6 +49,14 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const initializedRef = useRef(false)
+  const pendingUpdateRef = useRef<{ title?: string; content?: string } | null>(null)
+  const { status: saveStatus, markSaving, markSaved } = useSaveStatus()
+
+  // Track dirty state for beforeunload protection
+  const isDirty = initializedRef.current && note
+    ? title !== note.title || content !== (note.content ?? "")
+    : false
+  useBeforeUnload(isDirty)
 
   // Sync state when note data loads (only on initial load or noteId change)
   useEffect(() => {
@@ -56,19 +67,28 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
     }
   }, [note?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Cleanup auto-save timer on unmount
+  // Flush pending auto-save on unmount
   useEffect(() => {
     return () => {
       if (autoSaveTimerRef.current) {
         clearTimeout(autoSaveTimerRef.current)
       }
+      if (pendingUpdateRef.current) {
+        updateNote.mutate({ id: noteId, input: pendingUpdateRef.current })
+      }
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const scheduleAutoSave = (updates: { title?: string; content?: string }) => {
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current)
+    pendingUpdateRef.current = updates
     autoSaveTimerRef.current = setTimeout(() => {
-      updateNote.mutate({ id: noteId, input: updates })
+      pendingUpdateRef.current = null
+      markSaving()
+      updateNote.mutate(
+        { id: noteId, input: updates },
+        { onSettled: () => markSaved() },
+      )
     }, 1000)
   }
 
@@ -169,6 +189,7 @@ export function NoteEditor({ noteId, folders, onClose }: NoteEditorProps) {
               </div>
             )}
           </div>
+          <SaveStatus status={saveStatus} />
         </div>
 
         <div className="flex items-center gap-1">

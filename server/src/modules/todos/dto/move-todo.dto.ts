@@ -1,18 +1,13 @@
 import {
-  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
 
-export class MoveContentDto {
+export class MoveTodoDto {
   @IsString()
   @IsNotEmpty()
   id: string;
-
-  @IsOptional()
-  @IsIn(['idea', 'drafting', 'editing', 'review', 'published'])
-  stage?: string;
 
   @IsOptional()
   @IsString()

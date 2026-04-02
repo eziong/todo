@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Trash2,
   Calendar,
-  CheckCircle2,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -139,8 +138,6 @@ export function ContentCardOverlay({ content }: { content: ContentWithDetails })
 }
 
 function ContentCardBody({ content }: { content: ContentWithDetails }) {
-  const checklistTotal = content.checklists.length
-  const checklistDone = content.checklists.filter((c) => c.checked).length
   const scheduledDate = content.scheduledAt
     ? new Date(content.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     : null
@@ -175,12 +172,6 @@ function ContentCardBody({ content }: { content: ContentWithDetails }) {
           <div className="flex items-center gap-0.5">
             <Calendar className="h-3 w-3" />
             <span>{scheduledDate}</span>
-          </div>
-        )}
-        {checklistTotal > 0 && (
-          <div className="flex items-center gap-0.5">
-            <CheckCircle2 className="h-3 w-3" />
-            <span>{checklistDone}/{checklistTotal}</span>
           </div>
         )}
       </div>

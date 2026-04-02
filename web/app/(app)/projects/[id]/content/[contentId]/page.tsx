@@ -3,7 +3,8 @@
 import { use } from 'react'
 import { useRouter } from 'next/navigation'
 import { useContent, useUpdateContent, useDeleteContent } from '@/hooks/useContents'
-import { useContentChecklists, useCreateContentChecklist, useUpdateContentChecklist, useDeleteContentChecklist } from '@/hooks/useContentChecklists'
+import { useContentTodos, useCreateTodo, useUpdateTodo, useMoveTodo, useUnlinkTodoFromContent, useLinkTodoToContent } from '@/hooks/useTodos'
+import { useTodos } from '@/hooks/useTodos'
 import { useUpsertContentStageData } from '@/hooks/useContentStageData'
 import { useProjects } from '@/hooks/useProjects'
 import { useNotes } from '@/hooks/useNotes'
@@ -11,8 +12,9 @@ import { useDescriptionTemplates } from '@/hooks/useDescriptionTemplates'
 import { ContentDetail } from '@/components/features/content/content-detail'
 import { ContentSkeleton } from '@/components/features/content/content-skeleton'
 import { classifyError } from '@/lib/errors'
-import { ContentId, ContentChecklistId } from '@/types/branded'
-import type { UpdateContentInput, CreateContentChecklistInput, UpdateContentChecklistInput, ContentStage, UpsertStageDataInput } from '@/types/domain'
+import { ContentId } from '@/types/branded'
+import type { TodoId } from '@/types/branded'
+import type { UpdateContentInput, ContentStage, UpsertStageDataInput, CreateTodoInput, UpdateTodoInput, MoveTodoInput } from '@/types/domain'
 
 export default function ProjectContentDetailPage({
   params,
@@ -24,15 +26,17 @@ export default function ProjectContentDetailPage({
   const contentId = ContentId(rawContentId)
 
   const { data: content, isLoading, error, refetch } = useContent(rawContentId)
-  const { data: checklists } = useContentChecklists(contentId)
+  const { data: contentTodos } = useContentTodos(contentId)
   const { data: projects } = useProjects(false)
   const { data: notes } = useNotes()
   const { data: templates } = useDescriptionTemplates()
   const updateContent = useUpdateContent()
   const deleteContent = useDeleteContent()
-  const createChecklist = useCreateContentChecklist()
-  const updateChecklist = useUpdateContentChecklist()
-  const deleteChecklist = useDeleteContentChecklist()
+  const createTodo = useCreateTodo()
+  const updateTodo = useUpdateTodo()
+  const moveTodoMutation = useMoveTodo()
+  const unlinkTodo = useUnlinkTodoFromContent()
+  const linkTodo = useLinkTodoToContent()
   const upsertStageData = useUpsertContentStageData()
 
   if (isLoading) return <ContentSkeleton />
@@ -61,7 +65,7 @@ export default function ProjectContentDetailPage({
     <ContentDetail
       key={contentId as string}
       content={content}
-      checklists={checklists ?? content.checklists}
+      todos={contentTodos ?? []}
       projects={projects ?? []}
       notes={notes ?? []}
       templates={templates ?? []}
@@ -72,14 +76,20 @@ export default function ProjectContentDetailPage({
       onUpsertStageData={(id: ContentId, stage: ContentStage, input: UpsertStageDataInput) =>
         upsertStageData.mutate({ contentId: id, stage, input })
       }
-      onCreateChecklist={(input: CreateContentChecklistInput) =>
-        createChecklist.mutate(input)
+      onCreateTodo={(input: CreateTodoInput) =>
+        createTodo.mutate(input)
       }
-      onUpdateChecklist={(id: ContentChecklistId, input: UpdateContentChecklistInput) =>
-        updateChecklist.mutate({ id, input })
+      onUpdateTodo={(id: TodoId, input: UpdateTodoInput) =>
+        updateTodo.mutate({ id, input })
       }
-      onDeleteChecklist={(id: ContentChecklistId) =>
-        deleteChecklist.mutate(id)
+      onMoveTodo={(input: MoveTodoInput) =>
+        moveTodoMutation.mutate(input)
+      }
+      onUnlinkTodo={(id: TodoId) =>
+        unlinkTodo.mutate(id)
+      }
+      onLinkTodo={(id: TodoId, stage: ContentStage) =>
+        linkTodo.mutate({ id, contentId: rawContentId, contentStage: stage })
       }
       onBack={() => router.push(`/projects/${projectId}/content`)}
     />

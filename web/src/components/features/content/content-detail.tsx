@@ -1,6 +1,24 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
+import {
+  DndContext,
+  DragOverlay,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import {
   ArrowLeft,
   Trash2,
@@ -10,9 +28,11 @@ import {
   FileText,
   Layout,
   Check,
-  Square,
   Circle,
   CheckCircle2,
+  Search,
+  Link2,
+  GripVertical,
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -20,59 +40,166 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { useBeforeUnload } from "@/hooks/useBeforeUnload"
+import { useSaveStatus } from "@/hooks/useSaveStatus"
+import { useTodos } from "@/hooks/useTodos"
+import { SaveStatus } from "@/components/ui/save-status"
 import { STAGES, STAGE_LABELS, TYPE_COLORS, PLATFORM_COLORS } from "./content-card"
-import type { ContentId, ContentChecklistId } from "@/types/branded"
+import type { ContentId, TodoId } from "@/types/branded"
 import type {
   ContentWithDetails,
-  ContentChecklist,
   ContentStageData,
   ContentStage,
   ContentType,
   ContentPlatform,
   UpdateContentInput,
-  CreateContentChecklistInput,
-  UpdateContentChecklistInput,
+  CreateTodoInput,
+  UpdateTodoInput,
+  MoveTodoInput,
   UpsertStageDataInput,
   ProjectWithStats,
   NoteWithFolder,
   DescriptionTemplate,
+  TodoWithProject,
 } from "@/types/domain"
 
 interface ContentDetailProps {
   content: ContentWithDetails
-  checklists: ContentChecklist[]
+  todos: TodoWithProject[]
   projects: ProjectWithStats[]
   notes: NoteWithFolder[]
   templates: DescriptionTemplate[]
   onUpdate: (id: ContentId, input: UpdateContentInput) => void
   onDelete: (id: ContentId) => void
   onUpsertStageData: (contentId: ContentId, stage: ContentStage, input: UpsertStageDataInput) => void
-  onCreateChecklist: (input: CreateContentChecklistInput) => void
-  onUpdateChecklist: (id: ContentChecklistId, input: UpdateContentChecklistInput) => void
-  onDeleteChecklist: (id: ContentChecklistId) => void
+  onCreateTodo: (input: CreateTodoInput) => void
+  onUpdateTodo: (id: TodoId, input: UpdateTodoInput) => void
+  onMoveTodo: (input: MoveTodoInput) => void
+  onUnlinkTodo: (id: TodoId) => void
+  onLinkTodo: (id: TodoId, stage: ContentStage) => void
   onBack: () => void
+}
+
+function SortableTodoItem({
+  todo,
+  onToggle,
+  onUnlink,
+}: {
+  todo: TodoWithProject
+  onToggle: (todo: TodoWithProject) => void
+  onUnlink: (id: TodoId) => void
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: todo.id as string })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "group flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-background-secondary",
+        isDragging && "opacity-50"
+      )}
+    >
+      <button
+        className="flex h-4 w-4 shrink-0 cursor-grab items-center justify-center text-foreground-secondary/30 hover:text-foreground-secondary active:cursor-grabbing"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3 w-3" />
+      </button>
+      <button
+        onClick={() => onToggle(todo)}
+        className={cn(
+          "flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] border transition-colors",
+          todo.status === "completed"
+            ? "border-accent-blue bg-accent-blue text-white"
+            : "border-foreground-secondary/30 hover:border-foreground-secondary"
+        )}
+      >
+        {todo.status === "completed" && <Check className="h-3 w-3" />}
+      </button>
+      <span className={cn(
+        "flex-1 text-sm",
+        todo.status === "completed" ? "text-foreground-secondary line-through" : "text-foreground"
+      )}>
+        {todo.title}
+      </span>
+      {todo.project && (
+        <span
+          className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px]"
+          style={{
+            backgroundColor: todo.project.color ? `${todo.project.color}20` : undefined,
+            color: todo.project.color ?? undefined,
+          }}
+        >
+          {todo.project.name}
+        </span>
+      )}
+      <button
+        onClick={() => onUnlink(todo.id)}
+        className="flex h-5 w-5 items-center justify-center rounded-full text-foreground-secondary opacity-0 transition-opacity group-hover:opacity-100 hover:bg-background-tertiary hover:text-accent-red"
+        title="Unlink from content"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </div>
+  )
 }
 
 export function ContentDetail({
   content,
-  checklists,
+  todos,
   projects,
   notes,
   templates,
   onUpdate,
   onDelete,
   onUpsertStageData,
-  onCreateChecklist,
-  onUpdateChecklist,
-  onDeleteChecklist,
+  onCreateTodo,
+  onUpdateTodo,
+  onMoveTodo,
+  onUnlinkTodo,
+  onLinkTodo,
   onBack,
 }: ContentDetailProps) {
   const [title, setTitle] = useState(content.title)
   const [activeTab, setActiveTab] = useState<ContentStage>(content.stage)
-  const [newChecklistLabel, setNewChecklistLabel] = useState("")
+  const [newTodoTitle, setNewTodoTitle] = useState("")
+  const [linkSearchQuery, setLinkSearchQuery] = useState("")
+  const [isLinkPopoverOpen, setIsLinkPopoverOpen] = useState(false)
   const titleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const descTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pendingTitleRef = useRef<string | null>(null)
+  const pendingDescRef = useRef<{ stage: ContentStage; value: string } | null>(null)
+
+  const { status: saveStatus, markSaving, markSaved } = useSaveStatus()
+
+  // Search todos for linking (exclude already linked ones)
+  const { data: searchResults } = useTodos(
+    linkSearchQuery.trim().length > 0 ? { search: linkSearchQuery.trim() } : undefined,
+  )
+  const linkedTodoIds = new Set(todos.map((t) => t.id as string))
+  const filteredSearchResults = (searchResults ?? []).filter(
+    (t) => !linkedTodoIds.has(t.id as string),
+  )
 
   // Get stage data for the active tab
   const activeStageData = content.stageData.find((sd) => sd.stage === activeTab)
@@ -86,22 +213,66 @@ export function ContentDetail({
     setStageDescription(sd?.description ?? "")
   }
 
-  // Filter checklists by active tab stage
-  const stageChecklists = checklists.filter((c) => c.stage === activeTab)
+  // Track dirty state for beforeunload protection
+  const isDirty = title !== content.title || stageDescription !== (activeStageData?.description ?? "")
+  useBeforeUnload(isDirty)
+
+  // Flush pending auto-saves on unmount
+  useEffect(() => {
+    return () => {
+      if (titleTimerRef.current) clearTimeout(titleTimerRef.current)
+      if (descTimerRef.current) clearTimeout(descTimerRef.current)
+      if (pendingTitleRef.current !== null) {
+        onUpdate(content.id, { title: pendingTitleRef.current })
+      }
+      if (pendingDescRef.current) {
+        onUpsertStageData(content.id, pendingDescRef.current.stage, {
+          description: pendingDescRef.current.value || null,
+        })
+      }
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // DnD sensors for todo reordering
+  const todoDndSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor),
+  )
+  const [activeTodoId, setActiveTodoId] = useState<string | null>(null)
+
+  // Filter and sort todos by active tab stage
+  const stageTodos = todos
+    .filter((t) => t.contentStage === activeTab)
+    .sort((a, b) => {
+      if (a.position !== null && b.position !== null) return a.position < b.position ? -1 : a.position > b.position ? 1 : 0
+      if (a.position !== null) return -1
+      if (b.position !== null) return 1
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    })
+  const completedCount = stageTodos.filter((t) => t.status === "completed").length
+  const activeTodo = activeTodoId ? stageTodos.find((t) => (t.id as string) === activeTodoId) ?? null : null
 
   const handleTitleChange = (value: string) => {
     setTitle(value)
     if (titleTimerRef.current) clearTimeout(titleTimerRef.current)
+    pendingTitleRef.current = value
     titleTimerRef.current = setTimeout(() => {
+      pendingTitleRef.current = null
+      markSaving()
       onUpdate(content.id, { title: value })
+      markSaved()
     }, 1000)
   }
 
   const handleStageDescriptionChange = (value: string) => {
     setStageDescription(value)
     if (descTimerRef.current) clearTimeout(descTimerRef.current)
+    pendingDescRef.current = { stage: activeTab, value }
     descTimerRef.current = setTimeout(() => {
+      pendingDescRef.current = null
+      markSaving()
       onUpsertStageData(content.id, activeTab, { description: value || null })
+      markSaved()
     }, 1000)
   }
 
@@ -133,15 +304,43 @@ export function ContentDetail({
     onUpdate(content.id, { scheduledAt: value || null })
   }
 
-  const handleAddChecklist = () => {
-    if (!newChecklistLabel.trim()) return
-    onCreateChecklist({
+  const handleAddTodo = () => {
+    if (!newTodoTitle.trim()) return
+    onCreateTodo({
+      title: newTodoTitle.trim(),
       contentId: content.id as string,
-      stage: activeTab,
-      label: newChecklistLabel.trim(),
-      position: stageChecklists.length,
+      contentStage: activeTab,
     })
-    setNewChecklistLabel("")
+    setNewTodoTitle("")
+  }
+
+  const handleToggleTodo = (todo: TodoWithProject) => {
+    onUpdateTodo(todo.id, {
+      status: todo.status === "completed" ? "todo" : "completed",
+    })
+  }
+
+  const handleLinkExistingTodo = (todoId: TodoId) => {
+    onLinkTodo(todoId, activeTab)
+    setLinkSearchQuery("")
+    setIsLinkPopoverOpen(false)
+  }
+
+  const handleTodoDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    setActiveTodoId(null)
+    if (!over || active.id === over.id) return
+
+    const oldIndex = stageTodos.findIndex((t) => (t.id as string) === active.id)
+    const newIndex = stageTodos.findIndex((t) => (t.id as string) === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const reordered = arrayMove(stageTodos, oldIndex, newIndex)
+    const movedIndex = reordered.findIndex((t) => (t.id as string) === active.id)
+    const afterId = movedIndex > 0 ? (reordered[movedIndex - 1].id as string) : undefined
+    const beforeId = movedIndex < reordered.length - 1 ? (reordered[movedIndex + 1].id as string) : undefined
+
+    onMoveTodo({ id: active.id as string, afterId, beforeId })
   }
 
   const handleDelete = () => {
@@ -212,6 +411,8 @@ export function ContentDetail({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <SaveStatus status={saveStatus} />
         </div>
 
         <button
@@ -278,64 +479,124 @@ export function ContentDetail({
             />
           </div>
 
-          {/* Stage Checklist */}
+          {/* Stage Tasks */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-foreground">
-                {STAGE_LABELS[activeTab]} Checklist
+                {STAGE_LABELS[activeTab]} Tasks
               </label>
-              {stageChecklists.length > 0 && (
-                <span className="text-xs text-foreground-secondary">
-                  {stageChecklists.filter((c) => c.checked).length}/{stageChecklists.length}
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              {stageChecklists.map((item) => (
-                <div
-                  key={item.id}
-                  className="group flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-background-secondary"
-                >
-                  <button
-                    onClick={() => onUpdateChecklist(item.id, { checked: !item.checked })}
-                    className={cn(
-                      "flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] border transition-colors",
-                      item.checked
-                        ? "border-accent-blue bg-accent-blue text-white"
-                        : "border-foreground-secondary/30 hover:border-foreground-secondary"
-                    )}
-                  >
-                    {item.checked && <Check className="h-3 w-3" />}
-                    {!item.checked && <Square className="h-3 w-3 opacity-0" />}
-                  </button>
-                  <span className={cn(
-                    "flex-1 text-sm",
-                    item.checked ? "text-foreground-secondary line-through" : "text-foreground"
-                  )}>
-                    {item.label}
+              <div className="flex items-center gap-2">
+                {stageTodos.length > 0 && (
+                  <span className="text-xs text-foreground-secondary">
+                    {completedCount}/{stageTodos.length}
                   </span>
-                  <button
-                    onClick={() => onDeleteChecklist(item.id)}
-                    className="flex h-5 w-5 items-center justify-center rounded-full text-foreground-secondary opacity-0 transition-opacity group-hover:opacity-100 hover:bg-background-tertiary hover:text-accent-red"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
+                )}
+
+                {/* Link existing todo */}
+                <Popover open={isLinkPopoverOpen} onOpenChange={setIsLinkPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <button className="flex h-6 items-center gap-1 rounded-md px-2 text-xs text-foreground-secondary transition-colors hover:bg-background-tertiary hover:text-foreground">
+                      <Link2 className="h-3 w-3" />
+                      Link
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 p-2" align="end">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 rounded-md border border-border bg-background-secondary px-2">
+                        <Search className="h-3.5 w-3.5 text-foreground-secondary" />
+                        <input
+                          type="text"
+                          value={linkSearchQuery}
+                          onChange={(e) => setLinkSearchQuery(e.target.value)}
+                          placeholder="Search todos..."
+                          className="h-8 flex-1 border-none bg-transparent text-sm text-foreground placeholder:text-foreground-secondary/50 focus:outline-none"
+                          autoFocus
+                        />
+                      </div>
+                      {linkSearchQuery.trim().length > 0 && (
+                        <div className="max-h-48 overflow-auto">
+                          {filteredSearchResults.length === 0 ? (
+                            <p className="px-2 py-3 text-center text-xs text-foreground-secondary">
+                              No matching todos
+                            </p>
+                          ) : (
+                            filteredSearchResults.slice(0, 10).map((todo) => (
+                              <button
+                                key={todo.id}
+                                onClick={() => handleLinkExistingTodo(todo.id)}
+                                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-foreground transition-colors hover:bg-background-tertiary"
+                              >
+                                <span className="truncate">{todo.title}</span>
+                                {todo.project && (
+                                  <span
+                                    className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px]"
+                                    style={{
+                                      backgroundColor: todo.project.color ? `${todo.project.color}20` : undefined,
+                                      color: todo.project.color ?? undefined,
+                                    }}
+                                  >
+                                    {todo.project.name}
+                                  </span>
+                                )}
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
 
-            {/* Add checklist item */}
+            <DndContext
+              sensors={todoDndSensors}
+              collisionDetection={closestCenter}
+              onDragStart={(e: DragStartEvent) => setActiveTodoId(e.active.id as string)}
+              onDragEnd={handleTodoDragEnd}
+            >
+              <SortableContext
+                items={stageTodos.map((t) => t.id as string)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-1">
+                  {stageTodos.map((todo) => (
+                    <SortableTodoItem
+                      key={todo.id}
+                      todo={todo}
+                      onToggle={handleToggleTodo}
+                      onUnlink={onUnlinkTodo}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+
+              <DragOverlay dropAnimation={null}>
+                {activeTodo ? (
+                  <div className="flex items-center gap-2 rounded-lg bg-background-secondary px-2 py-1.5 shadow-lg">
+                    <GripVertical className="h-3 w-3 text-foreground-secondary/30" />
+                    <span className={cn(
+                      "flex-1 text-sm",
+                      activeTodo.status === "completed" ? "text-foreground-secondary line-through" : "text-foreground"
+                    )}>
+                      {activeTodo.title}
+                    </span>
+                  </div>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+
+            {/* Add new todo inline */}
             <div className="flex items-center gap-2">
               <Plus className="h-4 w-4 text-foreground-secondary" />
               <input
                 type="text"
-                value={newChecklistLabel}
-                onChange={(e) => setNewChecklistLabel(e.target.value)}
+                value={newTodoTitle}
+                onChange={(e) => setNewTodoTitle(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.nativeEvent.isComposing) handleAddChecklist()
+                  if (e.key === "Enter" && !e.nativeEvent.isComposing) handleAddTodo()
                 }}
-                placeholder="Add checklist item..."
+                placeholder="Add task..."
                 className="flex-1 border-none bg-transparent text-sm text-foreground placeholder:text-foreground-secondary/50 focus:outline-none"
               />
             </div>

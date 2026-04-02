@@ -12,7 +12,7 @@ interface ServerProject {
   color: string | null
   icon: string | null
   archived: boolean
-  position: number | null
+  position: string | null
   githubRepo: string | null
   features: string[]
   createdAt: string

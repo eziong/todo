@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UpdateProjectDto {
   @IsOptional()
@@ -22,8 +22,8 @@ export class UpdateProjectDto {
   archived?: boolean;
 
   @IsOptional()
-  @IsInt()
-  position?: number;
+  @IsString()
+  position?: string;
 
   @IsOptional()
   @IsString()

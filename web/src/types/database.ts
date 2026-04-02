@@ -17,7 +17,7 @@ export interface ProjectRow {
   color: string | null
   icon: string | null
   archived: boolean
-  position: number | null
+  position: string | null
   github_repo: string | null
   created_at: string
   updated_at: string
@@ -36,7 +36,7 @@ export interface TodoRow {
   due_date: string | null
   project_id: string | null
   parent_id: string | null
-  position: number | null
+  position: string | null
   completed_at: string | null
   created_at: string
   updated_at: string
@@ -79,7 +79,7 @@ export interface BuildCommandRow {
   method: WebhookMethod
   headers: Record<string, string>
   body_template: string | null
-  position: number | null
+  position: string | null
 }
 
 export type BuildStatus = 'pending' | 'running' | 'success' | 'failed'
@@ -105,7 +105,7 @@ export interface NoteFolderRow {
   user_id: string
   name: string
   parent_id: string | null
-  position: number | null
+  position: string | null
   created_at: string
 }
 
@@ -129,7 +129,7 @@ export interface LinkRow {
   url: string
   category: LinkCategory | null
   click_count: number
-  position: number | null
+  position: string | null
   created_at: string
 }
 
@@ -165,15 +165,6 @@ export interface ContentRow {
   tags: string[] | null
   created_at: string
   updated_at: string
-}
-
-export interface ContentChecklistRow {
-  id: string
-  content_id: string
-  stage: string
-  label: string
-  checked: boolean
-  position: number | null
 }
 
 // --- Phase 8: YouTube Integration ---

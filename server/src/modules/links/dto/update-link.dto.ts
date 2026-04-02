@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateLinkDto {
   @IsOptional()
@@ -14,8 +14,8 @@ export class UpdateLinkDto {
   category?: string | null;
 
   @IsOptional()
-  @IsInt()
-  position?: number | null;
+  @IsString()
+  position?: string | null;
 
   @IsOptional()
   @IsUUID()

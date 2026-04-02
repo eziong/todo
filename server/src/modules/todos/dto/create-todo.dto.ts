@@ -1,6 +1,5 @@
 import {
   IsIn,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -37,6 +36,14 @@ export class CreateTodoDto {
   parentId?: string;
 
   @IsOptional()
-  @IsInt()
-  position?: number;
+  @IsString()
+  position?: string;
+
+  @IsOptional()
+  @IsUUID()
+  contentId?: string;
+
+  @IsOptional()
+  @IsIn(['idea', 'drafting', 'editing', 'review', 'published'])
+  contentStage?: string;
 }

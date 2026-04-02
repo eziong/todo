@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   X,
   Check,
@@ -13,6 +13,9 @@ import {
   Hash,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useBeforeUnload } from "@/hooks/useBeforeUnload"
+import { useSaveStatus } from "@/hooks/useSaveStatus"
+import { SaveStatus } from "@/components/ui/save-status"
 import { useTodo, useSubtasks, useTodoTags } from "@/hooks/useTodo"
 import { useUpdateTodo, useCreateTodo } from "@/hooks/useTodos"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -69,11 +72,40 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
   const [priorityOpen, setPriorityOpen] = useState(false)
   const [dueDateOpen, setDueDateOpen] = useState(false)
 
+  const { status: saveStatus, markSaving, markSaved } = useSaveStatus()
+  const titleRef = useRef(titleValue)
+  const descriptionRef = useRef(descriptionValue)
+  titleRef.current = titleValue
+  descriptionRef.current = descriptionValue
+
+  // Track dirty state for beforeunload protection
+  const isDirty = todo
+    ? titleValue !== todo.title || descriptionValue !== (todo.description || "")
+    : false
+  useBeforeUnload(isDirty)
+
   // Sync local state when todo data first loads (key={taskId} handles task switch)
   useEffect(() => {
     if (todo) {
       setTitleValue(todo.title)
       setDescriptionValue(todo.description || "")
+    }
+  }, [todo?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Flush dirty values on unmount (panel close without blur)
+  useEffect(() => {
+    return () => {
+      if (!todo) return
+      const updates: Record<string, string | null> = {}
+      if (titleRef.current.trim() && titleRef.current !== todo.title) {
+        updates.title = titleRef.current.trim()
+      }
+      if (descriptionRef.current !== (todo.description || "")) {
+        updates.description = descriptionRef.current || null
+      }
+      if (Object.keys(updates).length > 0) {
+        updateTodo.mutate({ id: todo.id, input: updates })
+      }
     }
   }, [todo?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -84,16 +116,21 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
   const handleTitleBlur = () => {
     setEditingTitle(false)
     if (todo && titleValue.trim() && titleValue !== todo.title) {
-      updateTodo.mutate({ id: todo.id, input: { title: titleValue.trim() } })
+      markSaving()
+      updateTodo.mutate(
+        { id: todo.id, input: { title: titleValue.trim() } },
+        { onSettled: () => markSaved() },
+      )
     }
   }
 
   const handleDescriptionBlur = () => {
     if (todo && descriptionValue !== (todo.description || "")) {
-      updateTodo.mutate({
-        id: todo.id,
-        input: { description: descriptionValue || null },
-      })
+      markSaving()
+      updateTodo.mutate(
+        { id: todo.id, input: { description: descriptionValue || null } },
+        { onSettled: () => markSaved() },
+      )
     }
   }
 
@@ -379,10 +416,11 @@ function TaskDetailContent({ taskId, onClose }: { taskId: TodoId; onClose: () =>
       </div>
 
       {/* Activity footer */}
-      <div className="border-t border-border px-4 py-3">
+      <div className="flex items-center justify-between border-t border-border px-4 py-3">
         <p className="text-xs text-foreground-secondary/60">
           Created {formatDate(todo.createdAt)} · Modified {formatRelativeTime(todo.updatedAt)}
         </p>
+        <SaveStatus status={saveStatus} />
       </div>
     </div>
   )

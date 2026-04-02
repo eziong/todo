@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 import { ContentCard, ContentCardOverlay, STAGES, STAGE_LABELS } from "./content-card"
-import type { ContentStage, ContentType, ContentPlatform, ContentFilters, ContentWithDetails, ReorderContentItem } from "@/types/domain"
+import type { ContentStage, ContentType, ContentPlatform, ContentFilters, ContentWithDetails, MoveContentInput } from "@/types/domain"
 import type { ProjectWithStats } from "@/types/domain"
 
 const CONTENT_TYPES: ContentType[] = ['video', 'short', 'post', 'blog']
@@ -90,7 +90,7 @@ interface PipelineBoardProps {
   filters: ContentFilters
   onFiltersChange: (filters: ContentFilters) => void
   onStageChange: (id: string, stage: ContentStage) => void
-  onReorder: (items: ReorderContentItem[]) => void
+  onMoveContent: (input: MoveContentInput) => void
   onCreateContent: () => void
   onDeleteContent: (id: string) => void
   onSelectContent: (id: string) => void
@@ -169,7 +169,7 @@ export function PipelineBoard({
   filters,
   onFiltersChange,
   onStageChange,
-  onReorder,
+  onMoveContent,
   onCreateContent,
   onDeleteContent,
   onSelectContent,
@@ -188,7 +188,7 @@ export function PipelineBoard({
     contents
       .filter((c) => c.stage === stage)
       .sort((a, b) => {
-        if (a.position !== null && b.position !== null) return a.position - b.position
+        if (a.position !== null && b.position !== null) return a.position < b.position ? -1 : a.position > b.position ? 1 : 0
         if (a.position !== null) return -1
         if (b.position !== null) return 1
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -228,10 +228,8 @@ export function PipelineBoard({
 
     if (!sourceStage || !targetStage) return
 
-    const reorderItems: ReorderContentItem[] = []
-
     if (sourceStage === targetStage) {
-      // Same column — use arrayMove to match sortable's visual behavior exactly
+      // Same column reorder
       const columnItems = sortedContentsByStage(sourceStage)
       const oldIndex = columnItems.findIndex((c) => (c.id as string) === activeContentId)
       const newIndex = columnItems.findIndex((c) => (c.id as string) === overId)
@@ -239,21 +237,16 @@ export function PipelineBoard({
       if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return
 
       const reordered = arrayMove(columnItems, oldIndex, newIndex)
-      reordered.forEach((item, index) => {
-        reorderItems.push({
-          id: item.id as string,
-          stage: sourceStage,
-          position: index,
-        })
-      })
-    } else {
-      // Cross-column — remove from source, insert into target
-      const activeItem = contents.find((c) => (c.id as string) === activeContentId)
-      if (!activeItem) return
+      const movedIndex = reordered.findIndex((c) => (c.id as string) === activeContentId)
+      const afterId = movedIndex > 0 ? (reordered[movedIndex - 1].id as string) : undefined
+      const beforeId = movedIndex < reordered.length - 1 ? (reordered[movedIndex + 1].id as string) : undefined
 
-      // Target column: find insertion point
+      onMoveContent({ id: activeContentId, afterId, beforeId })
+    } else {
+      // Cross-column move
       const targetItems = sortedContentsByStage(targetStage)
       let insertIndex: number
+
       if (overId.startsWith('column-')) {
         insertIndex = targetItems.length
       } else {
@@ -261,31 +254,10 @@ export function PipelineBoard({
         insertIndex = overIndex >= 0 ? overIndex : targetItems.length
       }
 
-      const newTargetItems = [...targetItems]
-      newTargetItems.splice(insertIndex, 0, activeItem)
-      newTargetItems.forEach((item, index) => {
-        reorderItems.push({
-          id: item.id as string,
-          stage: targetStage,
-          position: index,
-        })
-      })
+      const afterId = insertIndex > 0 ? (targetItems[insertIndex - 1].id as string) : undefined
+      const beforeId = insertIndex < targetItems.length ? (targetItems[insertIndex].id as string) : undefined
 
-      // Source column: re-index without the moved item
-      const sourceItems = sortedContentsByStage(sourceStage).filter(
-        (c) => (c.id as string) !== activeContentId
-      )
-      sourceItems.forEach((item, index) => {
-        reorderItems.push({
-          id: item.id as string,
-          stage: sourceStage,
-          position: index,
-        })
-      })
-    }
-
-    if (reorderItems.length > 0) {
-      onReorder(reorderItems)
+      onMoveContent({ id: activeContentId, stage: targetStage, afterId, beforeId })
     }
   }
 

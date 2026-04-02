@@ -34,7 +34,7 @@ model projects {
   color       String?
   icon        String?
   archived    Boolean  @default(false)
-  position    Int?
+  position    String?
   github_repo String?
   features    String[] @default(["tasks", "notes", "links"])
   created_at  DateTime @default(now())
@@ -58,25 +58,28 @@ model projects {
 // Todos
 // =============================================================
 model todos {
-  id           String    @id @default(uuid())
-  user_id      String
-  title        String
-  description  String?   @db.Text
-  status       String    @default("todo")
-  priority     String    @default("none")
-  due_date     DateTime?
-  project_id   String?
-  parent_id    String?
-  position     Int?
-  completed_at DateTime?
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @default(now())
+  id            String    @id @default(uuid())
+  user_id       String
+  title         String
+  description   String?   @db.Text
+  status        String    @default("todo")
+  priority      String    @default("none")
+  due_date      DateTime?
+  project_id    String?
+  parent_id     String?
+  position      String?
+  completed_at  DateTime?
+  content_id    String?
+  content_stage String?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @default(now())
 
   project         projects?        @relation(fields: [project_id], references: [id], onDelete: SetNull)
   parent          todos?           @relation("TodoParent", fields: [parent_id], references: [id], onDelete: Cascade)
   children        todos[]          @relation("TodoParent")
   todo_tags       todo_tags[]
   recurring_rules recurring_rules[]
+  content         contents?        @relation(fields: [content_id], references: [id], onDelete: SetNull)
 
   @@index([user_id], map: "todos_user_id_idx")
   @@index([user_id, status], map: "todos_user_status_idx")
@@ -84,6 +87,7 @@ model todos {
   @@index([project_id], map: "todos_project_id_idx")
   @@index([parent_id], map: "todos_parent_id_idx")
   @@index([user_id, priority], map: "todos_user_priority_idx")
+  @@index([content_id], map: "todos_content_id_idx")
 }
 
 // =============================================================
@@ -145,7 +149,7 @@ model build_commands {
   method        String  @default("POST")
   headers       Json    @default("{}")
   body_template String? @db.Text
-  position      Int?
+  position      String?
 
   project projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
   builds  builds[]
@@ -203,7 +207,7 @@ model note_folders {
   user_id    String
   name       String
   parent_id  String?
-  position   Int?
+  position   String?
   created_at DateTime @default(now())
 
   parent   note_folders?  @relation("FolderParent", fields: [parent_id], references: [id], onDelete: Cascade)
@@ -248,7 +252,7 @@ model links {
   url         String
   category    String?
   click_count Int      @default(0)
-  position    Int?
+  position    String?
   created_at  DateTime @default(now())
 
   project projects? @relation(fields: [project_id], references: [id], onDelete: SetNull)
@@ -292,14 +296,14 @@ model contents {
   published_at     DateTime?
   template_id      String?
   tags             String[]  @default([])
-  position         Int?
+  position         String?
   created_at       DateTime  @default(now())
   updated_at       DateTime  @default(now())
 
   project              projects?              @relation(fields: [project_id], references: [id], onDelete: SetNull)
   note                 notes?                 @relation(fields: [note_id], references: [id], onDelete: SetNull)
   template             description_templates? @relation(fields: [template_id], references: [id], onDelete: SetNull)
-  content_checklists   content_checklists[]
+  todos                todos[]
   content_stage_data   content_stage_data[]
   assets               assets[]
   sponsorships         sponsorships[]
@@ -309,22 +313,6 @@ model contents {
   @@index([user_id, stage], map: "contents_user_stage_idx")
   @@index([project_id], map: "contents_project_id_idx")
   @@index([scheduled_at], map: "contents_scheduled_at_idx")
-}
-
-// =============================================================
-// Content Checklists
-// =============================================================
-model content_checklists {
-  id         String  @id @default(uuid())
-  content_id String
-  stage      String  @default("idea")
-  label      String
-  checked    Boolean @default(false)
-  position   Int?
-
-  content contents @relation(fields: [content_id], references: [id], onDelete: Cascade)
-
-  @@index([content_id], map: "content_checklists_content_id_idx")
 }
 
 // =============================================================

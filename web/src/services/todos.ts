@@ -1,6 +1,6 @@
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/lib/api-client'
-import { TodoId, ProjectId, UserId } from '@/types/branded'
-import type { Todo, TodoWithProject, CreateTodoInput, UpdateTodoInput, TodoFilters } from '@/types/domain'
+import { TodoId, ProjectId, UserId, ContentId } from '@/types/branded'
+import type { Todo, TodoWithProject, CreateTodoInput, UpdateTodoInput, TodoFilters, ContentStage, MoveTodoInput } from '@/types/domain'
 
 // --- Server Response Branding ---
 
@@ -20,8 +20,10 @@ interface ServerTodo {
   dueDate: string | null
   projectId: string | null
   parentId: string | null
-  position: number | null
+  position: string | null
   completedAt: string | null
+  contentId: string | null
+  contentStage: string | null
   createdAt: string
   updatedAt: string
 }
@@ -39,6 +41,8 @@ function brandTodo(raw: ServerTodo): Todo {
     priority: raw.priority as Todo['priority'],
     projectId: raw.projectId ? ProjectId(raw.projectId) : null,
     parentId: raw.parentId ? TodoId(raw.parentId) : null,
+    contentId: raw.contentId ? ContentId(raw.contentId) : null,
+    contentStage: raw.contentStage as ContentStage | null,
   }
 }
 
@@ -63,6 +67,8 @@ export async function fetchTodos(filters?: TodoFilters): Promise<TodoWithProject
   if (filters?.priority) params.set('priority', filters.priority)
   if (filters?.projectId) params.set('projectId', filters.projectId)
   if (filters?.search) params.set('search', filters.search)
+  if (filters?.contentId) params.set('contentId', filters.contentId)
+  if (filters?.contentStage) params.set('contentStage', filters.contentStage)
 
   const query = params.toString()
   const path = query ? `/api/todos?${query}` : '/api/todos'
@@ -94,4 +100,9 @@ export async function updateTodo(id: TodoId, input: UpdateTodoInput): Promise<To
 
 export async function deleteTodo(id: TodoId): Promise<void> {
   await apiDelete(`/api/todos/${id}`)
+}
+
+export async function moveTodo(input: MoveTodoInput): Promise<TodoWithProject> {
+  const data = await apiPatch<ServerTodoWithProject>('/api/todos/move', input)
+  return brandTodoWithProject(data)
 }

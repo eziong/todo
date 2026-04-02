@@ -1,5 +1,4 @@
 import {
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -16,6 +15,6 @@ export class CreateNoteFolderDto {
   parentId?: string;
 
   @IsOptional()
-  @IsInt()
-  position?: number;
+  @IsString()
+  position?: string;
 }

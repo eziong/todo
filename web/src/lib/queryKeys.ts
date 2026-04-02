@@ -73,11 +73,6 @@ export const queryKeys = {
     details: () => [...queryKeys.contents.all, 'detail'] as const,
     detail: (id: ContentId) => [...queryKeys.contents.details(), id] as const,
   },
-  contentChecklists: {
-    all: ['contentChecklists'] as const,
-    lists: () => [...queryKeys.contentChecklists.all, 'list'] as const,
-    list: (contentId: ContentId) => [...queryKeys.contentChecklists.lists(), contentId] as const,
-  },
   contentStageData: {
     all: ['contentStageData'] as const,
     lists: () => [...queryKeys.contentStageData.all, 'list'] as const,

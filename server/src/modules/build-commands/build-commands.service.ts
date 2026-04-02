@@ -16,7 +16,7 @@ export interface BuildCommandResponse {
   method: string;
   headers: Record<string, string>;
   bodyTemplate: string | null;
-  position: number | null;
+  position: string | null;
 }
 
 function mapBuildCommand(row: build_commands): BuildCommandResponse {

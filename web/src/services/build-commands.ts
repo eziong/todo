@@ -12,7 +12,7 @@ interface ServerBuildCommand {
   method: string
   headers: Record<string, string>
   bodyTemplate: string | null
-  position: number | null
+  position: string | null
 }
 
 function brandBuildCommand(raw: ServerBuildCommand): BuildCommand {

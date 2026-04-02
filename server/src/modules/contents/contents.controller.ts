@@ -14,9 +14,7 @@ import { AuthUser } from '../../common/types/auth.types';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 import { ContentFiltersDto } from './dto/content-filters.dto';
-import { ReorderContentDto } from './dto/reorder-content.dto';
-import { CreateContentChecklistDto } from './dto/create-content-checklist.dto';
-import { UpdateContentChecklistDto } from './dto/update-content-checklist.dto';
+import { MoveContentDto } from './dto/reorder-content.dto';
 import { UpsertStageDataDto } from './dto/upsert-stage-data.dto';
 import { ContentsService } from './contents.service';
 
@@ -29,9 +27,9 @@ export class ContentsController {
     return this.contentsService.findAll(user.id, filters);
   }
 
-  @Patch('contents/reorder')
-  reorder(@CurrentUser() user: AuthUser, @Body() dto: ReorderContentDto) {
-    return this.contentsService.reorder(user.id, dto);
+  @Patch('contents/move')
+  moveContent(@CurrentUser() user: AuthUser, @Body() dto: MoveContentDto) {
+    return this.contentsService.moveContent(user.id, dto);
   }
 
   @Get('contents/:id')
@@ -76,38 +74,5 @@ export class ContentsController {
     @Body() dto: UpsertStageDataDto,
   ) {
     return this.contentsService.upsertStageData(user.id, contentId, stage, dto);
-  }
-
-  // --- Checklists ---
-
-  @Get('contents/:contentId/checklists')
-  findChecklists(
-    @CurrentUser() user: AuthUser,
-    @Param('contentId') contentId: string,
-  ) {
-    return this.contentsService.findChecklists(user.id, contentId);
-  }
-
-  @Post('contents/:contentId/checklists')
-  createChecklist(
-    @CurrentUser() user: AuthUser,
-    @Param('contentId') contentId: string,
-    @Body() dto: CreateContentChecklistDto,
-  ) {
-    return this.contentsService.createChecklist(user.id, contentId, dto);
-  }
-
-  @Patch('content-checklists/:id')
-  updateChecklist(
-    @CurrentUser() user: AuthUser,
-    @Param('id') id: string,
-    @Body() dto: UpdateContentChecklistDto,
-  ) {
-    return this.contentsService.updateChecklist(user.id, id, dto);
-  }
-
-  @Delete('content-checklists/:id')
-  removeChecklist(@CurrentUser() user: AuthUser, @Param('id') id: string) {
-    return this.contentsService.removeChecklist(user.id, id);
   }
 }

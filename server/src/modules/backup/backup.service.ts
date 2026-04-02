@@ -25,7 +25,6 @@ const EXPORT_TABLES = [
   'notes',
   'description_templates',
   'contents',
-  'content_checklists',
   'youtube_channels',
   'links',
   'assets',

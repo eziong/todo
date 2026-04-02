@@ -23,9 +23,6 @@ SELECT gen_random_uuid(), "id", 'idea', "description", "created_at", "updated_at
 FROM "contents"
 WHERE "description" IS NOT NULL AND "description" != '';
 
--- Add stage column to content_checklists
-ALTER TABLE "content_checklists" ADD COLUMN "stage" TEXT NOT NULL DEFAULT 'idea';
-
 -- Drop description column from contents
 ALTER TABLE "contents" DROP COLUMN "description";
 

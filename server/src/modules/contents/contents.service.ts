@@ -3,16 +3,15 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { Prisma, contents, content_checklists, content_stage_data } from '@prisma/client';
+import { Prisma, contents, content_stage_data } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UndoService } from '../undo/undo.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 import { ContentFiltersDto } from './dto/content-filters.dto';
-import { ReorderContentDto } from './dto/reorder-content.dto';
-import { CreateContentChecklistDto } from './dto/create-content-checklist.dto';
-import { UpdateContentChecklistDto } from './dto/update-content-checklist.dto';
+import { MoveContentDto } from './dto/reorder-content.dto';
 import { UpsertStageDataDto } from './dto/upsert-stage-data.dto';
+import { generatePositionBetween, generateEndPosition } from '../../common/utils/position';
 
 export interface ContentResponse {
   id: string;
@@ -28,18 +27,9 @@ export interface ContentResponse {
   publishedAt: string | null;
   templateId: string | null;
   tags: string[];
-  position: number | null;
+  position: string | null;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface ContentChecklistResponse {
-  id: string;
-  contentId: string;
-  stage: string;
-  label: string;
-  checked: boolean;
-  position: number | null;
 }
 
 export interface ContentStageDataResponse {
@@ -56,14 +46,12 @@ export interface ContentWithDetailsResponse extends ContentResponse {
   projectName: string | null;
   projectColor: string | null;
   noteTitle: string | null;
-  checklists: ContentChecklistResponse[];
   stageData: ContentStageDataResponse[];
 }
 
 interface ContentRowWithDetails extends contents {
   project: { id: string; name: string; color: string | null } | null;
   note: { id: string; title: string } | null;
-  content_checklists: content_checklists[];
   content_stage_data: content_stage_data[];
 }
 
@@ -88,17 +76,6 @@ function mapContent(row: contents): ContentResponse {
   };
 }
 
-function mapChecklist(row: content_checklists): ContentChecklistResponse {
-  return {
-    id: row.id,
-    contentId: row.content_id,
-    stage: row.stage,
-    label: row.label,
-    checked: row.checked,
-    position: row.position,
-  };
-}
-
 function mapStageData(row: content_stage_data): ContentStageDataResponse {
   return {
     id: row.id,
@@ -119,7 +96,6 @@ function mapContentWithDetails(
     projectName: row.project?.name ?? null,
     projectColor: row.project?.color ?? null,
     noteTitle: row.note?.title ?? null,
-    checklists: row.content_checklists.map(mapChecklist),
     stageData: row.content_stage_data.map(mapStageData),
   };
 }
@@ -127,9 +103,6 @@ function mapContentWithDetails(
 const CONTENT_INCLUDE = {
   project: { select: { id: true, name: true, color: true } },
   note: { select: { id: true, title: true } },
-  content_checklists: {
-    orderBy: { position: 'asc' },
-  },
   content_stage_data: true,
 } satisfies Prisma.contentsInclude;
 
@@ -200,11 +173,12 @@ export class ContentsService {
   ): Promise<ContentWithDetailsResponse> {
     const stage = dto.stage ?? 'idea';
 
-    const maxPos = await this.prisma.contents.aggregate({
+    const last = await this.prisma.contents.findFirst({
       where: { user_id: userId, stage },
-      _max: { position: true },
+      orderBy: { position: 'desc' },
+      select: { position: true },
     });
-    const nextPosition = (maxPos._max.position ?? -1) + 1;
+    const nextPosition = generateEndPosition(last?.position ?? null);
 
     const row = await this.prisma.contents.create({
       data: {
@@ -297,34 +271,69 @@ export class ContentsService {
     return mapContentWithDetails(row);
   }
 
-  async reorder(
+  async moveContent(
     userId: string,
-    dto: ReorderContentDto,
-  ): Promise<{ updated: number }> {
-    const ids = dto.items.map((item) => item.id);
-
-    const existing = await this.prisma.contents.findMany({
-      where: { id: { in: ids }, user_id: userId },
-      select: { id: true },
+    dto: MoveContentDto,
+  ): Promise<ContentWithDetailsResponse> {
+    const content = await this.prisma.contents.findUnique({
+      where: { id: dto.id },
     });
-    const existingIds = new Set(existing.map((r) => r.id));
 
-    const validItems = dto.items.filter((item) => existingIds.has(item.id));
-
-    if (validItems.length === 0) {
-      return { updated: 0 };
+    if (!content) {
+      throw new NotFoundException('Content not found');
+    }
+    if (content.user_id !== userId) {
+      throw new ForbiddenException('Not allowed to move this content');
     }
 
-    await this.prisma.$transaction(
-      validItems.map((item) =>
-        this.prisma.contents.update({
-          where: { id: item.id },
-          data: { stage: item.stage, position: item.position },
-        }),
-      ),
-    );
+    const targetStage = dto.stage ?? content.stage;
 
-    return { updated: validItems.length };
+    let prevPos: string | null = null;
+    let nextPos: string | null = null;
+
+    if (dto.afterId) {
+      const after = await this.prisma.contents.findUnique({
+        where: { id: dto.afterId },
+        select: { position: true },
+      });
+      prevPos = after?.position ?? null;
+    }
+
+    if (dto.beforeId) {
+      const before = await this.prisma.contents.findUnique({
+        where: { id: dto.beforeId },
+        select: { position: true },
+      });
+      nextPos = before?.position ?? null;
+    }
+
+    const newPosition = generatePositionBetween(prevPos, nextPos);
+
+    const data: Prisma.contentsUpdateInput = {
+      stage: targetStage,
+      position: newPosition,
+      updated_at: new Date(),
+    };
+
+    // Create stage data for new stage if moving to a different stage
+    if (targetStage !== content.stage) {
+      const existingStageData = await this.prisma.content_stage_data.findUnique({
+        where: { content_id_stage: { content_id: dto.id, stage: targetStage } },
+      });
+      if (!existingStageData) {
+        await this.prisma.content_stage_data.create({
+          data: { content_id: dto.id, stage: targetStage },
+        });
+      }
+    }
+
+    const row = await this.prisma.contents.update({
+      where: { id: dto.id },
+      data,
+      include: CONTENT_INCLUDE,
+    });
+
+    return mapContentWithDetails(row);
   }
 
   async remove(userId: string, id: string): Promise<void> {
@@ -345,7 +354,7 @@ export class ContentsService {
   }
 
   private toRawData(row: any): Record<string, unknown> {
-    const { project, note, content_checklists, content_stage_data, ...data } = row;
+    const { project, note, content_stage_data, ...data } = row;
     return data;
   }
 
@@ -406,106 +415,5 @@ export class ContentsService {
     });
 
     return mapStageData(row);
-  }
-
-  // --- Checklists ---
-
-  async findChecklists(
-    userId: string,
-    contentId: string,
-  ): Promise<ContentChecklistResponse[]> {
-    const content = await this.prisma.contents.findUnique({
-      where: { id: contentId },
-    });
-
-    if (!content) {
-      throw new NotFoundException('Content not found');
-    }
-    if (content.user_id !== userId) {
-      throw new ForbiddenException('Not allowed to access this content');
-    }
-
-    const rows = await this.prisma.content_checklists.findMany({
-      where: { content_id: contentId },
-      orderBy: { position: 'asc' },
-    });
-
-    return rows.map(mapChecklist);
-  }
-
-  async createChecklist(
-    userId: string,
-    contentId: string,
-    dto: CreateContentChecklistDto,
-  ): Promise<ContentChecklistResponse> {
-    const content = await this.prisma.contents.findUnique({
-      where: { id: contentId },
-    });
-
-    if (!content) {
-      throw new NotFoundException('Content not found');
-    }
-    if (content.user_id !== userId) {
-      throw new ForbiddenException('Not allowed to modify this content');
-    }
-
-    const row = await this.prisma.content_checklists.create({
-      data: {
-        content_id: contentId,
-        stage: dto.stage ?? 'idea',
-        label: dto.label,
-        position: dto.position ?? null,
-      },
-    });
-
-    return mapChecklist(row);
-  }
-
-  async updateChecklist(
-    userId: string,
-    checklistId: string,
-    dto: UpdateContentChecklistDto,
-  ): Promise<ContentChecklistResponse> {
-    const existing = await this.prisma.content_checklists.findUnique({
-      where: { id: checklistId },
-      include: { content: { select: { user_id: true } } },
-    });
-
-    if (!existing) {
-      throw new NotFoundException('Checklist item not found');
-    }
-    if (existing.content.user_id !== userId) {
-      throw new ForbiddenException('Not allowed to modify this checklist item');
-    }
-
-    const data: Prisma.content_checklistsUpdateInput = {};
-    if (dto.label !== undefined) data.label = dto.label;
-    if (dto.checked !== undefined) data.checked = dto.checked;
-    if (dto.position !== undefined) data.position = dto.position;
-
-    const row = await this.prisma.content_checklists.update({
-      where: { id: checklistId },
-      data,
-    });
-
-    return mapChecklist(row);
-  }
-
-  async removeChecklist(userId: string, checklistId: string): Promise<void> {
-    const existing = await this.prisma.content_checklists.findUnique({
-      where: { id: checklistId },
-      include: { content: { select: { user_id: true } } },
-    });
-
-    if (!existing) {
-      throw new NotFoundException('Checklist item not found');
-    }
-    if (existing.content.user_id !== userId) {
-      throw new ForbiddenException('Not allowed to delete this checklist item');
-    }
-
-    await this.prisma.content_checklists.delete({
-      where: { id: checklistId },
-    });
   }
 }

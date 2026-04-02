@@ -1,6 +1,5 @@
 import {
   IsIn,
-  IsInt,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -30,6 +29,6 @@ export class CreateBuildCommandDto {
   bodyTemplate?: string;
 
   @IsOptional()
-  @IsInt()
-  position?: number;
+  @IsString()
+  position?: string;
 }

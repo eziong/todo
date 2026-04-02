@@ -10,6 +10,8 @@ import { UndoService } from '../undo/undo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TodoFiltersDto } from './dto/todo-filters.dto';
+import { MoveTodoDto } from './dto/move-todo.dto';
+import { generatePositionBetween, generateEndPosition } from '../../common/utils/position';
 
 // Row with joined project (partial select)
 interface TodoRowWithProject extends todos {
@@ -32,8 +34,10 @@ export interface TodoResponse {
   dueDate: string | null;
   projectId: string | null;
   parentId: string | null;
-  position: number | null;
+  position: string | null;
   completedAt: string | null;
+  contentId: string | null;
+  contentStage: string | null;
   createdAt: string;
   updatedAt: string;
   project: TodoProjectResponse | null;
@@ -52,6 +56,8 @@ function mapTodo(row: TodoRowWithProject): TodoResponse {
     parentId: row.parent_id,
     position: row.position,
     completedAt: row.completed_at?.toISOString() ?? null,
+    contentId: row.content_id,
+    contentStage: row.content_stage,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
     project: row.project
@@ -73,6 +79,8 @@ function mapTodoPlain(row: todos): Omit<TodoResponse, 'project'> {
     parentId: row.parent_id,
     position: row.position,
     completedAt: row.completed_at?.toISOString() ?? null,
+    contentId: row.content_id,
+    contentStage: row.content_stage,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
   };
@@ -89,8 +97,18 @@ export class TodosService {
   async findAll(userId: string, filters: TodoFiltersDto): Promise<TodoResponse[]> {
     const where: Prisma.todosWhereInput = {
       user_id: userId,
-      parent_id: null,
     };
+
+    // When filtering by contentId, show all linked todos (including subtasks).
+    // Otherwise, default to top-level todos only.
+    if (filters.contentId) {
+      where.content_id = filters.contentId;
+      if (filters.contentStage) {
+        where.content_stage = filters.contentStage;
+      }
+    } else {
+      where.parent_id = null;
+    }
 
     if (filters.status) {
       where.status = filters.status;
@@ -158,6 +176,22 @@ export class TodosService {
   }
 
   async create(userId: string, dto: CreateTodoDto): Promise<TodoResponse> {
+    let position = dto.position ?? null;
+
+    // Auto-assign end position for content-linked todos
+    if (!position && dto.contentId && dto.contentStage) {
+      const last = await this.prisma.todos.findFirst({
+        where: {
+          user_id: userId,
+          content_id: dto.contentId,
+          content_stage: dto.contentStage,
+        },
+        orderBy: { position: 'desc' },
+        select: { position: true },
+      });
+      position = generateEndPosition(last?.position ?? null);
+    }
+
     const row = await this.prisma.todos.create({
       data: {
         user_id: userId,
@@ -168,7 +202,9 @@ export class TodosService {
         due_date: dto.dueDate ? new Date(dto.dueDate) : null,
         project_id: dto.projectId ?? null,
         parent_id: dto.parentId ?? null,
-        position: dto.position ?? null,
+        position,
+        content_id: dto.contentId ?? null,
+        content_stage: dto.contentStage ?? null,
       },
       include: { project: { select: { id: true, name: true, color: true } } },
     });
@@ -217,6 +253,14 @@ export class TodosService {
         : { disconnect: true };
     }
     if (dto.position !== undefined) data.position = dto.position;
+    if (dto.contentId !== undefined) {
+      data.content = dto.contentId
+        ? { connect: { id: dto.contentId } }
+        : { disconnect: true };
+    }
+    if (dto.contentStage !== undefined) {
+      data.content_stage = dto.contentStage;
+    }
 
     const row = await this.prisma.todos.update({
       where: { id },
@@ -239,6 +283,51 @@ export class TodosService {
         })
         .catch(() => {});
     }
+
+    return mapTodo(row);
+  }
+
+  async moveTodo(
+    userId: string,
+    dto: MoveTodoDto,
+  ): Promise<TodoResponse> {
+    const todo = await this.prisma.todos.findUnique({
+      where: { id: dto.id },
+    });
+
+    if (!todo) {
+      throw new NotFoundException('Todo not found');
+    }
+    if (todo.user_id !== userId) {
+      throw new ForbiddenException('Not allowed to move this todo');
+    }
+
+    let prevPos: string | null = null;
+    let nextPos: string | null = null;
+
+    if (dto.afterId) {
+      const after = await this.prisma.todos.findUnique({
+        where: { id: dto.afterId },
+        select: { position: true },
+      });
+      prevPos = after?.position ?? null;
+    }
+
+    if (dto.beforeId) {
+      const before = await this.prisma.todos.findUnique({
+        where: { id: dto.beforeId },
+        select: { position: true },
+      });
+      nextPos = before?.position ?? null;
+    }
+
+    const newPosition = generatePositionBetween(prevPos, nextPos);
+
+    const row = await this.prisma.todos.update({
+      where: { id: dto.id },
+      data: { position: newPosition },
+      include: { project: { select: { id: true, name: true, color: true } } },
+    });
 
     return mapTodo(row);
   }
@@ -271,7 +360,7 @@ export class TodosService {
   }
 
   private toRawData(row: any): Record<string, unknown> {
-    const { project, ...data } = row;
+    const { project, content, ...data } = row;
     return data;
   }
 }

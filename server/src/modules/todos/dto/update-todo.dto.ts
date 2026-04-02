@@ -1,9 +1,9 @@
 import {
   IsIn,
-  IsInt,
   IsOptional,
   IsString,
   IsUUID,
+  ValidateIf,
 } from 'class-validator';
 
 export class UpdateTodoDto {
@@ -32,6 +32,16 @@ export class UpdateTodoDto {
   projectId?: string | null;
 
   @IsOptional()
-  @IsInt()
-  position?: number;
+  @IsString()
+  position?: string;
+
+  @IsOptional()
+  @ValidateIf((o) => o.contentId !== null)
+  @IsUUID()
+  contentId?: string | null;
+
+  @IsOptional()
+  @ValidateIf((o) => o.contentStage !== null)
+  @IsIn(['idea', 'drafting', 'editing', 'review', 'published'])
+  contentStage?: string | null;
 }

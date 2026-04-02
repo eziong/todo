@@ -1,5 +1,4 @@
 import {
-  IsInt,
   IsOptional,
   IsString,
   IsUUID,
@@ -15,6 +14,6 @@ export class UpdateNoteFolderDto {
   parentId?: string | null;
 
   @IsOptional()
-  @IsInt()
-  position?: number;
+  @IsString()
+  position?: string;
 }
